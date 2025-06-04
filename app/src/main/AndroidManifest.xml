@@ -27,7 +27,7 @@
             android:foregroundServiceType="mediaPlayback" /> <service
         android:name=".MusicQSTileService"
         android:exported="true"
-        android:icon="@drawable/playlist_music"  android:label="Play Ambient Music"
+        android:icon="@drawable/ic_music_unavailable"  android:label="Play Ambient Music"
         android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
         <intent-filter>
             <action android:name="android.service.quicksettings.action.QS_TILE" />
