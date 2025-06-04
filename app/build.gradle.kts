@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.spotless)
 }
 
 android {
@@ -40,8 +41,19 @@ android {
     }
 }
 
-dependencies {
+spotless {
+    kotlin {
+        ktfmt().googleStyle()
+        // ktfmt().dropboxStyle()
 
+        // Set the files to format
+        target("src/**/*.kt")
+        targetExclude("build/**/*.kt")
+        // targetExclude("src/main/kotlin/com/example/dontformat/*")
+    }
+}
+
+dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.session)
@@ -55,7 +67,6 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
