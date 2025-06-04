@@ -8,24 +8,20 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-
 @Composable
 fun AmbientMusicTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+  darkTheme: Boolean = isSystemInDarkTheme(),
+  dynamicColor: Boolean = true,
+  content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        else -> colorScheme
+  val colorScheme =
+    when {
+      dynamicColor -> {
+        val context = LocalContext.current
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+      }
+      else -> colorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        shapes = AppShapes,
-        content = content
-    )
+  MaterialTheme(colorScheme = colorScheme, shapes = AppShapes, content = content)
 }
