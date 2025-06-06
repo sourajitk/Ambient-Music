@@ -34,7 +34,13 @@ class MusicQSTileService : TileService() {
       return
     }
 
-    // Send command to the service to toggle playback
+    val currentlyPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
+    Log.d(TAG, "onClick: Current actual service state isPlaying=$currentlyPlaying.")
+
+    val optimisticNextState = !currentlyPlaying
+    Log.d(TAG, "onClick: Optimistically updating tile to reflect next state: isPlaying=$optimisticNextState")
+    applyVisuals(optimisticNextState, forceUnavailable = false)
+
     val intent =
       Intent(this, MusicPlaybackService::class.java).apply {
         action = MusicPlaybackService.ACTION_TOGGLE_PLAYBACK_QS
