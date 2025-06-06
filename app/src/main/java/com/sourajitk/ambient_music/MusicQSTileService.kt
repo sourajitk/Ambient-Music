@@ -35,11 +35,14 @@ class MusicQSTileService : TileService() {
     }
 
     val currentlyPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
-    Log.d(TAG, "onClick: Current actual service state isPlaying=$currentlyPlaying.")
+    Log.d(TAG, "isPlaying=$currentlyPlaying.")
 
-    val optimisticNextState = !currentlyPlaying
-    Log.d(TAG, "onClick: Optimistically updating tile to reflect next state: isPlaying=$optimisticNextState")
-    applyVisuals(optimisticNextState, forceUnavailable = false)
+    val pleaseNextState = !currentlyPlaying
+    Log.d(
+      TAG,
+      "isPlaying=$pleaseNextState"
+    )
+    applyVisuals(pleaseNextState, forceUnavailable = false)
 
     val intent =
       Intent(this, MusicPlaybackService::class.java).apply {
