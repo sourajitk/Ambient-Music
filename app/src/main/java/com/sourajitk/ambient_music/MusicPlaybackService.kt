@@ -6,6 +6,9 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.IBinder
 import android.service.quicksettings.TileService
 import android.util.Log
@@ -21,11 +24,15 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 
-class MusicPlaybackService : Service() {
+class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener {
 
   private var exoPlayer: ExoPlayer? = null
   private var mediaSession: MediaSession? = null
   private var isPlaylistSet = false
+
+  private lateinit var audioManager: AudioManager
+  private lateinit var audioFocusRequest: AudioFocusRequest
+  private var wasPausedByFocusLoss = false
 
   companion object {
     const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
@@ -44,7 +51,57 @@ class MusicPlaybackService : Service() {
     super.onCreate()
     Log.d(TAG, "onCreate: Service creating.")
     initializePlayerAndSession()
+    initializeAudioFocus()
     createNotificationChannel()
+  }
+
+  private fun initializeAudioFocus() {
+    audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+
+    val audioAttributes =
+      AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_MEDIA)
+        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+        .build()
+
+    audioFocusRequest =
+      AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+        .setAudioAttributes(audioAttributes)
+        .setAcceptsDelayedFocusGain(true)
+        .setOnAudioFocusChangeListener(this)
+        .build()
+  }
+
+  override fun onAudioFocusChange(focusChange: Int) {
+    when (focusChange) {
+      AudioManager.AUDIOFOCUS_GAIN -> {
+        if (wasPausedByFocusLoss) {
+          exoPlayer?.play()
+          wasPausedByFocusLoss = false
+        }
+      }
+      AudioManager.AUDIOFOCUS_LOSS -> {
+        stopPlaybackAndReleaseSession()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+      }
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+        if (exoPlayer?.isPlaying == true) {
+          wasPausedByFocusLoss = true
+          exoPlayer?.pause()
+        }
+      }
+    }
+  }
+
+  private fun requestAudioFocus(): Boolean {
+    val result = audioManager.requestAudioFocus(audioFocusRequest)
+    return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+  }
+
+  private fun abandonAudioFocus() {
+    audioManager.abandonAudioFocusRequest(audioFocusRequest)
   }
 
   private fun initializePlayerAndSession() {
@@ -202,26 +259,26 @@ class MusicPlaybackService : Service() {
       exoPlayer?.pause()
       Log.d(TAG, "togglePlayback: Pause command issued.")
     } else {
-      // If player is idle, or stopped, or playlist not set, (re)set the full playlist and start.
-      if (
-        exoPlayer!!.playbackState == Player.STATE_IDLE ||
-          exoPlayer!!.playbackState == Player.STATE_ENDED ||
-          !isPlaylistSet ||
-          exoPlayer?.currentMediaItem == null
-      ) {
-        Log.d(
-          TAG,
-          "togglePlayback: Player idle, ended, or playlist not set. Preparing full playlist."
-        )
-        prepareAndSetPlaylist()
+      // Request audio focus before playing
+      if (requestAudioFocus()) {
+        if (
+          exoPlayer!!.playbackState == Player.STATE_IDLE ||
+            exoPlayer!!.playbackState == Player.STATE_ENDED ||
+            !isPlaylistSet ||
+            exoPlayer?.currentMediaItem == null
+        ) {
+          Log.d(TAG, "Preparing full playlist.")
+          prepareAndSetPlaylist()
+        }
+        exoPlayer?.play()
+        Log.d(TAG, "Playing the audio file.")
       }
-      exoPlayer?.play()
-      Log.d(TAG, "togglePlayback: Play command issued.")
     }
   }
 
   private fun stopPlaybackAndReleaseSession() {
     Log.d(TAG, "stopPlaybackAndReleaseSession called.")
+    abandonAudioFocus()
     exoPlayer?.stop()
     exoPlayer?.clearMediaItems()
     isPlaylistSet = false
@@ -245,19 +302,17 @@ class MusicPlaybackService : Service() {
     Log.d(TAG, "createNotification. isServiceCurrentlyPlaying: $isServiceCurrentlyPlaying")
     val currentExoPlayerMediaItem = exoPlayer?.currentMediaItem
     val currentMediaMetadata = currentExoPlayerMediaItem?.mediaMetadata
-    val songFromRepo = SongRepo.getCurrentSong() // Used as fallback / initial
+    val songFromRepo = SongRepo.getCurrentSong()
 
     val title =
       currentMediaMetadata?.title?.toString()?.takeIf { it.isNotBlank() }
         ?: songFromRepo?.title?.takeIf { it.isNotBlank() }
-        // Unlikely case but kept this here cuzwhynot
-        ?: getString(R.string.qs_tile_notification_title_unknown) // Fallback string
+        ?: getString(R.string.qs_tile_notification_title_unknown)
 
     val artist =
       currentMediaMetadata?.artist?.toString()?.takeIf { it.isNotBlank() }
         ?: songFromRepo?.artist?.takeIf { it.isNotBlank() }
-        // Unlikely case but kept this here cuzwhynot
-        ?: getString(R.string.qs_tile_notification_artist_unknown) // Fallback string
+        ?: getString(R.string.qs_tile_notification_artist_unknown)
 
     val builder =
       NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
