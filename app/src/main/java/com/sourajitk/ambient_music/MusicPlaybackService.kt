@@ -4,8 +4,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -34,6 +37,10 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   private lateinit var audioFocusRequest: AudioFocusRequest
   private var wasPausedByFocusLoss = false
 
+  private val becomingNoisyReceiver = BecomingNoisyReceiver()
+  private val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+  private var isReceiverRegistered = false
+
   companion object {
     const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
     const val ACTION_SKIP_TO_NEXT = "com.sourajitk.ambient_music.ACTION_SKIP_TO_NEXT"
@@ -45,6 +52,16 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     @Volatile
     var isServiceCurrentlyPlaying: Boolean = false
       private set
+  }
+
+  // BroadcastReceiver class to handle the event
+  private inner class BecomingNoisyReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+      if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY && isServiceCurrentlyPlaying) {
+        // Pause playback when audio output changes
+        exoPlayer?.pause()
+      }
+    }
   }
 
   override fun onCreate() {
@@ -258,6 +275,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     if (playerIsCurrentlyPlaying) {
       exoPlayer?.pause()
       Log.d(TAG, "togglePlayback: Pause command issued.")
+      // Unregister the receiver when playback is paused
+      if (isReceiverRegistered) {
+        unregisterReceiver(becomingNoisyReceiver)
+        isReceiverRegistered = false
+      }
     } else {
       // Request audio focus before playing
       if (requestAudioFocus()) {
@@ -272,6 +294,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         }
         exoPlayer?.play()
         Log.d(TAG, "Playing the audio file.")
+        // Register the receiver only when playback starts
+        if (!isReceiverRegistered) {
+          registerReceiver(becomingNoisyReceiver, intentFilter)
+          isReceiverRegistered = true
+        }
       }
     }
   }
@@ -282,6 +309,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     exoPlayer?.stop()
     exoPlayer?.clearMediaItems()
     isPlaylistSet = false
+    // Unregister the receiver when playback is stopped completely
+    if (isReceiverRegistered) {
+      unregisterReceiver(becomingNoisyReceiver)
+      isReceiverRegistered = false
+    }
   }
 
   private fun createNotificationChannel() {
@@ -331,7 +363,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     return builder.build()
   }
 
-  // This function update the MediaSession() notif when we skip or go back tracks
   private fun updateNotification() {
     if (exoPlayer != null && mediaSession != null) {
       val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

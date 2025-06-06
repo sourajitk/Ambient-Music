@@ -38,10 +38,7 @@ class MusicQSTileService : TileService() {
     Log.d(TAG, "isPlaying=$currentlyPlaying.")
 
     val pleaseNextState = !currentlyPlaying
-    Log.d(
-      TAG,
-      "isPlaying=$pleaseNextState"
-    )
+    Log.d(TAG, "isPlaying=$pleaseNextState")
     applyVisuals(pleaseNextState, forceUnavailable = false)
 
     val intent =
