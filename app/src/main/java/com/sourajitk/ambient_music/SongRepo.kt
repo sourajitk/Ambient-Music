@@ -148,10 +148,10 @@ object SongRepo {
     return synchronized(this@SongRepo) { internalLoadedSongs.getOrNull(currentTrackIndex) }
   }
 
-  fun selectNextTrack() {
+  fun selectTrack(index: Int) {
     synchronized(this@SongRepo) {
-      if (internalLoadedSongs.isNotEmpty()) {
-        currentTrackIndex = (currentTrackIndex + 1) % internalLoadedSongs.size
+      if (index >= 0 && index < internalLoadedSongs.size) {
+        currentTrackIndex = index
       }
     }
   }
