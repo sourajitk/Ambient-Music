@@ -44,4 +44,4 @@ jobs:
           files: |
             ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required to publish release
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
