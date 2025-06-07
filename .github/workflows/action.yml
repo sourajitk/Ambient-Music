@@ -6,15 +6,15 @@ env:
 
 on:
   push:
-    branches:
-      - 'release'  # Only trigger on version tags like v1.0.0
+    tags:
+      - 'v*.*.*'
 
   workflow_dispatch:
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v4
