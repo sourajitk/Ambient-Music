@@ -15,21 +15,34 @@ android {
         minSdk = 34
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.0-alpha"
+        versionName = "1.0.5-alpha"
+    }
+    signingConfigs {
+        val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
+
+        if (hasSigningEnv) {
+            create("release") {
+                storeFile = rootProject.file("release-keystore.jks")
+                storePassword = System.getenv("SIGNING_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
-        release {
-            // Enable the following to decrease binary size and optimize res.
+        getByName("release").apply {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release")
+                ?: signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
