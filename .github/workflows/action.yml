@@ -8,28 +8,44 @@ on:
   push:
     tags:
       - 'v*.*.*'
-
   workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: self-hosted
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          pip install requests google-genai
+
+      - name: Generate AI Changelog
+        run: python generate_full_changelog.py --api-key "${{ secrets.GEMINI_API_KEY }}"
+
+      - name: Read Changelog File
+        id: read_changelog
+        run: |
+          {
+            echo 'changelog_body<<EOF'
+            cat changelog.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
 
       - name: Decode and restore keystore
         run: |
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
-          ls -la release-keystore.jks
-          pwd
-
-      - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
-      - name: Set repository name as env variable
-        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
       - name: Set Up JDK
         uses: actions/setup-java@v4
@@ -41,7 +57,7 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Build APK Release - ${{ env.main_project_module }}
+      - name: Build APK Release
         run: ./gradlew assembleRelease
         env:
           SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
@@ -54,5 +70,6 @@ jobs:
         with:
           files: |
             ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
+          body: ${{ steps.read_changelog.outputs.changelog_body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
