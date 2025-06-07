@@ -9,14 +9,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.net.Uri
 import android.os.IBinder
 import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -26,6 +31,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
+import coil.ImageLoader
+import coil.request.ImageRequest
 
 class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener {
 
@@ -40,6 +47,9 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   private val becomingNoisyReceiver = BecomingNoisyReceiver()
   private val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
   private var isReceiverRegistered = false
+
+  private var currentAlbumArt: Bitmap? = null
+  private lateinit var imageLoader: ImageLoader
 
   companion object {
     const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
@@ -67,6 +77,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   override fun onCreate() {
     super.onCreate()
     Log.d(TAG, "onCreate: Service creating.")
+    imageLoader = ImageLoader(this)
     initializePlayerAndSession()
     initializeAudioFocus()
     createNotificationChannel()
@@ -170,6 +181,10 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
                 TAG,
                 "CurrIndex: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason"
               )
+
+              // Clear old art and fetch new art on transition
+              currentAlbumArt = null
+              mediaItem?.mediaMetadata?.artworkUri?.let { fetchArtworkAsync(it) }
               updateNotification()
             }
 
@@ -238,12 +253,22 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
     val mediaItems =
       allSongData.map { songData ->
+        val metadataBuilder =
+          MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
+
+        if (songData.albumArtUrl != null) {
+          try {
+            metadataBuilder.setArtworkUri(songData.albumArtUrl.toUri())
+          } catch (e: Exception) {
+            // Catch potential errors if the URL string is malformed
+            Log.e(TAG, "Failed to parse album art URI: ${songData.albumArtUrl}", e)
+          }
+        }
+
         MediaItem.Builder()
           .setUri(songData.url)
           .setMediaId(songData.url) // Use URL as a unique ID
-          .setMediaMetadata(
-            MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist).build()
-          )
+          .setMediaMetadata(metadataBuilder.build())
           .build()
       }
 
@@ -310,10 +335,32 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     exoPlayer?.clearMediaItems()
     isPlaylistSet = false
     // Unregister the receiver when playback is stopped completely
+    currentAlbumArt = null
     if (isReceiverRegistered) {
       unregisterReceiver(becomingNoisyReceiver)
       isReceiverRegistered = false
     }
+  }
+
+  // Fetch artwork from a URL asynchronously
+  private fun fetchArtworkAsync(artworkUri: Uri) {
+    val request =
+      // Ngl using coil was interesting...
+      ImageRequest.Builder(this)
+        .data(artworkUri)
+        .target(
+          onSuccess = { result: Drawable ->
+            currentAlbumArt = result.toBitmap()
+            // Artwork is loaded, update the notification again to show it
+            updateNotification()
+          },
+          onError = {
+            currentAlbumArt = null
+            updateNotification()
+          }
+        )
+        .build()
+    imageLoader.enqueue(request)
   }
 
   private fun createNotificationChannel() {
@@ -338,12 +385,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
     val title =
       currentMediaMetadata?.title?.toString()?.takeIf { it.isNotBlank() }
-        ?: songFromRepo?.title?.takeIf { it.isNotBlank() }
+        ?: songFromRepo?.title
         ?: getString(R.string.qs_tile_notification_title_unknown)
-
     val artist =
       currentMediaMetadata?.artist?.toString()?.takeIf { it.isNotBlank() }
-        ?: songFromRepo?.artist?.takeIf { it.isNotBlank() }
+        ?: songFromRepo?.artist
         ?: getString(R.string.qs_tile_notification_artist_unknown)
 
     val builder =
@@ -351,13 +397,13 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         .setContentTitle(title)
         .setContentText(artist)
         .setSmallIcon(R.drawable.ic_music_note)
+        .setLargeIcon(currentAlbumArt)
         .setOngoing(true)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     mediaSession?.let { session ->
       val mediaStyle =
-        MediaStyleNotificationHelper.MediaStyle(session)
-          .setShowActionsInCompactView(0, 1) // Index 0: Play/Pause, Index 1: Skip to Next
+        MediaStyleNotificationHelper.MediaStyle(session).setShowActionsInCompactView(0, 1)
       builder.setStyle(mediaStyle)
     }
     return builder.build()

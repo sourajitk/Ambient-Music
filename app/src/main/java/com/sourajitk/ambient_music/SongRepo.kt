@@ -17,8 +17,8 @@ import okhttp3.Request
 data class SongAsset(
   val url: String,
   val title: String,
-  val artist: String
-  // val albumArtUri: String? = null
+  val artist: String,
+  val albumArtUrl: String? = null
 )
 
 object SongRepo {
