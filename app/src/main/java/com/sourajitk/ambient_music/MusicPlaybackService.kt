@@ -239,7 +239,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     return START_STICKY
   }
 
-  private fun prepareAndSetPlaylist() {
+  private fun prepareAndSetPlaylist(playRandom: Boolean = false) {
     Log.d(TAG, "prepareAndSetPlaylist called.")
     val allSongData = SongRepo.songs
     if (allSongData.isEmpty()) {
@@ -272,8 +272,16 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
           .build()
       }
 
+    // Enable shuffle by default
+    exoPlayer?.shuffleModeEnabled = true
+
     // Start from current index in repo
-    val startIndex = SongRepo.currentTrackIndex
+    var startIndex = SongRepo.currentTrackIndex
+    if (playRandom && allSongData.isNotEmpty()) {
+      startIndex = allSongData.indices.random()
+      // Update SongRepo so it's in sync
+      SongRepo.selectTrack(startIndex)
+    }
     exoPlayer?.setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
     exoPlayer?.prepare()
     // Playback will be started by togglePlayback if it was called to initiate
@@ -308,14 +316,15 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     } else {
       // Request audio focus before playing
       if (requestAudioFocus()) {
-        if (
+        val isFreshStart =
           exoPlayer!!.playbackState == Player.STATE_IDLE ||
             exoPlayer!!.playbackState == Player.STATE_ENDED ||
             !isPlaylistSet ||
             exoPlayer?.currentMediaItem == null
-        ) {
+
+        if (isFreshStart) {
           Log.d(TAG, "Preparing full playlist.")
-          prepareAndSetPlaylist()
+          prepareAndSetPlaylist(playRandom = true)
         }
         exoPlayer?.play()
         Log.d(TAG, "Playing the audio file.")
