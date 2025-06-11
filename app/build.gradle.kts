@@ -14,8 +14,7 @@ android {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 34
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.5-alpha"
+        versionName = "1.0.6-alpha"
     }
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
