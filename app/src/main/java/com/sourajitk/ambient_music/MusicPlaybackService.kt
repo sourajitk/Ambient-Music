@@ -510,6 +510,8 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   private fun requestTileUpdate() {
     Log.d(TAG, "Update tile state currstate: $isServiceCurrentlyPlaying")
     TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
+    TileService.requestListeningState(this, ComponentName(this, ChillQSTileService::class.java))
+    TileService.requestListeningState(this, ComponentName(this, SleepQSTileService::class.java))
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
