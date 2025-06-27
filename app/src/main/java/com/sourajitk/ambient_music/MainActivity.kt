@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
 // A better and more streamlined design will be implemented later.
 fun MinimalAppScreen() {
   val context = LocalContext.current
-  
+
   val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
   val showAddTilesSection by remember {
     mutableStateOf(!sharedPrefs.getBoolean("tile_prompt_shown", false))
