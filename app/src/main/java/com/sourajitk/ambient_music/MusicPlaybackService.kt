@@ -55,12 +55,19 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
     const val ACTION_SKIP_TO_NEXT = "com.sourajitk.ambient_music.ACTION_SKIP_TO_NEXT"
     const val ACTION_STOP_SERVICE = "com.sourajitk.ambient_music.ACTION_STOP_SERVICE"
+    const val ACTION_PLAY_GENRE_CHILL = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CHILL"
+    const val ACTION_PLAY_GENRE_CALM = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CALM"
+    const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
     private const val NOTIFICATION_ID = 1
     private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
     private const val TAG = "MusicPlaybackService"
 
     @Volatile
     var isServiceCurrentlyPlaying: Boolean = false
+      private set
+
+    @Volatile
+    var currentPlaylistGenre: String? = null
       private set
   }
 
@@ -235,12 +242,84 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
       }
+      ACTION_PLAY_GENRE_CHILL -> {
+        Log.i(TAG, "ACTION_PLAY_GENRE_CHILL received.")
+        if (SongRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongRepo:Genre is empty.")
+          isServiceCurrentlyPlaying = false
+          requestTileUpdate()
+          stopSelf()
+          return START_NOT_STICKY
+        }
+        startForeground(NOTIFICATION_ID, createNotification())
+        playGenre("chill")
+      }
+      ACTION_PLAY_GENRE_CALM -> {
+        if (SongRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongRepo:Genre is empty.")
+          isServiceCurrentlyPlaying = false
+          requestTileUpdate()
+          stopSelf()
+          return START_NOT_STICKY
+        }
+        startForeground(NOTIFICATION_ID, createNotification())
+        playGenre("calm")
+      }
+      ACTION_PLAY_GENRE_SLEEP -> {
+        if (SongRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongRepo:Genre is empty.")
+          isServiceCurrentlyPlaying = false
+          requestTileUpdate()
+          stopSelf()
+          return START_NOT_STICKY
+        }
+        startForeground(NOTIFICATION_ID, createNotification())
+        playGenre("sleep")
+      }
     }
     return START_STICKY
   }
 
+  /**
+   * Finally, implement a genre picker so we can check against what genre the tile calls for and
+   * serve it exactly what is wants. Usage is present in onStartCommand().
+   */
+  private fun playGenre(genre: String) {
+    if (requestAudioFocus()) {
+      Log.d(TAG, "Playing genre: $genre")
+      currentPlaylistGenre = genre // Set the current genre
+
+      // Avoid mixing up genres regardless of playState and which tile is being clicked.
+      val genreSongs = SongRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+
+      if (genreSongs.isEmpty()) {
+        Log.w(TAG, "No songs found for genre: $genre")
+        return
+      }
+
+      val mediaItems =
+        genreSongs.map { songData ->
+          val metadataBuilder =
+            MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
+          songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+          MediaItem.Builder()
+            .setUri(songData.url)
+            .setMediaId(songData.url)
+            .setMediaMetadata(metadataBuilder.build())
+            .build()
+        }
+
+      exoPlayer?.shuffleModeEnabled = true
+      exoPlayer?.setMediaItems(mediaItems, 0, C.TIME_UNSET)
+      exoPlayer?.prepare()
+      exoPlayer?.play()
+      isPlaylistSet = true
+    }
+  }
+
   private fun prepareAndSetPlaylist(playRandom: Boolean = false) {
     Log.d(TAG, "prepareAndSetPlaylist called.")
+    currentPlaylistGenre = null
     val allSongData = SongRepo.songs
     if (allSongData.isEmpty()) {
       Log.w(TAG, "Received nothing from JSON can't prepare playlist.")
@@ -267,7 +346,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
         MediaItem.Builder()
           .setUri(songData.url)
-          .setMediaId(songData.url) // Use URL as a unique ID
+          .setMediaId(songData.url)
           .setMediaMetadata(metadataBuilder.build())
           .build()
       }
@@ -343,12 +422,12 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     exoPlayer?.stop()
     exoPlayer?.clearMediaItems()
     isPlaylistSet = false
-    // Unregister the receiver when playback is stopped completely
     currentAlbumArt = null
     if (isReceiverRegistered) {
       unregisterReceiver(becomingNoisyReceiver)
       isReceiverRegistered = false
     }
+    currentPlaylistGenre = null
   }
 
   // Fetch artwork from a URL asynchronously
@@ -430,7 +509,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
   private fun requestTileUpdate() {
     Log.d(TAG, "Update tile state currstate: $isServiceCurrentlyPlaying")
-    TileService.requestListeningState(this, ComponentName(this, MusicQSTileService::class.java))
+    TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
