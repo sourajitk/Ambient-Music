@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,11 +28,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
 
 class MainActivity : ComponentActivity() {
@@ -87,9 +87,9 @@ class MainActivity : ComponentActivity() {
 // A better and more streamlined design will be implemented later.
 fun MinimalAppScreen() {
   val context = LocalContext.current
-
+  
   val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-  var showAddTileButton by remember {
+  val showAddTilesSection by remember {
     mutableStateOf(!sharedPrefs.getBoolean("tile_prompt_shown", false))
   }
 
@@ -129,43 +129,41 @@ fun MinimalAppScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        if (showAddTileButton) {
-          Button(
-            onClick = {
-              val statusBarManager = context.getSystemService(StatusBarManager::class.java)
-              statusBarManager.requestAddTileService(
-                ComponentName(context, MusicQSTileService::class.java),
-                context.getString(R.string.qs_tile_main_label),
-                Icon.createWithResource(context, R.drawable.ic_music_note),
-                context.mainExecutor
-              ) { result ->
-                val message =
-                  when (result) {
-                    StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED ->
-                      "Tile added successfully!"
-                    // This is a case that can actually happen if you uninstall the app
-                    // without removing the tile, let's take care of that too...
-                    StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED ->
-                      "Tile was already added."
-                    else -> "Tile not added."
-                  }
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-              }
-              // Save that the prompt has been shown to not show it again
-              sharedPrefs.edit { putBoolean("tile_prompt_shown", true) }
-              // Don't badger the user to add the tile again
-              showAddTileButton = false
-            },
-            modifier = Modifier.fillMaxWidth(0.8f)
-          ) {
-            Icon(
-              imageVector = Icons.Filled.AddCircle,
-              contentDescription = null,
-              modifier = Modifier.size(ButtonDefaults.IconSize)
-            )
-            Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Add Tile to Quick Settings")
+        // Add persistent prompts for all three tiles
+        if (showAddTilesSection) {
+          Card(modifier = Modifier.fillMaxWidth(0.9f)) {
+            Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+              Text(
+                text = "Add Genre Tiles",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+              )
+              Spacer(modifier = Modifier.height(20.dp))
+              AddTileRow(
+                context = context,
+                tileName = "Calm",
+                tileComponent = ComponentName(context, CalmQSTileService::class.java),
+                tileIconRes = R.drawable.playlist_music // Use a specific icon
+              )
+              Spacer(modifier = Modifier.height(12.dp))
+              AddTileRow(
+                context = context,
+                tileName = "Chill",
+                tileComponent = ComponentName(context, ChillQSTileService::class.java),
+                tileIconRes = R.drawable.playlist_music // Use a specific icon
+              )
+              Spacer(modifier = Modifier.height(12.dp))
+              AddTileRow(
+                context = context,
+                tileName = "Sleep",
+                tileComponent = ComponentName(context, SleepQSTileService::class.java),
+                tileIconRes = R.drawable.playlist_music // Use a specific icon
+              )
+            }
           }
+
+          Spacer(modifier = Modifier.height(16.dp))
+
           Spacer(modifier = Modifier.height(12.dp))
         }
 
@@ -187,6 +185,50 @@ fun MinimalAppScreen() {
           Text("Open App Settings")
         }
       }
+    }
+  }
+}
+
+@Composable
+private fun AddTileRow(
+  context: Context,
+  tileName: String,
+  tileComponent: ComponentName,
+  tileIconRes: Int
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween
+  ) {
+    Text(text = tileName, style = MaterialTheme.typography.bodyLarge)
+    OutlinedButton(
+      onClick = {
+        val statusBarManager = context.getSystemService(StatusBarManager::class.java)
+        statusBarManager.requestAddTileService(
+          tileComponent,
+          tileName,
+          Icon.createWithResource(context, tileIconRes),
+          context.mainExecutor
+        ) { result ->
+          val message =
+            when (result) {
+              StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED -> "'$tileName' tile added!"
+              StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED ->
+                "'$tileName' was already added."
+              else -> "Could not add '$tileName' tile."
+            }
+          Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+      }
+    ) {
+      Icon(
+        imageVector = Icons.Filled.AddCircle,
+        contentDescription = "Add $tileName tile",
+        modifier = Modifier.size(ButtonDefaults.IconSize)
+      )
+      Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+      Text("Add")
     }
   }
 }
