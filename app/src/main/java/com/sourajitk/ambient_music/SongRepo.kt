@@ -18,7 +18,8 @@ data class SongAsset(
   val url: String,
   val title: String,
   val artist: String,
-  val albumArtUrl: String? = null
+  val albumArtUrl: String? = null,
+  val genre: String? = null
 )
 
 object SongRepo {
