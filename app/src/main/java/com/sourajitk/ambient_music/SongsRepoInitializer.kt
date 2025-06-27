@@ -15,7 +15,9 @@ class SongsRepoInitializer : Application() {
       Log.d(TAG, "SongRepo init finished. Success: $success, Status: $statusMessage")
       if (success) {
         Log.d(TAG, "SongRepo successfully loaded songs. Requesting tile update.")
-        TileService.requestListeningState(this, ComponentName(this, MusicQSTileService::class.java))
+        TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
+        TileService.requestListeningState(this, ComponentName(this, ChillQSTileService::class.java))
+        TileService.requestListeningState(this, ComponentName(this, SleepQSTileService::class.java))
       }
     }
   }
