@@ -58,6 +58,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     const val ACTION_PLAY_GENRE_CHILL = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CHILL"
     const val ACTION_PLAY_GENRE_CALM = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CALM"
     const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
+    const val ACTION_PREPARE = "com.sourajitk.ambient_music.ACTION_PREPARE"
     private const val NOTIFICATION_ID = 1
     private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
     private const val TAG = "MusicPlaybackService"
@@ -217,6 +218,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
+      ACTION_PREPARE -> {
+        if (!isPlaylistSet && SongRepo.songs.isNotEmpty()) {
+          prepareAndSetPlaylist()
+        }
+      }
       ACTION_TOGGLE_PLAYBACK_QS -> {
         if (SongRepo.songs.isEmpty()) {
           isServiceCurrentlyPlaying = false
@@ -291,7 +297,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
       // Avoid mixing up genres regardless of playState and which tile is being clicked.
       val genreSongs = SongRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-
       if (genreSongs.isEmpty()) {
         Log.w(TAG, "No songs found for genre: $genre")
         return
@@ -310,7 +315,9 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         }
 
       exoPlayer?.shuffleModeEnabled = true
-      exoPlayer?.setMediaItems(mediaItems, 0, C.TIME_UNSET)
+      // Start from a random index within the filtered genre list
+      val startIndex = genreSongs.indices.random()
+      exoPlayer?.setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
       exoPlayer?.prepare()
       exoPlayer?.play()
       isPlaylistSet = true
@@ -369,45 +376,25 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   }
 
   private fun togglePlayback() {
-    if (exoPlayer == null || mediaSession == null) {
-      Log.e(TAG, "Null playback state. Re-initializing...")
+    if (exoPlayer == null) {
+      Log.e(TAG, "ExoPlayer is null in togglePlayback. Aborting.")
+      // Attempt recovery
       initializePlayerAndSession()
-      if (exoPlayer == null || mediaSession == null) {
-        Log.e(TAG, "Re-initialization failed. Aborting.")
-        isServiceCurrentlyPlaying = false
-        requestTileUpdate()
-        stopSelf()
-        return
-      }
+      prepareAndSetPlaylist()
+      return
     }
 
-    val playerIsCurrentlyPlaying = exoPlayer!!.isPlaying
-    Log.d(TAG, "togglePlayback: Player is currently playing = $playerIsCurrentlyPlaying")
-
-    if (playerIsCurrentlyPlaying) {
+    if (exoPlayer!!.isPlaying) {
       exoPlayer?.pause()
       Log.d(TAG, "togglePlayback: Pause command issued.")
-      // Unregister the receiver when playback is paused
       if (isReceiverRegistered) {
         unregisterReceiver(becomingNoisyReceiver)
         isReceiverRegistered = false
       }
     } else {
-      // Request audio focus before playing
       if (requestAudioFocus()) {
-        val isFreshStart =
-          exoPlayer!!.playbackState == Player.STATE_IDLE ||
-            exoPlayer!!.playbackState == Player.STATE_ENDED ||
-            !isPlaylistSet ||
-            exoPlayer?.currentMediaItem == null
-
-        if (isFreshStart) {
-          Log.d(TAG, "Preparing full playlist.")
-          prepareAndSetPlaylist(playRandom = true)
-        }
         exoPlayer?.play()
         Log.d(TAG, "Playing the audio file.")
-        // Register the receiver only when playback starts
         if (!isReceiverRegistered) {
           registerReceiver(becomingNoisyReceiver, intentFilter)
           isReceiverRegistered = true
