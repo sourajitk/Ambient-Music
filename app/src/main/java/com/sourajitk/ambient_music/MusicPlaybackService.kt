@@ -58,7 +58,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     const val ACTION_PLAY_GENRE_CHILL = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CHILL"
     const val ACTION_PLAY_GENRE_CALM = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CALM"
     const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
-    const val ACTION_PREPARE = "com.sourajitk.ambient_music.ACTION_PREPARE"
     private const val NOTIFICATION_ID = 1
     private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
     private const val TAG = "MusicPlaybackService"
@@ -218,11 +217,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
-      ACTION_PREPARE -> {
-        if (!isPlaylistSet && SongRepo.songs.isNotEmpty()) {
-          prepareAndSetPlaylist()
-        }
-      }
       ACTION_TOGGLE_PLAYBACK_QS -> {
         if (SongRepo.songs.isEmpty()) {
           isServiceCurrentlyPlaying = false
