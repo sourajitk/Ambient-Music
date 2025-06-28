@@ -10,7 +10,8 @@ This app allows you to play a curated stream of ambient music in the background 
             "url": "https://song_url",
             "title": "Laidback Lo-Fi",
             "artist": "Ambient Music Chill",
-            "albumArtUrl": "chill.jpeg"
+            "albumArtUrl": "chill.jpeg",
+            "genre": "chill"
         }
     ]
     ```
