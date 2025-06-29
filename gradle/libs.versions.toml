@@ -1,19 +1,19 @@
 [versions]
-agp = "8.10.1"
+agp = "8.11.0"
 coil = "2.7.0"
-kotlin = "2.0.21"
-kotlinxCoroutinesAndroid = "1.8.1"
-kotlinxCoroutinesCore = "1.8.1"
-kotlinxSerializationJson = "1.7.3"
+kotlin = "2.2.0"
+kotlinxCoroutinesAndroid = "1.10.2"
+kotlinxCoroutinesCore = "1.10.2"
+kotlinxSerializationJson = "1.9.0"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.06.00"
+composeBom = "2025.06.01"
 lifecycleViewmodelCompose = "2.9.1"
 loggingInterceptor = "4.12.0"
 media3Exoplayer = "1.7.1"
 media3Ui = "1.7.1"
 okhttp = "4.12.0"
-spotless = "6.25.0"
+spotless = "7.0.4"
 
 [libraries]
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
