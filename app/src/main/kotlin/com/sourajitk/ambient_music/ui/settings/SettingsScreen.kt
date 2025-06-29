@@ -3,65 +3,95 @@ package com.sourajitk.ambient_music.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
+import com.sourajitk.ambient_music.R
 
 @Composable
 fun SettingsScreen() {
   val context = LocalContext.current
 
-  Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-    Column(
-      modifier = Modifier.fillMaxSize().padding(16.dp),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Text("App Settings", style = MaterialTheme.typography.headlineMedium)
-      Spacer(modifier = Modifier.height(24.dp))
-      Text(
-        "Manage application permissions and see app info.",
-        style = MaterialTheme.typography.bodyLarge,
-        textAlign = TextAlign.Center,
-      )
-      Spacer(modifier = Modifier.height(16.dp))
-      FilledTonalButton(
+  var isDarkMode by remember { mutableStateOf(false) }
+
+  LazyColumn {
+    item {
+      PreferenceItem(
+        icon = Icons.Default.Settings,
+        title = "Addtional App Settings",
+        summary = "Open system settings to manage permissions",
         onClick = {
           val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
           val uri = Uri.fromParts("package", context.packageName, null)
           intent.data = uri
           context.startActivity(intent)
         },
-        modifier = Modifier.fillMaxWidth(0.8f),
-      ) {
-        Icon(
-          imageVector = Icons.Filled.Settings,
-          contentDescription = null,
-          modifier = Modifier.size(ButtonDefaults.IconSize),
-        )
-        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        Text("Open System App Settings")
-      }
+      )
+    }
+    // Dark Mode
+    item {
+      PreferenceItem(
+        icon = Icons.Default.DarkMode,
+        title = "Dark Mode",
+        summary = "Enable dark theme throughout the app",
+        onClick = { isDarkMode = !isDarkMode },
+        trailingContent = { Switch(checked = isDarkMode, onCheckedChange = { isDarkMode = it }) },
+      )
+    }
+    // Author
+    item {
+      PreferenceItem(
+        icon = Icons.Default.Person,
+        title = "Author",
+        summary = "Sourajit Karmakar",
+        onClick = {
+          val url = "https://github.com/sourajitk/"
+          val intent = Intent(Intent.ACTION_VIEW)
+          intent.data = url.toUri()
+          context.startActivity(intent)
+        },
+      )
+    }
+    // Source Code
+    item {
+      PreferenceItem(
+        icon = Icons.Default.Code,
+        title = "Source Code",
+        summary = "View the project on GitHub",
+        onClick = {
+          val url = "https://github.com/sourajitk/Ambient-Music"
+          val intent = Intent(Intent.ACTION_VIEW)
+          intent.data = url.toUri()
+          context.startActivity(intent)
+        },
+      )
+    }
+    // About Section
+    item {
+      PreferenceItem(
+        icon = Icons.Default.Info,
+        title = "Version",
+        summary = stringResource(R.string.app_version),
+        onClick = {
+          val url = "https://github.com/sourajitk/Ambient-Music/releases/latest"
+          val intent = Intent(Intent.ACTION_VIEW)
+          intent.data = url.toUri()
+          context.startActivity(intent)
+        },
+      )
     }
   }
 }
