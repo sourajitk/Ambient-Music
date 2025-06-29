@@ -5,15 +5,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,13 +24,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.ui.home.HomeScreen
 import com.sourajitk.ambient_music.ui.settings.SettingsScreen
 
 // Contains all of our routes
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
   object Home : Screen("home", "Home", Icons.Default.Home)
-
   object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 }
 
@@ -37,12 +40,25 @@ fun MainAppNavigation() {
   val navController = rememberNavController()
   val navItems = listOf(Screen.Home, Screen.Settings)
 
-  Scaffold(
-    bottomBar = {
-      NavigationBar(modifier = Modifier.height(80.dp)) { // Adjusted height to M3 default
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
+  // Get the current navigation back stack entry
+  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  val currentRoute = navBackStackEntry?.destination?.route
 
+  // Determine the title based on the current route
+  val topBarTitle = when (currentRoute) {
+    Screen.Settings.route -> "Settings"
+    else -> stringResource(R.string.app_name) // Default title for Home screen
+  }
+
+  Scaffold(
+    topBar = {
+      CenterAlignedTopAppBar(
+        title = { Text(topBarTitle) }
+      )
+    },
+    bottomBar = {
+      NavigationBar(modifier = Modifier.height(80.dp)) {
+        val currentDestination = navBackStackEntry?.destination
         navItems.forEach { screen ->
           NavigationBarItem(
             icon = { Icon(screen.icon, contentDescription = screen.label) },
