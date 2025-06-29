@@ -19,7 +19,7 @@ data class SongAsset(
   val title: String,
   val artist: String,
   val albumArtUrl: String? = null,
-  val genre: String? = null
+  val genre: String? = null,
 )
 
 object SongRepo {
@@ -51,7 +51,7 @@ object SongRepo {
       // Attempt to fetch the JSON from remote
       Log.d(
         TAG,
-        "initializeAndRefresh: Attempting to fetch songs from remote URL: $REMOTE_SONGS_URL"
+        "initializeAndRefresh: Attempting to fetch songs from remote URL: $REMOTE_SONGS_URL",
       )
       try {
         val request = Request.Builder().url(REMOTE_SONGS_URL).build()
@@ -63,7 +63,7 @@ object SongRepo {
                 if (jsonString.length > 500) jsonString.substring(0, 500) + "..." else jsonString
               Log.d(
                 TAG,
-                "initializeAndRefresh: Successfully fetched JSON string from remote (snippet): $loggableJson"
+                "initializeAndRefresh: Successfully fetched JSON string from remote (snippet): $loggableJson",
               )
 
               val remoteSongs = jsonParser.decodeFromString<List<SongAsset>>(jsonString)
@@ -79,7 +79,7 @@ object SongRepo {
               }
               Log.i(
                 TAG,
-                "initializeAndRefresh: Successfully parsed and updated ${remoteSongs.size} songs from remote."
+                "initializeAndRefresh: Successfully parsed and updated ${remoteSongs.size} songs from remote.",
               )
               finalStatusMessage = "Fetched ${remoteSongs.size} songs from remote."
               overallSuccess = true
@@ -91,7 +91,7 @@ object SongRepo {
             val errorBody = response.body?.string() ?: "No error body"
             Log.e(
               TAG,
-              "initializeAndRefresh: Remote fetch failed: ${response.code} ${response.message}. Error body: $errorBody"
+              "initializeAndRefresh: Remote fetch failed: ${response.code} ${response.message}. Error body: $errorBody",
             )
             finalStatusMessage = "Remote fetch failed: ${response.code}."
           }
@@ -109,7 +109,7 @@ object SongRepo {
 
       Log.d(
         TAG,
-        "initializeAndRefresh: Process finished. Songs loaded: ${internalLoadedSongs.size}. Final status: $finalStatusMessage"
+        "initializeAndRefresh: Process finished. Songs loaded: ${internalLoadedSongs.size}. Final status: $finalStatusMessage",
       )
       withContext(Dispatchers.Main) { onFinished?.invoke(overallSuccess, finalStatusMessage) }
     }

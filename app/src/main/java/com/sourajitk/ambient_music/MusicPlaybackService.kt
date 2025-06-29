@@ -186,7 +186,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
               SongRepo.selectTrack(newIndex)
               Log.i(
                 TAG,
-                "CurrIndex: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason"
+                "CurrIndex: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
               )
 
               // Clear old art and fetch new art on transition
@@ -426,7 +426,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
           onError = {
             currentAlbumArt = null
             updateNotification()
-          }
+          },
         )
         .build()
     imageLoader.enqueue(request)
@@ -437,7 +437,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       NotificationChannel(
         NOTIFICATION_CHANNEL_ID,
         "Music Playback (Playlist)",
-        NotificationManager.IMPORTANCE_LOW
+        NotificationManager.IMPORTANCE_LOW,
       )
     serviceChannel.description = "Channel for background music playback with playlist controls"
     val manager = getSystemService(NotificationManager::class.java)

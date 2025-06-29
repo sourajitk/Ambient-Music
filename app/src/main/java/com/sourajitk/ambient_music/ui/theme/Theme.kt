@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 fun AmbientMusicTheme(
   darkTheme: Boolean = isSystemInDarkTheme(),
   dynamicColor: Boolean = true,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   val colorScheme =
     when {
