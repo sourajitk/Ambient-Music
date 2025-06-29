@@ -141,23 +141,23 @@ fun MinimalAppScreen() {
               Spacer(modifier = Modifier.height(20.dp))
               AddTileRow(
                 context = context,
-                tileName = "Calm",
+                tileName = stringResource(R.string.tile_label_calm),
                 tileComponent = ComponentName(context, CalmQSTileService::class.java),
-                tileIconRes = R.drawable.playlist_music // Use a specific icon
+                tileIconRes = R.drawable.playlist_music
               )
               Spacer(modifier = Modifier.height(12.dp))
               AddTileRow(
                 context = context,
-                tileName = "Chill",
+                tileName = stringResource(R.string.tile_label_chill),
                 tileComponent = ComponentName(context, ChillQSTileService::class.java),
-                tileIconRes = R.drawable.playlist_music // Use a specific icon
+                tileIconRes = R.drawable.playlist_music
               )
               Spacer(modifier = Modifier.height(12.dp))
               AddTileRow(
                 context = context,
-                tileName = "Sleep",
+                tileName = stringResource(R.string.tile_label_sleep),
                 tileComponent = ComponentName(context, SleepQSTileService::class.java),
-                tileIconRes = R.drawable.playlist_music // Use a specific icon
+                tileIconRes = R.drawable.playlist_music
               )
             }
           }

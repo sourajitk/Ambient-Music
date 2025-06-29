@@ -14,7 +14,7 @@
     <string name="minimal_activity_info">QS Tile is now ready to be added!</string>
     <string name="qs_tile_notification_artist_unknown"> Unknown Artist</string>
     <string name="qs_tile_notification_title_unknown"> Unknown Song</string>
-    <string name="tile_label_calm">Calm</string>
-    <string name="tile_label_chill">Chill</string>
-    <string name="tile_label_sleep">Sleep</string>
+    <string name="tile_label_calm">Ambient Calm</string>
+    <string name="tile_label_chill">Ambient Chill</string>
+    <string name="tile_label_sleep">Ambient Sleep</string>
 </resources>
