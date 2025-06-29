@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
+import androidx.activity.enableEdgeToEdge
 
 class MainActivity : ComponentActivity() {
 
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
 
     // Basically, this is not a "real" notification, it's for MediaSession.
     if (
@@ -39,7 +41,7 @@ class MainActivity : ComponentActivity() {
     }
 
     setContent {
-      AmbientMusicTheme {
+      AmbientMusicTheme() {
         MainAppNavigation() // Set the root to our new Navigation Composable
       }
     }
