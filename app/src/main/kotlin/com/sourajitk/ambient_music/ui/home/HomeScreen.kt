@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,35 +57,31 @@ fun HomeScreen() {
   Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
     Column(
       modifier = Modifier.fillMaxSize().padding(16.dp),
-      verticalArrangement = Arrangement.Center,
+      verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Image(
-        painter = painterResource(id = R.mipmap.logo),
-        contentDescription = null,
-        modifier = Modifier.size(64.dp),
+        painter = painterResource(id = R.drawable.welcome_banner),
+        contentDescription = "Welcome Banner",
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 8.dp)
+          .clip(RoundedCornerShape(24.dp)),
+        contentScale = ContentScale.FillWidth
       )
-      // ... (The rest of your Column content from MinimalAppScreen goes here) ...
-      Spacer(modifier = Modifier.height(24.dp))
-      Text(
-        text = stringResource(id = R.string.app_name) + " QS Tile",
-        style = MaterialTheme.typography.headlineSmall,
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onSurface,
-      )
-      Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(32.dp))
       Text(
         text = stringResource(R.string.minimal_activity_info),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
       )
-      Spacer(modifier = Modifier.height(32.dp))
+      Spacer(modifier = Modifier.height(25.dp))
       if (showAddTilesSection) {
         Card(modifier = Modifier.fillMaxWidth(0.9f)) {
-          Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+          Column(modifier = Modifier.padding(vertical = 27.dp, horizontal = 16.dp)) {
             Text(
-              text = "Add Genre Tiles",
+              text = "Available Genre Tiles",
               style = MaterialTheme.typography.titleLarge,
               modifier = Modifier.align(Alignment.CenterHorizontally),
             )
