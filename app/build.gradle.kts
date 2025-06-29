@@ -15,7 +15,7 @@ android {
         minSdk = 34
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.8-alpha"
+        versionName = "2.0.0-beta"
     }
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
