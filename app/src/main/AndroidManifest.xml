@@ -32,6 +32,7 @@
             android:name=".CalmQSTileService"
             android:exported="true"
             android:label="@string/tile_label_calm"
+            android:icon="@drawable/ic_calm"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
@@ -42,6 +43,7 @@
             android:name=".ChillQSTileService"
             android:exported="true"
             android:label="@string/tile_label_chill"
+            android:icon="@drawable/ic_chill"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
@@ -52,6 +54,7 @@
             android:name=".SleepQSTileService"
             android:exported="true"
             android:label="@string/tile_label_sleep"
+            android:icon="@drawable/ic_sleep"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

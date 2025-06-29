@@ -75,11 +75,11 @@ class ChillQSTileService : TileService() {
       if (isMyGenreActive) {
         tile.subtitle = getString(R.string.qs_subtitle_playing)
         tile.state = Tile.STATE_ACTIVE
-        tile.icon = Icon.createWithResource(this, R.drawable.ic_pause)
+        tile.icon = Icon.createWithResource(this, R.drawable.ic_chill)
       } else {
-        tile.subtitle = "Tap to play"
+        tile.subtitle = getString(R.string.qs_subtitle_paused)
         tile.state = Tile.STATE_INACTIVE
-        tile.icon = Icon.createWithResource(this, R.drawable.ic_play_arrow)
+        tile.icon = Icon.createWithResource(this, R.drawable.ic_chill)
       }
     }
     tile.updateTile()
