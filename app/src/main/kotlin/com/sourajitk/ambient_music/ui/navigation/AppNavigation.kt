@@ -1,5 +1,6 @@
 package com.sourajitk.ambient_music.ui.navigation
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -9,11 +10,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -38,14 +39,13 @@ fun MainAppNavigation() {
 
   Scaffold(
     bottomBar = {
-      NavigationBar {
+      NavigationBar(modifier = Modifier.height(80.dp)) { // Adjusted height to M3 default
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
         navItems.forEach { screen ->
           NavigationBarItem(
             icon = { Icon(screen.icon, contentDescription = screen.label) },
-            label = { Text(screen.label) },
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
             onClick = {
               navController.navigate(screen.route) {
