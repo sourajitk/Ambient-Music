@@ -1,4 +1,8 @@
-# Ambient Music
+<div align="center">
+    <img src="https://i.imgur.com/URr54HK.png" width="600">
+</div>
+    <div align="center"><h1>Ambient Music</h1>
+</div>
 This app allows you to play a curated stream of ambient music in the background without any fuss just like you can on iOS! The idea is to have a "set and forget" music player. You hit play, and it handles the rest, providing a seamless stream of ambient tunes. No complex UI or no creating playlists.
 
 ## Features
@@ -36,8 +40,8 @@ This app allows you to play a curated stream of ambient music in the background 
     This project is built with Kotlin and uses Coroutines to handle all the background stuff like fetching music and caching. Some new APIs are used too like `requestAddTileService()`
     
     <div align="center">
-      <img src="https://i.imgur.com/QuAMGu6.png" width="300">
-      <img src="https://i.imgur.com/Ygg42Sy.png" width="300">
+      <img src="https://i.imgur.com/zsSW4eX.png" width="300">
+      <img src="https://i.imgur.com/tURdi9D.png" width="300">
     </div>
 
 ## Downloads
