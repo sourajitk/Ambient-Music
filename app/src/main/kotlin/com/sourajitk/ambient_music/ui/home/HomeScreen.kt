@@ -63,11 +63,9 @@ fun HomeScreen() {
       Image(
         painter = painterResource(id = R.drawable.welcome_banner),
         contentDescription = "Welcome Banner",
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 8.dp)
-          .clip(RoundedCornerShape(24.dp)),
-        contentScale = ContentScale.FillWidth
+        modifier =
+          Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp)),
+        contentScale = ContentScale.FillWidth,
       )
       Spacer(modifier = Modifier.height(32.dp))
       Text(
@@ -78,9 +76,7 @@ fun HomeScreen() {
       )
       Spacer(modifier = Modifier.height(25.dp))
       if (showAddTilesSection) {
-        Card(
-          modifier = Modifier.fillMaxWidth(0.95f),
-          shape = RoundedCornerShape(28.dp)) {
+        Card(modifier = Modifier.fillMaxWidth(0.95f), shape = RoundedCornerShape(28.dp)) {
           Column(modifier = Modifier.padding(vertical = 27.dp, horizontal = 16.dp)) {
             Text(
               text = "Available Genre Tiles",

@@ -31,6 +31,7 @@ import com.sourajitk.ambient_music.ui.settings.SettingsScreen
 // Contains all of our routes
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
   object Home : Screen("home", "Home", Icons.Default.Home)
+
   object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 }
 
@@ -45,17 +46,14 @@ fun MainAppNavigation() {
   val currentRoute = navBackStackEntry?.destination?.route
 
   // Determine the title based on the current route
-  val topBarTitle = when (currentRoute) {
-    Screen.Settings.route -> "Settings"
-    else -> stringResource(R.string.app_name) // Default title for Home screen
-  }
+  val topBarTitle =
+    when (currentRoute) {
+      Screen.Settings.route -> "Settings"
+      else -> stringResource(R.string.app_name) // Default title for Home screen
+    }
 
   Scaffold(
-    topBar = {
-      CenterAlignedTopAppBar(
-        title = { Text(topBarTitle) }
-      )
-    },
+    topBar = { CenterAlignedTopAppBar(title = { Text(topBarTitle) }) },
     bottomBar = {
       NavigationBar(modifier = Modifier.height(80.dp)) {
         val currentDestination = navBackStackEntry?.destination
@@ -73,7 +71,7 @@ fun MainAppNavigation() {
           )
         }
       }
-    }
+    },
   ) { innerPadding ->
     NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
       composable(Screen.Home.route) { HomeScreen() }
