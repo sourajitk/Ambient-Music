@@ -26,7 +26,7 @@ This app allows you to play a curated stream of ambient music in the background 
 * **Handy Notification Controls**
     Creates a MediaSession that shows the current track's title, artist, and album art. You can pause, play, and skip right from the notification.
     <div align="center">
-    <img src="https://i.imgur.com/2udi1l0.png" width="600">
+    <img src="https://i.imgur.com/ShtwPFq.png" width="600">
     </div>
 
 * **A QS Tile**
