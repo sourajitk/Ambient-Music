@@ -38,6 +38,7 @@ android {
         targetSdk = 36
         versionCode = commitCount
         versionName = "2.0.0-beta-$commitHash"
+        resValue("string", "app_version", "\"${versionName}\"")
     }
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
