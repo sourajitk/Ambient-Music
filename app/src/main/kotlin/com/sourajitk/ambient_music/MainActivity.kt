@@ -1,6 +1,8 @@
 package com.sourajitk.ambient_music
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -28,9 +30,11 @@ class MainActivity : ComponentActivity() {
       }
     }
 
+  @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     // Basically, this is not a "real" notification, it's for MediaSession.
     if (
