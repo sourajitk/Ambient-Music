@@ -1,4 +1,4 @@
-package com.sourajitk.ambient_music
+package com.sourajitk.ambient_music.playback
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -33,6 +33,11 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.data.SongsRepo
+import com.sourajitk.ambient_music.tiles.CalmQSTileService
+import com.sourajitk.ambient_music.tiles.ChillQSTileService
+import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
 class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener {
 
@@ -183,7 +188,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
               super.onMediaItemTransition(mediaItem, reason)
               val newIndex = this@apply.currentMediaItemIndex
-              SongRepo.selectTrack(newIndex)
+              SongsRepo.selectTrack(newIndex)
               Log.i(
                 TAG,
                 "CurrIndex: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
@@ -218,7 +223,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     when (intent?.action) {
       ACTION_TOGGLE_PLAYBACK_QS -> {
-        if (SongRepo.songs.isEmpty()) {
+        if (SongsRepo.songs.isEmpty()) {
           isServiceCurrentlyPlaying = false
           requestTileUpdate()
           stopSelf()
@@ -229,7 +234,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       }
       ACTION_SKIP_TO_NEXT -> {
         Log.i(TAG, "ACTION_SKIP_TO_NEXT received.")
-        if (SongRepo.songs.isEmpty() || exoPlayer == null) {
+        if (SongsRepo.songs.isEmpty() || exoPlayer == null) {
           Log.w(TAG, "ACTION_SKIP_TO_NEXT: Get some songs lol rn null.")
           if (isServiceCurrentlyPlaying) exoPlayer?.stop() else requestTileUpdate()
         } else {
@@ -244,8 +249,8 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       }
       ACTION_PLAY_GENRE_CHILL -> {
         Log.i(TAG, "ACTION_PLAY_GENRE_CHILL received.")
-        if (SongRepo.songs.isEmpty()) {
-          Log.w(TAG, "SongRepo:Genre is empty.")
+        if (SongsRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
           requestTileUpdate()
           stopSelf()
@@ -255,8 +260,8 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         playGenre("chill")
       }
       ACTION_PLAY_GENRE_CALM -> {
-        if (SongRepo.songs.isEmpty()) {
-          Log.w(TAG, "SongRepo:Genre is empty.")
+        if (SongsRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
           requestTileUpdate()
           stopSelf()
@@ -266,8 +271,8 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         playGenre("calm")
       }
       ACTION_PLAY_GENRE_SLEEP -> {
-        if (SongRepo.songs.isEmpty()) {
-          Log.w(TAG, "SongRepo:Genre is empty.")
+        if (SongsRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
           requestTileUpdate()
           stopSelf()
@@ -290,7 +295,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       currentPlaylistGenre = genre // Set the current genre
 
       // Avoid mixing up genres regardless of playState and which tile is being clicked.
-      val genreSongs = SongRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+      val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
       if (genreSongs.isEmpty()) {
         Log.w(TAG, "No songs found for genre: $genre")
         return
@@ -321,7 +326,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
   private fun prepareAndSetPlaylist(playRandom: Boolean = false) {
     Log.d(TAG, "prepareAndSetPlaylist called.")
     currentPlaylistGenre = null
-    val allSongData = SongRepo.songs
+    val allSongData = SongsRepo.songs
     if (allSongData.isEmpty()) {
       Log.w(TAG, "Received nothing from JSON can't prepare playlist.")
       isServiceCurrentlyPlaying = false
@@ -356,11 +361,11 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     exoPlayer?.shuffleModeEnabled = true
 
     // Start from current index in repo
-    var startIndex = SongRepo.currentTrackIndex
+    var startIndex = SongsRepo.currentTrackIndex
     if (playRandom && allSongData.isNotEmpty()) {
       startIndex = allSongData.indices.random()
-      // Update SongRepo so it's in sync
-      SongRepo.selectTrack(startIndex)
+      // Update SongsRepo so it's in sync
+      SongsRepo.selectTrack(startIndex)
     }
     exoPlayer?.setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
     exoPlayer?.prepare()
@@ -450,7 +455,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     Log.d(TAG, "createNotification. isServiceCurrentlyPlaying: $isServiceCurrentlyPlaying")
     val currentExoPlayerMediaItem = exoPlayer?.currentMediaItem
     val currentMediaMetadata = currentExoPlayerMediaItem?.mediaMetadata
-    val songFromRepo = SongRepo.getCurrentSong()
+    val songFromRepo = SongsRepo.getCurrentSong()
 
     val title =
       currentMediaMetadata?.title?.toString()?.takeIf { it.isNotBlank() }

@@ -1,10 +1,13 @@
-package com.sourajitk.ambient_music
+package com.sourajitk.ambient_music.tiles
 
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
+import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.data.SongsRepo
+import com.sourajitk.ambient_music.playback.MusicPlaybackService
 
 class SleepQSTileService : TileService() {
 
@@ -29,7 +32,7 @@ class SleepQSTileService : TileService() {
 
   override fun onClick() {
     super.onClick()
-    if (SongRepo.songs.isEmpty()) {
+    if (SongsRepo.songs.isEmpty()) {
       Log.w(TAG, "No songs in parsed JSON")
       updateTileVisualsBasedOnServiceState(forceUnavailable = true)
       return
@@ -57,8 +60,8 @@ class SleepQSTileService : TileService() {
 
   /** Fetches state from MusicPlaybackService and updates tile visuals. */
   private fun updateTileVisualsBasedOnServiceState(forceUnavailable: Boolean = false) {
-    val isPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
-    val activeGenre = MusicPlaybackService.currentPlaylistGenre
+    val isPlaying = MusicPlaybackService.Companion.isServiceCurrentlyPlaying
+    val activeGenre = MusicPlaybackService.Companion.currentPlaylistGenre
     val isMyGenreActive = isPlaying && myGenre.equals(activeGenre, ignoreCase = true)
     applyVisuals(isMyGenreActive, forceUnavailable)
   }
@@ -67,7 +70,7 @@ class SleepQSTileService : TileService() {
   private fun applyVisuals(isMyGenreActive: Boolean, forceUnavailable: Boolean) {
     val tile = qsTile ?: return
     tile.label = getString(R.string.tile_label_sleep)
-    if (forceUnavailable || SongRepo.songs.isEmpty()) {
+    if (forceUnavailable || SongsRepo.songs.isEmpty()) {
       tile.subtitle = getString(R.string.qs_subtitle_no_songs)
       tile.state = Tile.STATE_UNAVAILABLE
       tile.icon = Icon.createWithResource(this, R.drawable.ic_music_unavailable)

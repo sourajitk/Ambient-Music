@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
-        android:name=".SongsRepoInitializer"
+        android:name=".data.SongsRepoInitializer"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
@@ -24,12 +24,12 @@
         </activity>
 
         <service
-            android:name=".MusicPlaybackService"
+            android:name=".playback.MusicPlaybackService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <service
-            android:name=".CalmQSTileService"
+            android:name=".tiles.CalmQSTileService"
             android:exported="true"
             android:label="@string/tile_label_calm"
             android:icon="@drawable/ic_calm"
@@ -40,7 +40,7 @@
         </service>
 
         <service
-            android:name=".ChillQSTileService"
+            android:name=".tiles.ChillQSTileService"
             android:exported="true"
             android:label="@string/tile_label_chill"
             android:icon="@drawable/ic_chill"
@@ -51,7 +51,7 @@
         </service>
 
         <service
-            android:name=".SleepQSTileService"
+            android:name=".tiles.SleepQSTileService"
             android:exported="true"
             android:label="@string/tile_label_sleep"
             android:icon="@drawable/ic_sleep"

@@ -40,10 +40,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sourajitk.ambient_music.CalmQSTileService
-import com.sourajitk.ambient_music.ChillQSTileService
 import com.sourajitk.ambient_music.R
-import com.sourajitk.ambient_music.SleepQSTileService
+import com.sourajitk.ambient_music.tiles.CalmQSTileService
+import com.sourajitk.ambient_music.tiles.ChillQSTileService
+import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
 @Composable
 fun HomeScreen() {
