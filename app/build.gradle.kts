@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.sourajitk.ambient_music"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 34
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "2.0.0-beta"
     }
