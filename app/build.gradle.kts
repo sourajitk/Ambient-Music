@@ -8,6 +8,26 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
+fun execCommand(command: String): String? {
+    val cmd = command.split(" ").toTypedArray()
+    val process = ProcessBuilder(*cmd)
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .start()
+    return process.inputStream.bufferedReader().readLine()?.trim()
+}
+
+val commitCount by project.extra {
+    execCommand("git rev-list --count HEAD")?.toInt()
+        ?: throw GradleException("Unable to get number of commits. Make sure git is initialized.")
+}
+
+val commitHash by project.extra {
+    execCommand("git rev-parse --short HEAD")
+        ?: throw GradleException(
+            "Unable to get commit hash. Make sure git is initialized."
+        )
+}
+
 android {
     namespace = "com.sourajitk.ambient_music"
     compileSdk = 36
@@ -16,8 +36,8 @@ android {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 34
         targetSdk = 36
-        versionCode = 1
-        versionName = "2.0.0-beta"
+        versionCode = commitCount
+        versionName = "2.0.0-beta-$commitHash"
     }
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
