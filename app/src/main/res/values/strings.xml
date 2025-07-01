@@ -17,5 +17,4 @@
     <string name="tile_label_calm">Ambient Calm</string>
     <string name="tile_label_chill">Ambient Chill</string>
     <string name="tile_label_sleep">Ambient Sleep</string>
-    <string name="app_version">v2.0.0</string>
 </resources>
