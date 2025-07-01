@@ -52,7 +52,7 @@ class SleepQSTileService : TileService() {
       applyVisuals(isMyGenreActive = true, forceUnavailable = false)
       val intent =
         Intent(this, MusicPlaybackService::class.java).apply {
-          action = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
+          action = MusicPlaybackService.ACTION_PLAY_GENRE_SLEEP
         }
       startForegroundService(intent)
     }
