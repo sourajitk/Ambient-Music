@@ -1,4 +1,4 @@
-package com.sourajitk.ambient_music
+package com.sourajitk.ambient_music.data
 
 import android.content.Context
 import android.util.Log
@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -22,8 +23,8 @@ data class SongAsset(
   val genre: String? = null,
 )
 
-object SongRepo {
-  private const val TAG = "SongRepoJSONHandler"
+object SongsRepo {
+  private const val TAG = "SongsRepoJSONHandler"
   private const val REMOTE_SONGS_URL = "https://downloads.statixos.com/.am-ms/songs.json"
   private const val LOCAL_CACHE_FILE_NAME = "songs_cache.json"
 
@@ -67,7 +68,7 @@ object SongRepo {
               )
 
               val remoteSongs = jsonParser.decodeFromString<List<SongAsset>>(jsonString)
-              synchronized(this@SongRepo) {
+              synchronized(this@SongsRepo) {
                 internalLoadedSongs = remoteSongs
                 if (
                   currentTrackIndex >= internalLoadedSongs.size && internalLoadedSongs.isNotEmpty()
@@ -99,7 +100,7 @@ object SongRepo {
       } catch (e: IOException) {
         Log.e(TAG, "initializeAndRefresh: IOException during remote fetch: ", e)
         finalStatusMessage = "Network error during fetch."
-      } catch (e: kotlinx.serialization.SerializationException) {
+      } catch (e: SerializationException) {
         Log.e(TAG, "initializeAndRefresh: SerializationException during remote JSON parsing: ", e)
         finalStatusMessage = "Error parsing remote data."
       } catch (e: Exception) {
@@ -143,14 +144,14 @@ object SongRepo {
   }
 
   val songs: List<SongAsset>
-    get() = synchronized(this@SongRepo) { internalLoadedSongs }
+    get() = synchronized(this@SongsRepo) { internalLoadedSongs }
 
   fun getCurrentSong(): SongAsset? {
-    return synchronized(this@SongRepo) { internalLoadedSongs.getOrNull(currentTrackIndex) }
+    return synchronized(this@SongsRepo) { internalLoadedSongs.getOrNull(currentTrackIndex) }
   }
 
   fun selectTrack(index: Int) {
-    synchronized(this@SongRepo) {
+    synchronized(this@SongsRepo) {
       if (index >= 0 && index < internalLoadedSongs.size) {
         currentTrackIndex = index
       }
