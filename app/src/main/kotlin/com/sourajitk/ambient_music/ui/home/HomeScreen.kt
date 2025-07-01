@@ -76,7 +76,7 @@ fun HomeScreen() {
       )
       Spacer(modifier = Modifier.height(25.dp))
       if (showAddTilesSection) {
-        Card(modifier = Modifier.fillMaxWidth(0.95f), shape = RoundedCornerShape(28.dp)) {
+        Card(modifier = Modifier.fillMaxWidth(0.95f), shape = RoundedCornerShape(32.dp)) {
           Column(modifier = Modifier.padding(vertical = 27.dp, horizontal = 16.dp)) {
             Text(
               text = "Available Genre Tiles",
