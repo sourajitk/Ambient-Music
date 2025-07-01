@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
 
@@ -32,9 +33,11 @@ class MainActivity : ComponentActivity() {
 
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    setTheme(R.style.Theme_AmbientMusic)
 
     // Basically, this is not a "real" notification, it's for MediaSession.
     if (
