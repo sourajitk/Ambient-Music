@@ -35,8 +35,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
     },
     text = {
       Text(
-        text =
-          stringResource(R.string.update_available_text, releaseInfo.tag_name, currentVersion),
+        text = stringResource(R.string.update_available_text, releaseInfo.tag_name, currentVersion),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
       )
