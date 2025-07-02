@@ -14,7 +14,7 @@ loggingInterceptor = "4.12.0"
 materialIconsExtended = "1.7.8"
 media3Exoplayer = "1.7.1"
 media3Ui = "1.7.1"
-navigationCompose = "2.9.0"
+navigationCompose = "2.9.1"
 okhttp = "4.12.0"
 spotless = "7.0.4"
 

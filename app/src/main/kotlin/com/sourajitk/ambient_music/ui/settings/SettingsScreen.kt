@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,10 +29,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
-import com.sourajitk.ambient_music.ui.components.UpdateInfoDialog
+import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.util.UpdateChecker
 import kotlinx.coroutines.launch
 
@@ -52,8 +51,6 @@ private sealed class UpdateCheckState {
 fun SettingsScreen() {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
-
-  var isDarkMode by remember { mutableStateOf(false) }
 
   var updateState by remember { mutableStateOf<UpdateCheckState>(UpdateCheckState.Idle) }
 
@@ -75,16 +72,6 @@ fun SettingsScreen() {
           intent.data = uri
           context.startActivity(intent)
         },
-      )
-    }
-    // Dark Mode
-    item {
-      PreferenceItem(
-        icon = Icons.Default.DarkMode,
-        title = "Dark Mode",
-        summary = "Enable dark theme throughout the app",
-        onClick = { isDarkMode = !isDarkMode },
-        trailingContent = { Switch(checked = isDarkMode, onCheckedChange = { isDarkMode = it }) },
       )
     }
     // Author
@@ -169,8 +156,11 @@ fun SettingsScreen() {
     item {
       Spacer(modifier = Modifier.height(16.dp))
       Text(
-        text = "Hint: Some preferences open external links. 😉",
-        style = MaterialTheme.typography.bodySmall,
+        text = "Hint: Tapping on some settings, open some links 😉",
+        style =
+          MaterialTheme.typography.bodyMedium.copy(
+            fontSize = 12.5.sp
+          ),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
