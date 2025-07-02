@@ -72,11 +72,11 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
     NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
       .setSmallIcon(R.drawable.ic_music_note)
       .setContentTitle("Update Available")
-      .setContentText("An update to ${releaseInfo.tag_name} is available.")
+      .setContentText("An update to ${releaseInfo.tag_name} is available!")
       .setStyle(
         NotificationCompat.BigTextStyle()
           .bigText(
-            "An update to ${releaseInfo.tag_name} is now available. Tap to open the releases page on GitHub."
+            "A new update to ${releaseInfo.tag_name} is now available! Tap to open the GitHub Release page."
           )
       )
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)
