@@ -29,7 +29,7 @@ object UpdateChecker {
           val latestRelease = jsonParser.decodeFromString<GitHubRelease>(responseBody)
 
           val currentVersion = BuildConfig.VERSION_NAME
-          val latestVersion = latestRelease.tag_name
+          val latestVersion = latestRelease.tag_name.removePrefix("v")
           Log.d(
             "UpdateChecker",
             "Current version: $currentVersion, Latest GitHub release: $latestVersion",
