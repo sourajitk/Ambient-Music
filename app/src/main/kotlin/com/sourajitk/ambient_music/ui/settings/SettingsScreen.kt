@@ -3,6 +3,7 @@ package com.sourajitk.ambient_music.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
@@ -10,28 +11,56 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.ui.components.UpdateInfoDialog
+import com.sourajitk.ambient_music.util.UpdateChecker
+import kotlinx.coroutines.launch
+
+private sealed class UpdateCheckState {
+  object Idle : UpdateCheckState()
+
+  object Checking : UpdateCheckState()
+
+  object UpToDate : UpdateCheckState()
+
+  data class UpdateAvailable(val releaseInfo: GitHubRelease) : UpdateCheckState()
+}
 
 @Composable
 fun SettingsScreen() {
   val context = LocalContext.current
+  val scope = rememberCoroutineScope()
 
   var isDarkMode by remember { mutableStateOf(false) }
 
+  var updateState by remember { mutableStateOf<UpdateCheckState>(UpdateCheckState.Idle) }
+
+  if (updateState is UpdateCheckState.UpdateAvailable) {
+    UpdateInfoDialog(
+      releaseInfo = (updateState as UpdateCheckState.UpdateAvailable).releaseInfo,
+      onDismissRequest = { updateState = UpdateCheckState.Idle },
+    )
+  }
   LazyColumn {
     item {
       PreferenceItem(
         icon = Icons.Default.Settings,
-        title = "Addtional App Settings",
+        title = "Additional App Settings",
         summary = "Open system settings to manage permissions",
         onClick = {
           val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -79,14 +108,50 @@ fun SettingsScreen() {
         },
       )
     }
+    // Updater Preference w/ Logic
+    item {
+      val summaryText =
+        when (updateState) {
+          is UpdateCheckState.Checking -> "Checking for updates..."
+          is UpdateCheckState.UpToDate -> "You have the latest version!"
+          else -> "Tap to check for updates"
+        }
+      // Actual updater logic
+      PreferenceItem(
+        icon = Icons.Default.Sync,
+        title = "Updates",
+        summary = summaryText,
+        onClick = {
+          if (updateState !is UpdateCheckState.Checking) {
+            scope.launch {
+              updateState = UpdateCheckState.Checking
+              // FOR UX PURPOSES :)
+              kotlinx.coroutines.delay(1500)
+              val update = UpdateChecker.checkForUpdate(context)
+              updateState =
+                if (update != null) {
+                  UpdateCheckState.UpdateAvailable(update)
+                } else {
+                  UpdateCheckState.UpToDate
+                }
+            }
+          }
+        },
+        trailingContent = {
+          if (updateState is UpdateCheckState.Checking) {
+            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+          }
+        },
+      )
+    }
     // About Section
     item {
+      val url = stringResource(R.string.github_latest_rel)
       PreferenceItem(
         icon = Icons.Default.Info,
         title = "Version",
         summary = stringResource(R.string.app_version),
         onClick = {
-          val url = "https://github.com/sourajitk/Ambient-Music/releases/latest"
           val intent = Intent(Intent.ACTION_VIEW)
           intent.data = url.toUri()
           context.startActivity(intent)

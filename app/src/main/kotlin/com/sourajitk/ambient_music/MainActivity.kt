@@ -10,10 +10,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.ui.components.UpdateInfoDialog
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
+import com.sourajitk.ambient_music.util.UpdateChecker
 
 class MainActivity : ComponentActivity() {
 
@@ -48,8 +57,17 @@ class MainActivity : ComponentActivity() {
     }
 
     setContent {
-      AmbientMusicTheme() {
-        MainAppNavigation() // Set the root to our new Navigation Composable
+      AmbientMusicTheme {
+        val context = LocalContext.current
+        var updateInfo by remember { mutableStateOf<GitHubRelease?>(null) }
+        LaunchedEffect(key1 = true) {
+          val update = UpdateChecker.checkForUpdate(context)
+          update?.let { updateInfo = it }
+        }
+        MainAppNavigation()
+        updateInfo?.let { release ->
+          UpdateInfoDialog(releaseInfo = release, onDismissRequest = { updateInfo = null })
+        }
       }
     }
   }
