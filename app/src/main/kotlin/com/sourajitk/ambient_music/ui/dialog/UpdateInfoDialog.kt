@@ -14,12 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.net.toUri
+import com.sourajitk.ambient_music.BuildConfig
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
 
 @Composable
 fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
   val context = LocalContext.current
+  val currentVersion = BuildConfig.VERSION_NAME
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
@@ -33,7 +35,8 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
     },
     text = {
       Text(
-        text = stringResource(id = R.string.update_available_text, releaseInfo.tag_name),
+        text =
+          stringResource(R.string.update_available_text, releaseInfo.tag_name, currentVersion),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
       )
