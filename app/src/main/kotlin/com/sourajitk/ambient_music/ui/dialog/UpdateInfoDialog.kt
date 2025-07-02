@@ -1,4 +1,4 @@
-package com.sourajitk.ambient_music.ui.components
+package com.sourajitk.ambient_music.ui.dialog
 
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth

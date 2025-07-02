@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.sourajitk.ambient_music.data.GitHubRelease
-import com.sourajitk.ambient_music.ui.components.UpdateInfoDialog
+import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
 import com.sourajitk.ambient_music.util.UpdateChecker
