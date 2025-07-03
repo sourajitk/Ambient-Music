@@ -36,12 +36,21 @@ This app allows you to play a curated stream of ambient music in the background 
       <img src="https://i.imgur.com/Pu8QIWu.png" width="300">
     </div>
 
+* **Easy Information about Updates**
+  Get to know when I update the app based on notifications posted to you! Dismissed the notification but still want to know if you're on the latest version? Tap to check for updates within the app! Includes use of newest APIs for notification broadcasting for the latest version of Android!
+      <div align="center">
+      <img src="https://i.imgur.com/7hz3qRs.png" width="240">
+      <img src="https://i.imgur.com/bzc8b5w.png" width="240">
+      <img src="https://i.imgur.com/d8aBM1G.png" width="240">
+    </div>
+
 * **Built with Modern Technologies**
     This project is built with Kotlin and uses Coroutines to handle all the background stuff like fetching music and caching. Some new APIs are used too like `requestAddTileService()`
     
     <div align="center">
-      <img src="https://i.imgur.com/zsSW4eX.png" width="300">
-      <img src="https://i.imgur.com/tURdi9D.png" width="300">
+      <img src="https://i.imgur.com/fvSPnew.png" width="240">
+      <img src="https://i.imgur.com/HwW6uG5.png" width="240">
+      <img src="https://i.imgur.com/vADKZHL.png" width="240">
     </div>
 
 ## Downloads
