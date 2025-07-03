@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Sourajit Karmakar
+
 package com.sourajitk.ambient_music.ui.settings
 
 import android.content.Intent
@@ -157,10 +160,7 @@ fun SettingsScreen() {
       Spacer(modifier = Modifier.height(16.dp))
       Text(
         text = "Hint: Tapping on some settings, open some links 😉",
-        style =
-          MaterialTheme.typography.bodyMedium.copy(
-            fontSize = 12.5.sp
-          ),
+        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

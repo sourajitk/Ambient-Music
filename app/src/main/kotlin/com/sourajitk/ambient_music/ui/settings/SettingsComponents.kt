@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Sourajit Karmakar
+
 package com.sourajitk.ambient_music.ui.settings
 
 import androidx.compose.foundation.clickable
