@@ -3,11 +3,19 @@
 
 package com.sourajitk.ambient_music.util
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.sourajitk.ambient_music.BuildConfig
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.data.SongsRepoInitializer
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -50,5 +58,30 @@ object UpdateChecker {
         return@withContext null
       }
     }
+  }
+
+  fun scheduleUpdateChecks(initializer: SongsRepoInitializer) {
+    val constraints =
+      Constraints.Builder()
+        // Only run when there's a network connection
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
+    // Set to minimum refresh value allowed by Android i.e. 15 mins.
+    val updateRequest =
+      PeriodicWorkRequestBuilder<UpdateWorker>(
+          15,
+          TimeUnit.MINUTES,
+        )
+        .setConstraints(constraints)
+        .build()
+
+    WorkManager.getInstance(initializer)
+      .enqueueUniquePeriodicWork(
+        "ambient_update_worker",
+        ExistingPeriodicWorkPolicy.KEEP,
+        updateRequest,
+      )
+    Log.d(TAG, "Periodic updates scheduled.")
   }
 }
