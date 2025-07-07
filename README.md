@@ -1,8 +1,7 @@
 <div align="center">
-    <img src="https://i.imgur.com/URr54HK.png" width="600">
+    <img src="https://i.imgur.com/UTyWfnm.png" width="1000">
 </div>
-    <div align="center"><h1>Ambient Music</h1>
-</div>
+</br>
 This app allows you to play a curated stream of ambient music in the background without any fuss just like you can on iOS! The idea is to have a "set and forget" music player. You hit play, and it handles the rest, providing a seamless stream of ambient tunes. No complex UI or no creating playlists.
 
 ## Features
