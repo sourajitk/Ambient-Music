@@ -11,6 +11,8 @@ import android.util.Log
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.playback.MusicPlaybackService
+import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
+import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
 
 class ChillQSTileService : TileService() {
 
@@ -38,6 +40,8 @@ class ChillQSTileService : TileService() {
     if (SongsRepo.songs.isEmpty()) {
       Log.w(TAG, "No songs in parsed JSON")
       updateTileVisualsBasedOnServiceState(forceUnavailable = false)
+      createUpdateNotificationChannel(this)
+      checkForAppUpdates(this)
       return
     }
     val isPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
@@ -73,7 +77,7 @@ class ChillQSTileService : TileService() {
   private fun applyVisuals(isMyGenreActive: Boolean, forceUnavailable: Boolean) {
     val tile = qsTile ?: return
     tile.label = getString(R.string.tile_label_chill)
-    if (forceUnavailable || SongsRepo.songs.isEmpty()) {
+    if (forceUnavailable) {
       tile.subtitle = getString(R.string.qs_subtitle_no_songs)
       tile.state = Tile.STATE_UNAVAILABLE
       tile.icon = Icon.createWithResource(this, R.drawable.ic_music_unavailable)
