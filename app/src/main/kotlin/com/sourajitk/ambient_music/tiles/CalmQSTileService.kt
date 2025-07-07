@@ -37,7 +37,7 @@ class CalmQSTileService : TileService() {
     super.onClick()
     if (SongsRepo.songs.isEmpty()) {
       Log.w(TAG, "No songs in parsed JSON")
-      updateTileVisualsBasedOnServiceState(forceUnavailable = true)
+      updateTileVisualsBasedOnServiceState(forceUnavailable = false)
       return
     }
     val isPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
