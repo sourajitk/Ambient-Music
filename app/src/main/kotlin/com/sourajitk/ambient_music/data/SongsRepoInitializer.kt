@@ -12,6 +12,7 @@ import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
 import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
+import com.sourajitk.ambient_music.util.UpdateScheduler.scheduleUpdateChecks
 
 class SongsRepoInitializer : Application() {
   private val TAG = "SongsRepoInitializer"
@@ -21,6 +22,7 @@ class SongsRepoInitializer : Application() {
     // Call the new top-level function to create the channel
     createUpdateNotificationChannel(this)
     checkForAppUpdates(this)
+    scheduleUpdateChecks(this)
     Log.d(TAG, "Initializing SongsRepo & Fetching JSON")
     SongsRepo.initializeAndRefresh(applicationContext) { success, statusMessage ->
       Log.d(TAG, "SongsRepo init finished. Success: $success, Status: $statusMessage")
