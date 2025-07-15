@@ -13,6 +13,7 @@ import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.playback.MusicPlaybackService
 import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
 import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
+import com.sourajitk.ambient_music.util.TileStateUtil
 
 class CalmQSTileService : TileService() {
 
@@ -21,6 +22,7 @@ class CalmQSTileService : TileService() {
 
   override fun onTileAdded() {
     super.onTileAdded()
+    TileStateUtil.setTileAdded(applicationContext, this::class.java.name, true)
     updateTileVisualsBasedOnServiceState()
   }
 
@@ -97,6 +99,7 @@ class CalmQSTileService : TileService() {
 
   override fun onTileRemoved() {
     super.onTileRemoved()
+    TileStateUtil.setTileAdded(applicationContext, this::class.java.name, false)
     Log.d(TAG, "onTileRemoved")
   }
 }

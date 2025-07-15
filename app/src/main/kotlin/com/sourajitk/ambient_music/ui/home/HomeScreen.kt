@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -51,17 +52,12 @@ import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
+import com.sourajitk.ambient_music.util.TileStateUtil
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(windowSizeClass: WindowSizeClass) {
   val context = LocalContext.current
-
-  val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-  var showAddTilesSection by remember {
-    mutableStateOf(!sharedPrefs.getBoolean("tile_prompt_shown", false))
-  }
-
   val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
   val bannerModifier =
     if (isExpandedScreen) {
@@ -138,6 +134,10 @@ private fun AddTileRow(
   tileComponent: ComponentName,
   tileIconRes: Int,
 ) {
+  var isTileAdded by remember {
+    mutableStateOf(TileStateUtil.isTileAdded(context, tileComponent.className))
+  }
+
   Row(
     modifier = Modifier.fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
@@ -145,32 +145,45 @@ private fun AddTileRow(
   ) {
     Text(text = tileName, style = MaterialTheme.typography.bodyLarge)
     OutlinedButton(
+      modifier = Modifier.width(120.dp),
+      enabled = !isTileAdded,
       onClick = {
-        val statusBarManager = context.getSystemService(StatusBarManager::class.java)
+        val statusBarManager =
+          context.getSystemService(StatusBarManager::class.java) as StatusBarManager
         statusBarManager.requestAddTileService(
           tileComponent,
           tileName,
           Icon.createWithResource(context, tileIconRes),
           context.mainExecutor,
         ) { result ->
-          val message =
-            when (result) {
-              StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED -> "'$tileName' tile added!"
-              StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED ->
-                "'$tileName' was already added."
-              else -> "Could not add '$tileName' tile."
-            }
+          val message: String
+          if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED) {
+            message = "'$tileName' tile added!"
+            isTileAdded = true
+          } else {
+            message = "Could not add '$tileName' tile."
+          }
           Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
-      }
+      },
     ) {
-      Icon(
-        imageVector = Icons.Filled.AddCircle,
-        contentDescription = "Add $tileName tile",
-        modifier = Modifier.size(ButtonDefaults.IconSize),
-      )
-      Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-      Text("Add")
+      if (isTileAdded) {
+        Icon(
+          imageVector = Icons.Filled.CheckCircle,
+          contentDescription = "$tileName is added",
+          modifier = Modifier.size(ButtonDefaults.IconSize),
+        )
+        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+        Text("Added!")
+      } else {
+        Icon(
+          imageVector = Icons.Filled.AddCircle,
+          contentDescription = "Add $tileName tile",
+          modifier = Modifier.size(ButtonDefaults.IconSize),
+        )
+        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+        Text("Add")
+      }
     }
   }
 }
