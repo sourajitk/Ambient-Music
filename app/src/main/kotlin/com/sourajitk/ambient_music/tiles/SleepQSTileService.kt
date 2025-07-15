@@ -11,8 +11,8 @@ import android.util.Log
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.playback.MusicPlaybackService
-import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
 import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
+import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
 
 class SleepQSTileService : TileService() {
 

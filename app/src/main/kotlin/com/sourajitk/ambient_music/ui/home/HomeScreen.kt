@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -29,6 +31,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,8 +52,9 @@ import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(windowSizeClass: WindowSizeClass) {
   val context = LocalContext.current
 
   val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -57,30 +62,41 @@ fun HomeScreen() {
     mutableStateOf(!sharedPrefs.getBoolean("tile_prompt_shown", false))
   }
 
+  val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
+  val bannerModifier =
+    if (isExpandedScreen) {
+      Modifier.fillMaxWidth(0.6f).clip(RoundedCornerShape(24.dp))
+    } else {
+      Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp))
+    }
+
   Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-    Column(
+    LazyColumn(
       modifier = Modifier.fillMaxSize().padding(16.dp),
-      verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      Image(
-        painter = painterResource(id = R.drawable.welcome_banner),
-        contentDescription = "Welcome Banner",
-        modifier =
-          Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp)),
-        contentScale = ContentScale.FillWidth,
-      )
-      Spacer(modifier = Modifier.height(32.dp))
-      Text(
-        text = stringResource(R.string.minimal_activity_info),
-        style = MaterialTheme.typography.bodyLarge,
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
-      Spacer(modifier = Modifier.height(25.dp))
-      if (showAddTilesSection) {
-        Card(modifier = Modifier.fillMaxWidth(0.95f), shape = RoundedCornerShape(32.dp)) {
-          Column(modifier = Modifier.padding(vertical = 27.dp, horizontal = 16.dp)) {
+      item {
+        Image(
+          painter = painterResource(id = R.drawable.welcome_banner),
+          contentDescription = "Welcome Banner",
+          modifier = bannerModifier,
+          contentScale = ContentScale.FillWidth,
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+      }
+
+      item {
+        Text(
+          text = stringResource(R.string.minimal_activity_info),
+          style = MaterialTheme.typography.bodyLarge,
+          textAlign = TextAlign.Center,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+      }
+      item {
+        Card(modifier = bannerModifier, shape = RoundedCornerShape(32.dp)) {
+          Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 30.dp)) {
             Text(
               text = "Available Genre Tiles",
               style = MaterialTheme.typography.titleLarge,
@@ -88,24 +104,24 @@ fun HomeScreen() {
             )
             Spacer(modifier = Modifier.height(20.dp))
             AddTileRow(
-              context = context,
-              tileName = stringResource(R.string.tile_label_calm),
-              tileComponent = ComponentName(context, CalmQSTileService::class.java),
-              tileIconRes = R.drawable.playlist_music,
+              context,
+              stringResource(R.string.tile_label_calm),
+              ComponentName(context, CalmQSTileService::class.java),
+              R.drawable.playlist_music,
             )
             Spacer(modifier = Modifier.height(12.dp))
             AddTileRow(
-              context = context,
-              tileName = stringResource(R.string.tile_label_chill),
-              tileComponent = ComponentName(context, ChillQSTileService::class.java),
-              tileIconRes = R.drawable.playlist_music,
+              context,
+              stringResource(R.string.tile_label_chill),
+              ComponentName(context, ChillQSTileService::class.java),
+              R.drawable.playlist_music,
             )
             Spacer(modifier = Modifier.height(12.dp))
             AddTileRow(
-              context = context,
-              tileName = stringResource(R.string.tile_label_sleep),
-              tileComponent = ComponentName(context, SleepQSTileService::class.java),
-              tileIconRes = R.drawable.playlist_music,
+              context,
+              stringResource(R.string.tile_label_sleep),
+              ComponentName(context, SleepQSTileService::class.java),
+              R.drawable.playlist_music,
             )
           }
         }

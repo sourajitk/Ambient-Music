@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,7 @@ private sealed class UpdateCheckState {
 }
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(windowSizeClass: WindowSizeClass) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
 

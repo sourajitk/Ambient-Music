@@ -123,4 +123,5 @@ dependencies {
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.material3.window.size.class1)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.foundation)
 }
