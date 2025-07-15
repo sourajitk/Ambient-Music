@@ -5,6 +5,7 @@ package com.sourajitk.ambient_music.ui.dialog
 
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.BuildConfig
 import com.sourajitk.ambient_music.R
@@ -28,6 +30,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
+    modifier = Modifier.widthIn(max = 300.dp),
     icon = { Icon(Icons.Default.Info, contentDescription = "Update Info") },
     title = {
       Text(
