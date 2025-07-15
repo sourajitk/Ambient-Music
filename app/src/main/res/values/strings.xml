@@ -11,7 +11,7 @@
     <string name="qs_tile_notification_paused">Paused</string>
     <string name="qs_tile_notification_title_default">Ambient Music</string>
     <string name="qs_tile_notification_artist_default">Playback Service</string>
-    <string name="minimal_activity_info">QS Tile is now ready to be added!</string>
+    <string name="minimal_activity_info">Ambient Music QS Tiles are now ready to be added!</string>
     <string name="qs_tile_notification_artist_unknown"> Unknown Artist</string>
     <string name="qs_tile_notification_title_unknown"> Unknown Song</string>
     <string name="tile_label_calm">Ambient Calm</string>
