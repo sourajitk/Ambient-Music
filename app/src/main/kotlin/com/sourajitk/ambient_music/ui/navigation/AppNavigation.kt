@@ -50,6 +50,17 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val navController = rememberNavController()
   val navItems = listOf(Screen.Home, Screen.Settings)
 
+  // Get the current navigation back stack entry
+  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  val currentRoute = navBackStackEntry?.destination?.route
+
+  // Determine the title based on the current route
+  val topBarTitle =
+    when (currentRoute) {
+      Screen.Settings.route -> "Settings"
+      else -> stringResource(R.string.app_name) // Default title for Home screen
+    }
+
   // Determine if we should show the navigation rail (for wider screens)
   // or the navigation bar (for phone-sized screens).
   val showNavRail = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
@@ -63,7 +74,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
       // Only needed for compact screens
       topBar = {
         if (!showNavRail) {
-          CenterAlignedTopAppBar(title = { Text(stringResource(id = R.string.app_name)) })
+          CenterAlignedTopAppBar(title = { Text(topBarTitle) })
         }
       },
       bottomBar = {
