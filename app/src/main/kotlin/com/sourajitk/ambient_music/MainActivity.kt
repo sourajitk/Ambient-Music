@@ -13,6 +13,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
       }
     }
 
+  @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -63,11 +66,12 @@ class MainActivity : ComponentActivity() {
       AmbientMusicTheme {
         val context = LocalContext.current
         var updateInfo by remember { mutableStateOf<GitHubRelease?>(null) }
+        val windowSizeClass = calculateWindowSizeClass(this)
         LaunchedEffect(key1 = true) {
           val update = UpdateChecker.checkForUpdate(context)
           update?.let { updateInfo = it }
         }
-        MainAppNavigation()
+        MainAppNavigation(windowSizeClass = windowSizeClass)
         updateInfo?.let { release ->
           UpdateInfoDialog(releaseInfo = release, onDismissRequest = { updateInfo = null })
         }

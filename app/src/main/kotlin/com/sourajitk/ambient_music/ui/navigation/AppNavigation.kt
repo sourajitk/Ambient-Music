@@ -3,7 +3,9 @@
 
 package com.sourajitk.ambient_music.ui.navigation
 
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -13,16 +15,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,45 +46,81 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainAppNavigation() {
+fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val navController = rememberNavController()
   val navItems = listOf(Screen.Home, Screen.Settings)
 
-  // Get the current navigation back stack entry
-  val navBackStackEntry by navController.currentBackStackEntryAsState()
-  val currentRoute = navBackStackEntry?.destination?.route
+  // Determine if we should show the navigation rail (for wider screens)
+  // or the navigation bar (for phone-sized screens).
+  val showNavRail = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
 
-  // Determine the title based on the current route
-  val topBarTitle =
-    when (currentRoute) {
-      Screen.Settings.route -> "Settings"
-      else -> stringResource(R.string.app_name) // Default title for Home screen
+  Row(modifier = Modifier.fillMaxSize()) {
+    if (showNavRail) {
+      AppNavigationRail(navController = navController, navItems = navItems)
     }
 
-  Scaffold(
-    topBar = { CenterAlignedTopAppBar(title = { Text(topBarTitle) }) },
-    bottomBar = {
-      NavigationBar(modifier = Modifier.height(80.dp)) {
-        val currentDestination = navBackStackEntry?.destination
-        navItems.forEach { screen ->
-          NavigationBarItem(
-            icon = { Icon(screen.icon, contentDescription = screen.label) },
-            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-            onClick = {
-              navController.navigate(screen.route) {
-                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-              }
-            },
-          )
+    Scaffold(
+      // Only needed for compact screens
+      topBar = {
+        if (!showNavRail) {
+          CenterAlignedTopAppBar(title = { Text(stringResource(id = R.string.app_name)) })
         }
+      },
+      bottomBar = {
+        if (!showNavRail) {
+          AppBottomNavigationBar(navController = navController, navItems = navItems)
+        }
+      },
+    ) { innerPadding ->
+      NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
+        composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
+        composable(Screen.Settings.route) { SettingsScreen(windowSizeClass) }
       }
-    },
-  ) { innerPadding ->
-    NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
-      composable(Screen.Home.route) { HomeScreen() }
-      composable(Screen.Settings.route) { SettingsScreen() }
+    }
+  }
+}
+
+// Split the navbar controllers for two form factors: tablets/foldables and phones.
+@Composable
+fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Screen>) {
+  NavigationBar {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    navItems.forEach { screen ->
+      NavigationBarItem(
+        icon = { Icon(screen.icon, contentDescription = screen.label) },
+        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+        onClick = {
+          navController.navigate(screen.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+          }
+        },
+      )
+    }
+  }
+}
+
+@Composable
+fun AppNavigationRail(navController: NavHostController, navItems: List<Screen>) {
+  NavigationRail(modifier = Modifier.fillMaxHeight()) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    navItems.forEach { screen ->
+      NavigationRailItem(
+        icon = { Icon(screen.icon, contentDescription = screen.label) },
+        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+        onClick = {
+          navController.navigate(screen.route) {
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+          }
+        },
+      )
     }
   }
 }

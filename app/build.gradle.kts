@@ -120,4 +120,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.material3.window.size.class1)
+    implementation(libs.androidx.foundation.layout)
 }
