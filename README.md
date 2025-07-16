@@ -44,7 +44,7 @@ This app allows you to play a curated stream of ambient music in the background 
     </div>
 
 * **Built with Modern Technologies**
-    This project is built with Kotlin and uses Coroutines to handle all the background stuff like fetching music and caching. Some new APIs are used too like `requestAddTileService()`
+    This project is built with Kotlin and uses Coroutines to handle all the background stuff like fetching music and caching. UI is completely written using Jetpack Compose. Some new APIs are used too like `requestAddTileService()`
     
     <div align="center">
       <img src="https://i.imgur.com/PDKLZWi.png" width="240">
@@ -59,16 +59,14 @@ Enable navigation siderails when the display gets beyond a certain DPI for optim
     </div>
 
 ## Downloads
-- [Minimum Requirement: Android 14+](https://github.com/sourajitk/Ambient-Music/releases)
+Minimum Requirement: [Android 14+](https://github.com/sourajitk/Ambient-Music/releases)
 
 ## Credits
 Big thanks to all my testers for constantly testing my app and providing constructive feedback to help make it better throughout all the releases! 😄
 
-## Documentation & References
+## Documentation
+Some useful links I referred to while building the app:
 
-This app is built using the latest Android APIs and Jetpack Compose libraries. Below are some key documentation resources that guided development:
-
-### Jetpack Compose
 - [Compose Navigation](https://developer.android.com/jetpack/compose/navigation) 
 - [Compose Material 3](https://developer.android.com/jetpack/compose/material3)
 - [requestAddTileService](https://developer.android.com/reference/android/service/quicksettings/TileService#requestAddTileService(android.content.ComponentName))
