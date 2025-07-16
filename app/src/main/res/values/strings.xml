@@ -20,4 +20,6 @@
     <string name="update_available_text">A new update to %1$s is available!\nYou\'re on v%2$s.</string>
     <string name="update_url">https://api.github.com/repos/sourajitk/Ambient-Music/releases/latest</string>
     <string name="github_latest_rel">https://github.com/sourajitk/Ambient-Music/releases/latest</string>
+    <string name="incompatible_android_version">Note: Since you\'re using a version of Android earlier than version 13, please
+        open the Quick Settings edit panel and manually add the tile from there.</string>
 </resources>

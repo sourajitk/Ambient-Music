@@ -34,7 +34,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
-        minSdk = 34
+        minSdk = 31
         targetSdk = 36
         versionCode = commitCount
         versionName = "2.0.8.2-beta-$commitHash"
