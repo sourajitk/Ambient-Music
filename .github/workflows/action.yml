@@ -7,7 +7,7 @@ env:
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install Python dependencies
         run: |
@@ -50,9 +50,9 @@ jobs:
       - name: Set Up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '21'
-          cache: 'gradle'
+          distribution: "zulu"
+          java-version: "21"
+          cache: "gradle"
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
@@ -65,11 +65,16 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           CI: true
 
+      - name: Rename APK
+        run: |
+          apk_file=$(find ${{ env.main_project_module }}/build/outputs/apk/release -name "*.apk")
+          mv "$apk_file" "Ambient-Music-${{ github.ref_name }}.apk"
+
       - name: Upload Release to GitHub
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
+            Ambient-Music-${{ github.ref_name }}.apk
           body: ${{ steps.read_changelog.outputs.changelog_body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
