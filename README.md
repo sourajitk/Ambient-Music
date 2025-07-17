@@ -59,7 +59,7 @@ Enable navigation siderails when the display gets beyond a certain DPI for optim
     </div>
 
 ## Downloads
-Minimum Requirement: [Android 14+](https://github.com/sourajitk/Ambient-Music/releases)
+Minimum Requirement: [Android 12+](https://github.com/sourajitk/Ambient-Music/releases)
 
 ## Credits
 Big thanks to all my testers for constantly testing my app and providing constructive feedback to help make it better throughout all the releases! 😄
@@ -72,6 +72,12 @@ Some useful links I referred to while building the app:
 - [requestAddTileService](https://developer.android.com/reference/android/service/quicksettings/TileService#requestAddTileService(android.content.ComponentName))
 - [Window Size Classes](https://developer.android.com/guide/topics/large-screens/support-different-screen-sizes)
 - [NavigationRail in Compose](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#NavigationRail(kotlin.Function1))
+
+## Featured In
+<img src="https://www.androidauthority.com/wp-content/uploads/2025/07/Photo-of-an-Android-phone-running-Ambient-Music.jpg.webp" width="550">
+
+[Android Authority](https://www.androidauthority.com/apple-ambient-music-on-android-3578211)
+
 
 ## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).  
