@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -21,7 +22,6 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +52,7 @@ private sealed class UpdateCheckState {
 }
 
 @Composable
-fun SettingsScreen(windowSizeClass: WindowSizeClass) {
+fun SettingsScreen() {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
 
@@ -100,6 +100,19 @@ fun SettingsScreen(windowSizeClass: WindowSizeClass) {
         summary = "View the project on GitHub",
         onClick = {
           val url = "https://github.com/sourajitk/Ambient-Music"
+          val intent = Intent(Intent.ACTION_VIEW)
+          intent.data = url.toUri()
+          context.startActivity(intent)
+        },
+      )
+    }
+    item {
+      PreferenceItem(
+        icon = Icons.Default.AttachMoney,
+        title = "Donate",
+        summary = "Support me for more projects to come!",
+        onClick = {
+          val url = "https://www.paypal.com/paypalme/androbotsdev"
           val intent = Intent(Intent.ACTION_VIEW)
           intent.data = url.toUri()
           context.startActivity(intent)
