@@ -85,7 +85,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     ) { innerPadding ->
       NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
         composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
-        composable(Screen.Settings.route) { SettingsScreen(windowSizeClass) }
+        composable(Screen.Settings.route) { SettingsScreen() }
       }
     }
   }
