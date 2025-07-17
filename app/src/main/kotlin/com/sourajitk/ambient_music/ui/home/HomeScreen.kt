@@ -7,7 +7,9 @@ import android.app.StatusBarManager
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.drawable.Icon
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -99,26 +101,36 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
               modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(20.dp))
-            AddTileRow(
-              context,
-              stringResource(R.string.tile_label_calm),
-              ComponentName(context, CalmQSTileService::class.java),
-              R.drawable.playlist_music,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            AddTileRow(
-              context,
-              stringResource(R.string.tile_label_chill),
-              ComponentName(context, ChillQSTileService::class.java),
-              R.drawable.playlist_music,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            AddTileRow(
-              context,
-              stringResource(R.string.tile_label_sleep),
-              ComponentName(context, SleepQSTileService::class.java),
-              R.drawable.playlist_music,
-            )
+            // Check the Android version before showing the Add tile rows
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              AddTileRow(
+                context,
+                stringResource(R.string.tile_label_calm),
+                ComponentName(context, CalmQSTileService::class.java),
+                R.drawable.playlist_music,
+              )
+              Spacer(modifier = Modifier.height(12.dp))
+              AddTileRow(
+                context,
+                stringResource(R.string.tile_label_chill),
+                ComponentName(context, ChillQSTileService::class.java),
+                R.drawable.playlist_music,
+              )
+              Spacer(modifier = Modifier.height(12.dp))
+              AddTileRow(
+                context,
+                stringResource(R.string.tile_label_sleep),
+                ComponentName(context, SleepQSTileService::class.java),
+                R.drawable.playlist_music,
+              )
+            } else {
+              Text(
+                text = stringResource(R.string.incompatible_android_version),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 8.dp),
+              )
+            }
           }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -127,6 +139,7 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
   }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 private fun AddTileRow(
   context: Context,
@@ -148,6 +161,8 @@ private fun AddTileRow(
       modifier = Modifier.width(120.dp),
       enabled = !isTileAdded,
       onClick = {
+        // The API call itself is now safe because the button to trigger it
+        // will only be shown on API 33+
         val statusBarManager =
           context.getSystemService(StatusBarManager::class.java) as StatusBarManager
         statusBarManager.requestAddTileService(
