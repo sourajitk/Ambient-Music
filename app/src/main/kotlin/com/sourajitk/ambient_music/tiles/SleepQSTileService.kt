@@ -17,7 +17,10 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 
 class SleepQSTileService : TileService() {
 
-  private val TAG = "SleepTileService"
+  companion object {
+    private const val TAG = "SleepTileService"
+  }
+
   private val myGenre = "sleep"
 
   override fun onTileAdded() {

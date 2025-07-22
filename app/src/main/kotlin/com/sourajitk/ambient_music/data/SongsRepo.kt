@@ -61,38 +61,33 @@ object SongsRepo {
         val request = Request.Builder().url(REMOTE_SONGS_URL).build()
         client.newCall(request).execute().use { response ->
           if (response.isSuccessful) {
-            val jsonString = response.body?.string()
-            if (jsonString != null) {
-              val loggableJson =
-                if (jsonString.length > 500) jsonString.substring(0, 500) + "..." else jsonString
-              Log.d(
-                TAG,
-                "initializeAndRefresh: Successfully fetched JSON string from remote (snippet): $loggableJson",
-              )
+            val jsonString = response.body.string()
+            val loggableJson =
+              if (jsonString.length > 500) jsonString.substring(0, 500) + "..." else jsonString
+            Log.d(
+              TAG,
+              "initializeAndRefresh: Successfully fetched JSON string from remote (snippet): $loggableJson",
+            )
 
-              val remoteSongs = jsonParser.decodeFromString<List<SongAsset>>(jsonString)
-              synchronized(this@SongsRepo) {
-                internalLoadedSongs = remoteSongs
-                if (
-                  currentTrackIndex >= internalLoadedSongs.size && internalLoadedSongs.isNotEmpty()
-                ) {
-                  currentTrackIndex = 0
-                }
-                // Save the newly fetched data to cache
-                saveToCache(context, jsonString)
+            val remoteSongs = jsonParser.decodeFromString<List<SongAsset>>(jsonString)
+            synchronized(this@SongsRepo) {
+              internalLoadedSongs = remoteSongs
+              if (
+                currentTrackIndex >= internalLoadedSongs.size && internalLoadedSongs.isNotEmpty()
+              ) {
+                currentTrackIndex = 0
               }
-              Log.i(
-                TAG,
-                "initializeAndRefresh: Successfully parsed and updated ${remoteSongs.size} songs from remote.",
-              )
-              finalStatusMessage = "Fetched ${remoteSongs.size} songs from remote."
-              overallSuccess = true
-            } else {
-              Log.w(TAG, "initializeAndRefresh: Remote response body was null.")
-              finalStatusMessage = "Remote fetch succeeded but body was empty."
+              // Save the newly fetched data to cache
+              saveToCache(context, jsonString)
             }
+            Log.i(
+              TAG,
+              "initializeAndRefresh: Successfully parsed and updated ${remoteSongs.size} songs from remote.",
+            )
+            finalStatusMessage = "Fetched ${remoteSongs.size} songs from remote."
+            overallSuccess = true
           } else {
-            val errorBody = response.body?.string() ?: "No error body"
+            val errorBody = response.body.string()
             Log.e(
               TAG,
               "initializeAndRefresh: Remote fetch failed: ${response.code} ${response.message}. Error body: $errorBody",

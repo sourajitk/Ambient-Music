@@ -15,7 +15,9 @@ import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChann
 import com.sourajitk.ambient_music.util.UpdateScheduler.scheduleUpdateChecks
 
 class SongsRepoInitializer : Application() {
-  private val TAG = "SongsRepoInitializer"
+  companion object {
+    private const val TAG = "SongsRepoInitializer"
+  }
 
   override fun onCreate() {
     super.onCreate()
