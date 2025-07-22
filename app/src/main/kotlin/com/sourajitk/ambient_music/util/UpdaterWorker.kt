@@ -19,7 +19,7 @@ class UpdateWorker(appContext: Context, workerParams: WorkerParameters) :
         showUpdateNotification(applicationContext, update)
       }
       return Result.success()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       return Result.failure()
     }
   }

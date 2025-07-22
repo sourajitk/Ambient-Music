@@ -28,17 +28,17 @@ object UpdateChecker {
             Log.e("UpdateChecker", "Failed to fetch releases: ${response.code}")
             return@withContext null
           }
-          val responseBody = response.body?.string() ?: return@withContext null
+          val responseBody = response.body.string()
           val latestRelease = jsonParser.decodeFromString<GitHubRelease>(responseBody)
 
           val currentVersion = BuildConfig.VERSION_NAME
-          val latestVersion = latestRelease.tag_name.removePrefix("v")
+          val latestVersion = latestRelease.tagName.removePrefix("v")
           Log.d(
             "UpdateChecker",
             "Current version: $currentVersion, Latest GitHub release: $latestVersion",
           )
           if (latestVersion > currentVersion) {
-            Log.d("UpdateChecker", "New update found: ${latestRelease.tag_name}")
+            Log.d("UpdateChecker", "New update found: ${latestRelease.tagName}")
             return@withContext latestRelease
           } else {
             Log.d("UpdateChecker", "App is up to date.")

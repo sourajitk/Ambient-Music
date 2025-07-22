@@ -17,7 +17,10 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 
 class CalmQSTileService : TileService() {
 
-  private val TAG = "CalmQSTileService"
+  companion object {
+    private const val TAG = "CalmQSTileService"
+  }
+
   private val myGenre = "calm"
 
   override fun onTileAdded() {

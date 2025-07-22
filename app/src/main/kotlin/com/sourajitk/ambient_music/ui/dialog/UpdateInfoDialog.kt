@@ -41,7 +41,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
     },
     text = {
       Text(
-        text = stringResource(R.string.update_available_text, releaseInfo.tag_name, currentVersion),
+        text = stringResource(R.string.update_available_text, releaseInfo.tagName, currentVersion),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
       )
@@ -49,7 +49,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
     confirmButton = {
       TextButton(
         onClick = {
-          val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.html_url.toUri())
+          val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
           context.startActivity(browserIntent)
           onDismissRequest()
         }

@@ -45,7 +45,7 @@ fun checkForAppUpdates(context: Context) {
     try {
       val update = UpdateChecker.checkForUpdate(context)
       if (update != null) {
-        Log.d(TAG, "Update found: ${update.tag_name}. Posting notification.")
+        Log.d(TAG, "Update found: ${update.tagName}. Posting notification.")
         showUpdateNotification(context, update)
       } else {
         Log.d(TAG, "No new updates found.")
@@ -62,7 +62,7 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
   // Intent to open the GitHub release page when the notification is tapped
-  val intent = Intent(Intent.ACTION_VIEW, releaseInfo.html_url.toUri())
+  val intent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
   val pendingIntent =
     PendingIntent.getActivity(
       context,
@@ -75,11 +75,11 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
     NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
       .setSmallIcon(R.drawable.ic_music_note)
       .setContentTitle("Update Available")
-      .setContentText("An update to ${releaseInfo.tag_name} is available!")
+      .setContentText("An update to ${releaseInfo.tagName} is available!")
       .setStyle(
         NotificationCompat.BigTextStyle()
           .bigText(
-            "A new update to ${releaseInfo.tag_name} is now available! Tap to open the GitHub Release page."
+            "A new update to ${releaseInfo.tagName} is now available! Tap to open the GitHub Release page."
           )
       )
       .setPriority(NotificationCompat.PRIORITY_DEFAULT)
