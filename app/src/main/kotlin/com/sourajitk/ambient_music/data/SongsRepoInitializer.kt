@@ -9,6 +9,7 @@ import android.service.quicksettings.TileService
 import android.util.Log
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
+import com.sourajitk.ambient_music.tiles.FocusQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
 import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
@@ -33,6 +34,7 @@ class SongsRepoInitializer : Application() {
         TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
         TileService.requestListeningState(this, ComponentName(this, ChillQSTileService::class.java))
         TileService.requestListeningState(this, ComponentName(this, SleepQSTileService::class.java))
+        TileService.requestListeningState(this, ComponentName(this, FocusQSTileService::class.java))
       }
     }
   }
