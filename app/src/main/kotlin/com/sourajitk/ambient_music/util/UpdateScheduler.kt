@@ -19,7 +19,7 @@ object UpdateScheduler {
     val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
     val updateRequest =
-      PeriodicWorkRequestBuilder<UpdateWorker>(2, TimeUnit.HOURS)
+      PeriodicWorkRequestBuilder<UpdateWorker>(36, TimeUnit.HOURS)
         .setConstraints(constraints)
         .build()
 
