@@ -65,16 +65,31 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           CI: true
 
+      - name: Build AAB Release
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          CI: true
+
       - name: Rename APK
         run: |
           apk_file=$(find ${{ env.main_project_module }}/build/outputs/apk/release -name "*.apk")
           mv "$apk_file" "Ambient-Music-${{ github.ref_name }}.apk"
+
+      - name: Rename AAB
+        id: find_aab
+        run: |
+          aab_file=$(find ${{ env.main_project_module }}/build/outputs/bundle/release -name "*.aab")
+          mv "$aab_file" "Ambient-Music-${{ github.ref_name }}.aab"
 
       - name: Upload Release to GitHub
         uses: softprops/action-gh-release@v2
         with:
           files: |
             Ambient-Music-${{ github.ref_name }}.apk
+            Ambient-Music-${{ github.ref_name }}.aab
           body: ${{ steps.read_changelog.outputs.changelog_body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
