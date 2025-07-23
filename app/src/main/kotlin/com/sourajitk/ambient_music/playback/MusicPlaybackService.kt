@@ -40,6 +40,7 @@ import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
+import com.sourajitk.ambient_music.tiles.FocusQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
 class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener {
@@ -66,6 +67,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     const val ACTION_PLAY_GENRE_CHILL = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CHILL"
     const val ACTION_PLAY_GENRE_CALM = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CALM"
     const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
+    const val ACTION_PLAY_GENRE_FOCUS = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_PRODUCTIVITY"
     private const val NOTIFICATION_ID = 1
     private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
     private const val TAG = "MusicPlaybackService"
@@ -251,7 +253,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         stopSelf()
       }
       ACTION_PLAY_GENRE_CHILL -> {
-        Log.i(TAG, "ACTION_PLAY_GENRE_CHILL received.")
         if (SongsRepo.songs.isEmpty()) {
           Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
@@ -283,6 +284,17 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         }
         startForeground(NOTIFICATION_ID, createNotification())
         playGenre("sleep")
+      }
+      ACTION_PLAY_GENRE_FOCUS -> {
+        if (SongsRepo.songs.isEmpty()) {
+          Log.w(TAG, "SongsRepo:Genre is empty.")
+          isServiceCurrentlyPlaying = false
+          requestTileUpdate()
+          stopSelf()
+          return START_NOT_STICKY
+        }
+        startForeground(NOTIFICATION_ID, createNotification())
+        playGenre("focus")
       }
     }
     return START_STICKY
@@ -501,6 +513,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
     TileService.requestListeningState(this, ComponentName(this, ChillQSTileService::class.java))
     TileService.requestListeningState(this, ComponentName(this, SleepQSTileService::class.java))
+    TileService.requestListeningState(this, ComponentName(this, FocusQSTileService::class.java))
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
