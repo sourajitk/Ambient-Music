@@ -37,7 +37,7 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = commitCount
-        versionName = "2.0.8.4-beta-$commitHash"
+        versionName = "2.0.9-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
     signingConfigs {
