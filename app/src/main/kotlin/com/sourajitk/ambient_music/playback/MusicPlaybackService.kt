@@ -121,9 +121,10 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         }
       }
       AudioManager.AUDIOFOCUS_LOSS -> {
-        stopPlaybackAndReleaseSession()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        if (exoPlayer?.isPlaying == true) {
+          exoPlayer?.pause()
+        }
+        abandonAudioFocus()
       }
       AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
       AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
