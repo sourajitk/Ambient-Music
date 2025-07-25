@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -32,6 +33,8 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
   val context = LocalContext.current
   val currentVersion = BuildConfig.VERSION_NAME
   val playStoreUrlString = stringResource(id = R.string.google_play_url)
+  val installSourceInfo = context.packageManager.getInstallSourceInfo(context.packageName)
+  val wasInstalledFromPlayStore = installSourceInfo.installingPackageName == "com.android.vending"
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
@@ -41,6 +44,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
         Icons.Default.Info,
         contentDescription = "Update Info",
         tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.height(37.dp).width(27.dp),
       )
     },
     title = {
@@ -58,27 +62,34 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
       )
     },
     confirmButton = {
-      Row(modifier = Modifier.fillMaxWidth().height(35.dp), horizontalArrangement = Arrangement.Center) {
+      Row(
+        modifier = Modifier.fillMaxWidth().height(35.dp),
+        horizontalArrangement = Arrangement.Absolute.Right,
+      ) {
         TextButton(onClick = onDismissRequest) { Text("Later") }
-        TextButton(
-          onClick = {
-            val browserIntent = Intent(Intent.ACTION_VIEW, playStoreUrlString.toUri())
-            context.startActivity(browserIntent)
-            onDismissRequest()
+        if (wasInstalledFromPlayStore) {
+          TextButton(
+            onClick = {
+              val browserIntent = Intent(Intent.ACTION_VIEW, playStoreUrlString.toUri())
+              context.startActivity(browserIntent)
+              onDismissRequest()
+            }
+          ) {
+            Text("Go to Play Store")
           }
-        ) {
-          Text("Play Store")
-        }
-        TextButton(
-          onClick = {
-            val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
-            context.startActivity(browserIntent)
-            onDismissRequest()
+        } else {
+          TextButton(
+            onClick = {
+              val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
+              context.startActivity(browserIntent)
+              onDismissRequest()
+            }
+          ) {
+            Text("Go to GitHub")
           }
-        ) {
-          Text("GitHub")
         }
       }
     },
+    dismissButton = {},
   )
 }
