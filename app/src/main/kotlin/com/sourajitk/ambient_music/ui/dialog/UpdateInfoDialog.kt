@@ -27,14 +27,14 @@ import androidx.core.net.toUri
 import com.sourajitk.ambient_music.BuildConfig
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.util.InstallSourceChecker
 
 @Composable
 fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
   val context = LocalContext.current
   val currentVersion = BuildConfig.VERSION_NAME
   val playStoreUrlString = stringResource(id = R.string.google_play_url)
-  val installSourceInfo = context.packageManager.getInstallSourceInfo(context.packageName)
-  val wasInstalledFromPlayStore = installSourceInfo.installingPackageName == "com.android.vending"
+  val wasInstalledFromPlayStore = InstallSourceChecker.isFromPlayStore(context)
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
