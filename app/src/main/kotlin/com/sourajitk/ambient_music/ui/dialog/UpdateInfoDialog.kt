@@ -4,12 +4,16 @@
 package com.sourajitk.ambient_music.ui.dialog
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,11 +31,18 @@ import com.sourajitk.ambient_music.data.GitHubRelease
 fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
   val context = LocalContext.current
   val currentVersion = BuildConfig.VERSION_NAME
+  val playStoreUrlString = stringResource(id = R.string.google_play_url)
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
-    modifier = Modifier.widthIn(max = 300.dp),
-    icon = { Icon(Icons.Default.Info, contentDescription = "Update Info") },
+    modifier = Modifier.widthIn(max = 288.dp),
+    icon = {
+      Icon(
+        Icons.Default.Info,
+        contentDescription = "Update Info",
+        tint = MaterialTheme.colorScheme.primary,
+      )
+    },
     title = {
       Text(
         text = "Update Available",
@@ -47,16 +58,27 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
       )
     },
     confirmButton = {
-      TextButton(
-        onClick = {
-          val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
-          context.startActivity(browserIntent)
-          onDismissRequest()
+      Row(modifier = Modifier.fillMaxWidth().height(35.dp), horizontalArrangement = Arrangement.Center) {
+        TextButton(onClick = onDismissRequest) { Text("Later") }
+        TextButton(
+          onClick = {
+            val browserIntent = Intent(Intent.ACTION_VIEW, playStoreUrlString.toUri())
+            context.startActivity(browserIntent)
+            onDismissRequest()
+          }
+        ) {
+          Text("Play Store")
         }
-      ) {
-        Text("Go to GitHub")
+        TextButton(
+          onClick = {
+            val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
+            context.startActivity(browserIntent)
+            onDismissRequest()
+          }
+        ) {
+          Text("GitHub")
+        }
       }
     },
-    dismissButton = { TextButton(onClick = onDismissRequest) { Text("Later") } },
   )
 }
