@@ -3,9 +3,15 @@
 
 package com.sourajitk.ambient_music.util
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
+import android.service.quicksettings.TileService
 import androidx.core.content.edit
+import com.sourajitk.ambient_music.tiles.CalmQSTileService
+import com.sourajitk.ambient_music.tiles.ChillQSTileService
+import com.sourajitk.ambient_music.tiles.FocusQSTileService
+import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
 object TileStateUtil {
   private const val TILE_PREFS_NAME = "tile_state_prefs"
@@ -20,5 +26,19 @@ object TileStateUtil {
 
   fun isTileAdded(context: Context, tileClassName: String): Boolean {
     return getPrefs(context).getBoolean(tileClassName, false)
+  }
+
+  fun requestTileUpdate(context: Context) {
+    val tileServices =
+      listOf(
+        CalmQSTileService::class.java,
+        ChillQSTileService::class.java,
+        SleepQSTileService::class.java,
+        FocusQSTileService::class.java,
+      )
+
+    tileServices.forEach { serviceClass ->
+      TileService.requestListeningState(context, ComponentName(context, serviceClass))
+    }
   }
 }
