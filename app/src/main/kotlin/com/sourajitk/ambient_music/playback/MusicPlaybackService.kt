@@ -8,7 +8,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -19,7 +18,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
 import android.os.IBinder
-import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
@@ -38,10 +36,7 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
-import com.sourajitk.ambient_music.tiles.CalmQSTileService
-import com.sourajitk.ambient_music.tiles.ChillQSTileService
-import com.sourajitk.ambient_music.tiles.FocusQSTileService
-import com.sourajitk.ambient_music.tiles.SleepQSTileService
+import com.sourajitk.ambient_music.util.TileStateUtil
 
 class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener {
 
@@ -161,7 +156,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
               Log.d(TAG, "Player status changed ig: $isPlayingValue")
               isServiceCurrentlyPlaying = isPlayingValue
               updateNotification()
-              requestTileUpdate()
+              TileStateUtil.requestTileUpdate(applicationContext)
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -186,7 +181,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
               }
               if (performGeneralPostUpdate) {
                 updateNotification()
-                requestTileUpdate()
+                TileStateUtil.requestTileUpdate(applicationContext)
               }
             }
 
@@ -216,7 +211,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
               Log.e(TAG, "Player.Listener.ExoPlayer Error: ", error)
               isServiceCurrentlyPlaying = false
               updateNotification()
-              requestTileUpdate()
+              TileStateUtil.requestTileUpdate(applicationContext)
             }
           }
         )
@@ -230,7 +225,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       ACTION_TOGGLE_PLAYBACK_QS -> {
         if (SongsRepo.songs.isEmpty()) {
           isServiceCurrentlyPlaying = false
-          requestTileUpdate()
+          TileStateUtil.requestTileUpdate(applicationContext)
           stopSelf()
           return START_NOT_STICKY
         }
@@ -241,7 +236,8 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         Log.i(TAG, "ACTION_SKIP_TO_NEXT received.")
         if (SongsRepo.songs.isEmpty() || exoPlayer == null) {
           Log.w(TAG, "ACTION_SKIP_TO_NEXT: Get some songs lol rn null.")
-          if (isServiceCurrentlyPlaying) exoPlayer?.stop() else requestTileUpdate()
+          if (isServiceCurrentlyPlaying) exoPlayer?.stop()
+          else TileStateUtil.requestTileUpdate(applicationContext)
         } else {
           startForeground(NOTIFICATION_ID, createNotification())
           exoPlayer?.seekToNextMediaItem()
@@ -256,7 +252,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         if (SongsRepo.songs.isEmpty()) {
           Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
-          requestTileUpdate()
+          TileStateUtil.requestTileUpdate(applicationContext)
           stopSelf()
           return START_NOT_STICKY
         }
@@ -267,7 +263,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         if (SongsRepo.songs.isEmpty()) {
           Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
-          requestTileUpdate()
+          TileStateUtil.requestTileUpdate(applicationContext)
           stopSelf()
           return START_NOT_STICKY
         }
@@ -278,7 +274,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         if (SongsRepo.songs.isEmpty()) {
           Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
-          requestTileUpdate()
+          TileStateUtil.requestTileUpdate(applicationContext)
           stopSelf()
           return START_NOT_STICKY
         }
@@ -289,7 +285,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
         if (SongsRepo.songs.isEmpty()) {
           Log.w(TAG, "SongsRepo:Genre is empty.")
           isServiceCurrentlyPlaying = false
-          requestTileUpdate()
+          TileStateUtil.requestTileUpdate(applicationContext)
           stopSelf()
           return START_NOT_STICKY
         }
@@ -346,7 +342,7 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
       Log.w(TAG, "Received nothing from JSON can't prepare playlist.")
       isServiceCurrentlyPlaying = false
       updateNotification()
-      requestTileUpdate()
+      TileStateUtil.requestTileUpdate(applicationContext)
       isPlaylistSet = false
       return
     }
@@ -506,14 +502,6 @@ class MusicPlaybackService : Service(), AudioManager.OnAudioFocusChangeListener 
     } else {
       Log.w(TAG, "updateNotification: Player or MediaSession is null.")
     }
-  }
-
-  private fun requestTileUpdate() {
-    Log.d(TAG, "Update tile state current state: $isServiceCurrentlyPlaying")
-    TileService.requestListeningState(this, ComponentName(this, CalmQSTileService::class.java))
-    TileService.requestListeningState(this, ComponentName(this, ChillQSTileService::class.java))
-    TileService.requestListeningState(this, ComponentName(this, SleepQSTileService::class.java))
-    TileService.requestListeningState(this, ComponentName(this, FocusQSTileService::class.java))
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
