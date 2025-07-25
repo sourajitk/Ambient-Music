@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+appUpdateKtx = "2.1.0"
 coil = "2.7.0"
 coreSplashscreen = "1.0.1"
 kotlin = "2.2.0"
@@ -39,6 +40,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdateKtx" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
