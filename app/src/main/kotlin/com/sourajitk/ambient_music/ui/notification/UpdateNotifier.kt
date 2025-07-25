@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.util.InstallSourceChecker
 import com.sourajitk.ambient_music.util.UpdateChecker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,14 +61,26 @@ fun checkForAppUpdates(context: Context) {
 fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
   val notificationManager =
     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+  val wasInstalledFromPlayStore = InstallSourceChecker.isFromPlayStore(context)
 
-  // Intent to open the GitHub release page when the notification is tapped
-  val intent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
+  val updateIntent: Intent
+  val updateText: String
+
+  if (wasInstalledFromPlayStore) {
+    val playStoreUrl = context.getString(R.string.google_play_url)
+    updateIntent = Intent(Intent.ACTION_VIEW, playStoreUrl.toUri())
+    updateText = "Version ${releaseInfo.tagName} is now available on the Play Store. Tap to update."
+  } else {
+    updateIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
+    updateText =
+      "Version ${releaseInfo.tagName} is now available on GitHub. Tap to open the GitHub Release page."
+  }
+
   val pendingIntent =
     PendingIntent.getActivity(
       context,
       0,
-      intent,
+      updateIntent,
       PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
     )
 
@@ -75,17 +88,12 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
     NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
       .setSmallIcon(R.drawable.ic_music_note)
       .setContentTitle("Update Available")
-      .setContentText("An update to ${releaseInfo.tagName} is available!")
-      .setStyle(
-        NotificationCompat.BigTextStyle()
-          .bigText(
-            "A new update to ${releaseInfo.tagName} is now available! Tap to open the GitHub Release page."
-          )
-      )
-      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      .setContentText("A new version is ready to install.")
+      .setStyle(NotificationCompat.BigTextStyle().bigText(updateText))
+      .setPriority(NotificationCompat.PRIORITY_LOW)
       .setContentIntent(pendingIntent)
       .setAutoCancel(true)
       .build()
 
-  notificationManager.notify(UPDATE_NOTIFICATION_ID, notification)
+  notificationManager.notify(1001, notification)
 }
