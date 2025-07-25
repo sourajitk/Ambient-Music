@@ -29,6 +29,7 @@ import com.sourajitk.ambient_music.data.GitHubRelease
 import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
+import com.sourajitk.ambient_music.util.InAppUpdateManager
 import com.sourajitk.ambient_music.util.UpdateChecker
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     setTheme(R.style.Theme_AmbientMusic)
+    InAppUpdateManager.checkForUpdate(this)
 
     // Basically, this is not a "real" notification, it's for MediaSession.
     if (

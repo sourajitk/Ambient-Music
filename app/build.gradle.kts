@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.app.update.ktx)
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
