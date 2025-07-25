@@ -29,7 +29,11 @@
         <service
             android:name=".playback.MusicPlaybackService"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
+            android:foregroundServiceType="mediaPlayback">
+        <property
+            android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+            android:value="system_exempted" />
+        </service>
 
         <service
             android:name=".tiles.CalmQSTileService"
@@ -40,9 +44,6 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="system_exempted" />
         </service>
 
         <service

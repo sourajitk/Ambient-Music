@@ -19,6 +19,7 @@
     <string name="tile_label_sleep">Ambient Sleep</string>
     <string name="tile_label_focus">Ambient Focus</string>
     <string name="update_available_text">A new update to %1$s is available!\nYou\'re on v%2$s.</string>
+    <string name="google_play_url">https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music</string>
     <string name="update_url">https://api.github.com/repos/sourajitk/Ambient-Music/releases/latest</string>
     <string name="github_latest_rel">https://github.com/sourajitk/Ambient-Music/releases/latest</string>
     <string name="incompatible_android_version">Note: Since you\'re using a version of Android earlier than version 13, please
