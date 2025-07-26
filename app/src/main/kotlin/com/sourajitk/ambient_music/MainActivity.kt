@@ -5,10 +5,14 @@ package com.sourajitk.ambient_music
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,6 +52,11 @@ class MainActivity : ComponentActivity() {
       }
     }
 
+  private fun isIgnoringBatteryOptimizations(context: Context): Boolean {
+    val powerManager = context.applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+    return powerManager.isIgnoringBatteryOptimizations("com.sourajitk.ambient_music")
+  }
+
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   @SuppressLint("SourceLockedOrientationActivity")
@@ -65,6 +74,11 @@ class MainActivity : ComponentActivity() {
         PackageManager.PERMISSION_GRANTED
     ) {
       requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    if (!isIgnoringBatteryOptimizations(context)) {
+      val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+      context.startActivity(intent)
     }
 
     setContent {
