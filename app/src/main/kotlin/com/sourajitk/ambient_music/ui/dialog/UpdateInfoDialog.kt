@@ -38,7 +38,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
 
   AlertDialog(
     onDismissRequest = onDismissRequest,
-    modifier = Modifier.widthIn(max = 288.dp),
+    modifier = Modifier.widthIn(max = 300.dp),
     icon = {
       Icon(
         Icons.Default.Info,
