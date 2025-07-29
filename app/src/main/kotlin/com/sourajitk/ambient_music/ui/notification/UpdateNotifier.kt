@@ -95,5 +95,5 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
       .setAutoCancel(true)
       .build()
 
-  notificationManager.notify(1001, notification)
+  notificationManager.notify(UPDATE_NOTIFICATION_ID, notification)
 }
