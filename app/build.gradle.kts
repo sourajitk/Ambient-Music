@@ -37,7 +37,7 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = commitCount
-        versionName = "2.1.0.2-$commitHash"
+        versionName = "26.0-LiquidGlass-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
     signingConfigs {
@@ -126,4 +126,9 @@ dependencies {
     implementation(libs.material3.window.size.class1)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.foundation)
+    implementation(files("libs/expressa-core-release.aar"))
+    implementation(files("libs/expressa-components-release.aar"))
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation("com.github.Kyant0:AndroidLiquidGlass:1.0.0-alpha03")
 }

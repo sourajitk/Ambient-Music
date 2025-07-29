@@ -58,7 +58,7 @@ Enable navigation siderails when the display gets beyond a certain DPI for optim
       <img src="https://i.imgur.com/q7kvM29.png" width="750">
     </div>
 
-## Downloads (Android 12+)
+## Downloads (Android 12+) 
 
 <p align="left">
   <p align="left">

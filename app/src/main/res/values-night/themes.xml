@@ -5,5 +5,11 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="postSplashScreenTheme">@style/Theme.AmbientMusic</item>
     </style>
-    <style name="Theme.AmbientMusic" parent="android:Theme.Material.NoActionBar" />
+    <style name="Theme.AmbientMusic" parent="android:Theme.Material.NoActionBar">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+    </style>
 </resources>
