@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.ui.dialog.BatteryPermissionDialog
 import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
@@ -75,6 +78,23 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(key1 = true) {
           val update = UpdateChecker.checkForUpdate(context)
           update?.let { updateInfo = it }
+        }
+        var showBatteryDialog by remember { mutableStateOf(false) }
+        LaunchedEffect(key1 = true) {
+          val sharedPrefs = context.getSharedPreferences("app_prefs", MODE_PRIVATE)
+          // Only check for Android 14's API since it's the only version with the buggy behavior.
+          if (Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+              showBatteryDialog = true
+              sharedPrefs.edit { putBoolean("battery_prompt_shown", true) }
+            }
+          }
+        }
+
+        // Show the dialog if the state is true
+        if (showBatteryDialog) {
+          BatteryPermissionDialog(onDismissRequest = { showBatteryDialog = false })
         }
         MainAppNavigation(windowSizeClass = windowSizeClass)
         updateInfo?.let { release ->
