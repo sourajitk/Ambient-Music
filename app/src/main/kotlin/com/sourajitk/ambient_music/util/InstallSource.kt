@@ -4,6 +4,7 @@
 package com.sourajitk.ambient_music.util
 
 import android.content.Context
+import android.util.Log
 
 object InstallSourceChecker {
   private const val PLAY_STORE_PACKAGE = "com.android.vending"
@@ -15,6 +16,7 @@ object InstallSourceChecker {
       installSourceInfo.installingPackageName == PLAY_STORE_PACKAGE
     } catch (e: Exception) {
       // If the package name can't be found or another error occurs, assume it's not from Play Store
+      Log.e("AMInstallSource", "No Play Store detected $e")
       false
     }
   }
