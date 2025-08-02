@@ -67,33 +67,29 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
   val updateText: String
 
   if (wasInstalledFromPlayStore) {
-    val playStoreUrl = context.getString(R.string.google_play_url)
-    updateIntent = Intent(Intent.ACTION_VIEW, playStoreUrl.toUri())
-    updateText = "Version ${releaseInfo.tagName} is now available on the Play Store. Tap to update."
-  } else {
     updateIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
     updateText =
       "Version ${releaseInfo.tagName} is now available on GitHub. Tap to open the GitHub Release page."
+    val pendingIntent =
+      PendingIntent.getActivity(
+        context,
+        0,
+        updateIntent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+      )
+    val notification =
+      NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
+        .setSmallIcon(R.drawable.ic_music_note)
+        .setContentTitle("Update Available")
+        .setContentText("A new version is ready to install.")
+        .setStyle(NotificationCompat.BigTextStyle().bigText(updateText))
+        .setPriority(NotificationCompat.PRIORITY_LOW)
+        .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+        .build()
+
+    notificationManager.notify(UPDATE_NOTIFICATION_ID, notification)
+  } else {
+    Log.d(TAG, "App installed from Play Store. No notification posted.")
   }
-
-  val pendingIntent =
-    PendingIntent.getActivity(
-      context,
-      0,
-      updateIntent,
-      PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-    )
-
-  val notification =
-    NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
-      .setSmallIcon(R.drawable.ic_music_note)
-      .setContentTitle("Update Available")
-      .setContentText("A new version is ready to install.")
-      .setStyle(NotificationCompat.BigTextStyle().bigText(updateText))
-      .setPriority(NotificationCompat.PRIORITY_LOW)
-      .setContentIntent(pendingIntent)
-      .setAutoCancel(true)
-      .build()
-
-  notificationManager.notify(UPDATE_NOTIFICATION_ID, notification)
 }
