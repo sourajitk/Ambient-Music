@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,19 +37,22 @@ import androidx.navigation.compose.rememberNavController
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.ui.home.HomeScreen
 import com.sourajitk.ambient_music.ui.settings.SettingsScreen
+import com.sourajitk.ambient_music.ui.timer.TimerScreen
 
 // Contains all of our routes
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
   object Home : Screen("home", "Home", Icons.Default.Home)
 
   object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+
+  object Timer : Screen("timer", "Sleep Timer", Icons.Default.Timer)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val navController = rememberNavController()
-  val navItems = listOf(Screen.Home, Screen.Settings)
+  val navItems = listOf(Screen.Home, Screen.Timer, Screen.Settings)
 
   // Get the current navigation back stack entry
   val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -58,6 +62,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val topBarTitle =
     when (currentRoute) {
       Screen.Settings.route -> "Settings"
+      Screen.Timer.route -> "Sleep Timer"
       else -> stringResource(R.string.app_name) // Default title for Home screen
     }
 
@@ -85,6 +90,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     ) { innerPadding ->
       NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
         composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
+        composable(Screen.Timer.route) { TimerScreen() }
         composable(Screen.Settings.route) { SettingsScreen() }
       }
     }
