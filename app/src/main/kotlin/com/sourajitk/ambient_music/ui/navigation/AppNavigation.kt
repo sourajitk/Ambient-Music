@@ -102,6 +102,7 @@ fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Scre
       NavigationBarItem(
         icon = { Icon(screen.icon, contentDescription = screen.label) },
         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+        label = { Text(screen.label) },
         onClick = {
           navController.navigate(screen.route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
