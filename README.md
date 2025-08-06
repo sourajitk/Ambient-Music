@@ -58,8 +58,7 @@ Enable navigation siderails when the display gets beyond a certain DPI for optim
       <img src="https://i.imgur.com/q7kvM29.png" width="750">
     </div>
 
-## Downloads (Android 12+)
-
+## Downloads (Android 12+) [![Github All Releases](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total.svg)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
 <p align="left">
   <p align="left">
     <a href="https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music"><img src="https://i.imgur.com/ElcHPWC.png" alt="Get it on the Google play store" height="80"></a>
