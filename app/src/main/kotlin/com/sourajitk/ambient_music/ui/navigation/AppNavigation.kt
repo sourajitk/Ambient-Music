@@ -18,11 +18,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -49,6 +52,8 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector)
 fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val navController = rememberNavController()
   val navItems = listOf(Screen.Home, Screen.Settings)
+  // For the snackbar
+  val snackbarHostState = remember { SnackbarHostState() }
 
   // Get the current navigation back stack entry
   val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -71,6 +76,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     }
 
     Scaffold(
+      snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
       // Only needed for compact screens
       topBar = {
         if (!showNavRail) {
@@ -85,7 +91,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     ) { innerPadding ->
       NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
         composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
-        composable(Screen.Settings.route) { SettingsScreen() }
+        composable(Screen.Settings.route) { SettingsScreen(snackbarHostState = snackbarHostState) }
       }
     }
   }

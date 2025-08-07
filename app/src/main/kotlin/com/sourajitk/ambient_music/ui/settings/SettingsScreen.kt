@@ -17,10 +17,12 @@ import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,8 +39,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
+import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.util.UpdateChecker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private sealed class UpdateCheckState {
@@ -52,11 +59,12 @@ private sealed class UpdateCheckState {
 }
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(snackbarHostState: SnackbarHostState) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
 
   var updateState by remember { mutableStateOf<UpdateCheckState>(UpdateCheckState.Idle) }
+  var isRefreshingLibrary by remember { mutableStateOf(false) }
 
   if (updateState is UpdateCheckState.UpdateAvailable) {
     UpdateInfoDialog(
@@ -65,6 +73,8 @@ fun SettingsScreen() {
     )
   }
   LazyColumn {
+    item { CategoryHeader("General") }
+    // Opens App Info
     item {
       PreferenceItem(
         icon = Icons.Default.Settings,
@@ -78,6 +88,49 @@ fun SettingsScreen() {
         },
       )
     }
+    // Refresh Song Library
+    item {
+      val summaryText =
+        if (isRefreshingLibrary) "Fetching new songs..."
+        else "Tap to clear cache and fetch latest songs"
+      PreferenceItem(
+        icon = Icons.Default.Refresh,
+        title = "Refresh Song Library",
+        summary = summaryText,
+        onClick = {
+          if (!isRefreshingLibrary) {
+            scope.launch {
+              isRefreshingLibrary = true
+              var finalStatusMessage = "Refresh failed"
+              try {
+                coroutineScope {
+                  // For better UX, sync summaryText and show.Snackbar
+                  val refreshJob =
+                    async(Dispatchers.IO) {
+                      SongsRepo.initializeAndRefresh(context) { success, statusMessage ->
+                        finalStatusMessage = statusMessage
+                      }
+                    }
+                  // This delay is purely for UX purposes.
+                  delay(1500)
+                  refreshJob.await()
+                }
+              } finally {
+                // Ensure the refresh state is set back to false for the message to change
+                isRefreshingLibrary = false
+                snackbarHostState.showSnackbar(message = finalStatusMessage)
+              }
+            }
+          }
+        },
+        trailingContent = {
+          if (isRefreshingLibrary) {
+            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+          }
+        },
+      )
+    }
+    item { CategoryHeader("About") }
     // Author
     item {
       PreferenceItem(
@@ -92,6 +145,20 @@ fun SettingsScreen() {
         },
       )
     }
+    // Donate
+    item {
+      PreferenceItem(
+        icon = Icons.Default.AttachMoney,
+        title = "Donate",
+        summary = "Support me for more projects to come!",
+        onClick = {
+          val url = "https://www.paypal.com/paypalme/androbotsdev"
+          val intent = Intent(Intent.ACTION_VIEW)
+          intent.data = url.toUri()
+          context.startActivity(intent)
+        },
+      )
+    }
     // Source Code
     item {
       PreferenceItem(
@@ -100,19 +167,6 @@ fun SettingsScreen() {
         summary = "View the project on GitHub",
         onClick = {
           val url = "https://github.com/sourajitk/Ambient-Music"
-          val intent = Intent(Intent.ACTION_VIEW)
-          intent.data = url.toUri()
-          context.startActivity(intent)
-        },
-      )
-    }
-    item {
-      PreferenceItem(
-        icon = Icons.Default.AttachMoney,
-        title = "Donate",
-        summary = "Support me for more projects to come!",
-        onClick = {
-          val url = "https://www.paypal.com/paypalme/androbotsdev"
           val intent = Intent(Intent.ACTION_VIEW)
           intent.data = url.toUri()
           context.startActivity(intent)
@@ -137,7 +191,7 @@ fun SettingsScreen() {
             scope.launch {
               updateState = UpdateCheckState.Checking
               // FOR UX PURPOSES :)
-              kotlinx.coroutines.delay(1500)
+              delay(1500)
               val update = UpdateChecker.checkForUpdate(context)
               updateState =
                 if (update != null) {
@@ -181,4 +235,14 @@ fun SettingsScreen() {
       )
     }
   }
+}
+
+@Composable
+private fun CategoryHeader(title: String) {
+  Text(
+    text = title,
+    style = MaterialTheme.typography.labelLarge,
+    color = MaterialTheme.colorScheme.primary,
+    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
+  )
 }
