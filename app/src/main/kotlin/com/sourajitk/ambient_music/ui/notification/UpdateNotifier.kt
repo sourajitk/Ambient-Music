@@ -66,7 +66,7 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
   val updateIntent: Intent
   val updateText: String
 
-  if (wasInstalledFromPlayStore) {
+  if (!wasInstalledFromPlayStore) {
     updateIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
     updateText =
       "Version ${releaseInfo.tagName} is now available on GitHub. Tap to open the GitHub Release page."
