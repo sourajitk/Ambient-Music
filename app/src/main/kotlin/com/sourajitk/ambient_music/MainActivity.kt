@@ -33,6 +33,7 @@ import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.ui.navigation.MainAppNavigation
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
 import com.sourajitk.ambient_music.util.InAppUpdateManager
+import com.sourajitk.ambient_music.util.InstallSourceChecker
 import com.sourajitk.ambient_music.util.UpdateChecker
 
 class MainActivity : ComponentActivity() {
@@ -75,12 +76,14 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         var updateInfo by remember { mutableStateOf<GitHubRelease?>(null) }
         val windowSizeClass = calculateWindowSizeClass(this)
-        LaunchedEffect(key1 = true) {
-          val update = UpdateChecker.checkForUpdate(context)
-          update?.let { updateInfo = it }
-        }
         var showBatteryDialog by remember { mutableStateOf(false) }
         LaunchedEffect(key1 = true) {
+          // Only show the update dialog box if the app was not installed from Play Store
+          val wasInstalledFromPlayStore = InstallSourceChecker.isFromPlayStore(context)
+          if (!wasInstalledFromPlayStore) {
+            val update = UpdateChecker.checkForUpdate(context)
+            update?.let { updateInfo = it }
+          }
           val sharedPrefs = context.getSharedPreferences("app_prefs", MODE_PRIVATE)
           // Only check for Android 14's API since it's the only version with the buggy behavior.
           if (Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
