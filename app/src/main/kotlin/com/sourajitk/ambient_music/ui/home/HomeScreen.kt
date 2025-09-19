@@ -97,7 +97,7 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
         Card(modifier = bannerModifier, shape = RoundedCornerShape(32.dp)) {
           Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 30.dp)) {
             Text(
-              text = "Available Genre Tiles",
+              text = stringResource(R.string.available_genres),
               style = MaterialTheme.typography.titleLarge,
               modifier = Modifier.align(Alignment.CenterHorizontally),
             )
@@ -205,7 +205,7 @@ private fun AddTileRow(
           modifier = Modifier.size(ButtonDefaults.IconSize),
         )
         Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        Text("Add")
+        Text(stringResource(R.string.add_label))
       }
     }
   }

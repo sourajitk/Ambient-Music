@@ -49,7 +49,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
     },
     title = {
       Text(
-        text = "Update Available",
+        text = stringResource(R.string.update_available),
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
       )
@@ -66,7 +66,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
         modifier = Modifier.fillMaxWidth().height(35.dp),
         horizontalArrangement = Arrangement.Absolute.Right,
       ) {
-        TextButton(onClick = onDismissRequest) { Text("Later") }
+        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
         if (wasInstalledFromPlayStore) {
           TextButton(
             onClick = {
@@ -75,7 +75,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
               onDismissRequest()
             }
           ) {
-            Text("Go to Play Store")
+            Text(stringResource(R.string.play_store_button))
           }
         } else {
           TextButton(
@@ -85,7 +85,7 @@ fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
               onDismissRequest()
             }
           ) {
-            Text("Go to GitHub")
+            Text(stringResource(R.string.github_button))
           }
         }
       }

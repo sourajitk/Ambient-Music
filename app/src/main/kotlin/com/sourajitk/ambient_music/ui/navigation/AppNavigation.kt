@@ -41,10 +41,16 @@ import com.sourajitk.ambient_music.ui.home.HomeScreen
 import com.sourajitk.ambient_music.ui.settings.SettingsScreen
 
 // Contains all of our routes
-sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
-  object Home : Screen("home", "Home", Icons.Default.Home)
+sealed class Screen(val route: String, val label: Int, val icon: ImageVector) {
+  object Home : Screen("home", R.string.home_string, Icons.Default.Home)
 
-  object Settings : Screen("settings", "Settings", Icons.Default.Settings)
+  object Settings : Screen("settings", R.string.settings_string, Icons.Default.Settings)
+}
+
+// Composable to get the string label
+@Composable
+fun Screen.label(): String {
+  return stringResource(id = this.label)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +68,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   // Determine the title based on the current route
   val topBarTitle =
     when (currentRoute) {
-      Screen.Settings.route -> "Settings"
+      Screen.Settings.route -> stringResource(R.string.settings_string)
       else -> stringResource(R.string.app_name) // Default title for Home screen
     }
 
@@ -106,9 +112,9 @@ fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Scre
 
     navItems.forEach { screen ->
       NavigationBarItem(
-        icon = { Icon(screen.icon, contentDescription = screen.label) },
+        icon = { Icon(screen.icon, contentDescription = screen.label()) },
         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-        label = { Text(screen.label) },
+        label = { Text(screen.label()) },
         onClick = {
           navController.navigate(screen.route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -129,7 +135,7 @@ fun AppNavigationRail(navController: NavHostController, navItems: List<Screen>) 
 
     navItems.forEach { screen ->
       NavigationRailItem(
-        icon = { Icon(screen.icon, contentDescription = screen.label) },
+        icon = { Icon(screen.icon, contentDescription = screen.label()) },
         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
         onClick = {
           navController.navigate(screen.route) {

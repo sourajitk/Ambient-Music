@@ -27,4 +27,13 @@
     <string name="battery_message">Since you\'re on Android 14, background playback
         may be interrupted due to battery optimization issues.
         To avoid this, please disable battery optimizations for the app.</string>
+    <string name="battery_optimization_dialog">Battery Optimization</string>
+    <string name="settings_string">Settings</string>
+    <string name="later_string">Later</string>
+    <string name="update_available">Update Available</string>
+    <string name="play_store_button">Go to Play Store</string>
+    <string name="github_button">Go to GitHub</string>
+    <string name="available_genres">Available Genre Tiles</string>
+    <string name="home_string">Home</string>
+    <string name="add_label">Add</string>
 </resources>

@@ -41,12 +41,12 @@ fun BatteryPermissionDialog(onDismissRequest: () -> Unit) {
     },
     title = {
       Text(
-        text = "Battery Optimization",
+        text = stringResource(R.string.battery_optimization_dialog),
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
       )
     },
-    text = { Text(text = stringResource(R.string.battery_message), textAlign = TextAlign.Center) },
+    text = { Text(stringResource(R.string.battery_message), textAlign = TextAlign.Center) },
     confirmButton = {
       TextButton(
         onClick = {
@@ -55,9 +55,11 @@ fun BatteryPermissionDialog(onDismissRequest: () -> Unit) {
           onDismissRequest()
         }
       ) {
-        Text("Settings")
+        Text(stringResource(R.string.settings_string))
       }
     },
-    dismissButton = { TextButton(onClick = onDismissRequest) { Text("Later") } },
+    dismissButton = {
+      TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
+    },
   )
 }
