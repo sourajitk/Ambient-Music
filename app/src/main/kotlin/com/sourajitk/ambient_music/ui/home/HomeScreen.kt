@@ -166,7 +166,7 @@ private fun AddTileRow(
   ) {
     Text(text = tileName, style = MaterialTheme.typography.bodyLarge)
     OutlinedButton(
-      modifier = Modifier.width(120.dp),
+      modifier = Modifier.width(70.dp),
       enabled = !isTileAdded,
       onClick = {
         // The API call itself is now safe because the button to trigger it
@@ -194,18 +194,16 @@ private fun AddTileRow(
         Icon(
           imageVector = Icons.Filled.CheckCircle,
           contentDescription = "$tileName is added",
-          modifier = Modifier.size(ButtonDefaults.IconSize),
+          modifier = Modifier.size(22.dp),
         )
         Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        Text("Added!")
       } else {
         Icon(
           imageVector = Icons.Filled.AddCircle,
           contentDescription = "Add $tileName tile",
-          modifier = Modifier.size(ButtonDefaults.IconSize),
+          modifier = Modifier.size(22.dp),
         )
         Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-        Text(stringResource(R.string.add_label))
       }
     }
   }
