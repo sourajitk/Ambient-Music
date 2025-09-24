@@ -6,6 +6,7 @@ package com.sourajitk.ambient_music.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.provider.Settings.Global.getString
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Character.toString
 
 private sealed class UpdateCheckState {
   object Idle : UpdateCheckState()
@@ -73,13 +75,13 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     )
   }
   LazyColumn {
-    item { CategoryHeader("General") }
+    item { CategoryHeader(stringResource(R.string.general_header)) }
     // Opens App Info
     item {
       PreferenceItem(
         icon = Icons.Default.Settings,
-        title = "Additional App Settings",
-        summary = "Open system settings to manage permissions",
+        title = stringResource(R.string.additional_settings_title),
+        summary = stringResource(R.string.additional_settings_body),
         onClick = {
           val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
           val uri = Uri.fromParts("package", context.packageName, null)
@@ -91,17 +93,17 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     // Refresh Song Library
     item {
       val summaryText =
-        if (isRefreshingLibrary) "Fetching new songs..."
-        else "Tap to clear cache and fetch latest songs"
+        if (isRefreshingLibrary) stringResource(R.string.cache_clear_fetching)
+        else stringResource(R.string.cache_clear_helper)
       PreferenceItem(
         icon = Icons.Default.Refresh,
-        title = "Refresh Song Library",
+        title = stringResource(R.string.refresh_song_lib),
         summary = summaryText,
         onClick = {
           if (!isRefreshingLibrary) {
             scope.launch {
               isRefreshingLibrary = true
-              var finalStatusMessage = "Refresh failed"
+              var finalStatusMessage = context.getString(R.string.refresh_fail_detail)
               try {
                 coroutineScope {
                   // For better UX, sync summaryText and show.Snackbar
@@ -130,13 +132,13 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
         },
       )
     }
-    item { CategoryHeader("About") }
+    item { CategoryHeader(stringResource(R.string.about_header_title)) }
     // Author
     item {
       PreferenceItem(
         icon = Icons.Default.Person,
-        title = "Author",
-        summary = "Sourajit Karmakar",
+        title = stringResource(R.string.author_title),
+        summary = stringResource(R.string.app_author),
         onClick = {
           val url = "https://github.com/sourajitk/"
           val intent = Intent(Intent.ACTION_VIEW)
@@ -149,8 +151,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     item {
       PreferenceItem(
         icon = Icons.Default.AttachMoney,
-        title = "Donate",
-        summary = "Support me for more projects to come!",
+        title = stringResource(R.string.donate_title),
+        summary = stringResource(R.string.donate_text),
         onClick = {
           val url = "https://www.paypal.com/paypalme/androbotsdev"
           val intent = Intent(Intent.ACTION_VIEW)
@@ -163,8 +165,8 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     item {
       PreferenceItem(
         icon = Icons.Default.Code,
-        title = "Source Code",
-        summary = "View the project on GitHub",
+        title = stringResource(R.string.source_code_title),
+        summary = stringResource(R.string.source_code_body),
         onClick = {
           val url = "https://github.com/sourajitk/Ambient-Music"
           val intent = Intent(Intent.ACTION_VIEW)
@@ -177,14 +179,14 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     item {
       val summaryText =
         when (updateState) {
-          is UpdateCheckState.Checking -> "Checking for updates..."
-          is UpdateCheckState.UpToDate -> "You have the latest version!"
-          else -> "Tap to check for updates"
+          is UpdateCheckState.Checking -> stringResource(R.string.check_for_updates)
+          is UpdateCheckState.UpToDate -> stringResource(R.string.latest_version_helper)
+          else -> stringResource(R.string.check_for_updates_helper)
         }
       // Actual updater logic
       PreferenceItem(
         icon = Icons.Default.Sync,
-        title = "Updates",
+        title = stringResource(R.string.updates),
         summary = summaryText,
         onClick = {
           if (updateState !is UpdateCheckState.Checking) {
@@ -214,7 +216,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
       val url = stringResource(R.string.github_latest_rel)
       PreferenceItem(
         icon = Icons.Default.Info,
-        title = "Version",
+        title = stringResource(R.string.version_helper),
         summary = stringResource(R.string.app_version),
         onClick = {
           val intent = Intent(Intent.ACTION_VIEW)
@@ -227,11 +229,13 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     item {
       Spacer(modifier = Modifier.height(16.dp))
       Text(
-        text = "Hint: Tapping on some settings, open some links 😉",
+        text = stringResource(R.string.hint_text),
         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 16.dp),
       )
     }
   }

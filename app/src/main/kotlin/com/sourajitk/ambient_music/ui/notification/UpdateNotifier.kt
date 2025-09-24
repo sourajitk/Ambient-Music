@@ -69,7 +69,7 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
   if (!wasInstalledFromPlayStore) {
     updateIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
     updateText =
-      "Version ${releaseInfo.tagName} is now available on GitHub. Tap to open the GitHub Release page."
+        context.getString(R.string.update_notification_body_github, releaseInfo.tagName)
     val pendingIntent =
       PendingIntent.getActivity(
         context,
@@ -80,8 +80,8 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
     val notification =
       NotificationCompat.Builder(context, "APP_UPDATES_CHANNEL")
         .setSmallIcon(R.drawable.ic_music_note)
-        .setContentTitle("Update Available")
-        .setContentText("A new version is ready to install.")
+        .setContentTitle(context.getString(R.string.update_available_title))
+        .setContentText(context.getString(R.string.update_available_subtitle))
         .setStyle(NotificationCompat.BigTextStyle().bigText(updateText))
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setContentIntent(pendingIntent)
