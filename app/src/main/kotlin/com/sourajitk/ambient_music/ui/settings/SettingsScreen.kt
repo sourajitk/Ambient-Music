@@ -48,7 +48,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.Character.toString
 
 private sealed class UpdateCheckState {
   object Idle : UpdateCheckState()
@@ -233,9 +232,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
       )
     }
   }

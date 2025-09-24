@@ -68,8 +68,7 @@ fun showUpdateNotification(context: Context, releaseInfo: GitHubRelease) {
 
   if (!wasInstalledFromPlayStore) {
     updateIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
-    updateText =
-        context.getString(R.string.update_notification_body_github, releaseInfo.tagName)
+    updateText = context.getString(R.string.update_notification_body_github, releaseInfo.tagName)
     val pendingIntent =
       PendingIntent.getActivity(
         context,

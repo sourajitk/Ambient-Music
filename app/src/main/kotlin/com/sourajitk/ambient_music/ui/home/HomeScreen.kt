@@ -78,8 +78,8 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
         Image(
           painter = painterResource(id = R.drawable.welcome_banner),
           contentDescription = "Welcome Banner",
-          modifier = bannerModifier,
-          contentScale = ContentScale.FillWidth,
+          modifier = Modifier.fillMaxWidth().height(150.dp),
+          contentScale = ContentScale.Fit,
         )
         Spacer(modifier = Modifier.height(32.dp))
       }
