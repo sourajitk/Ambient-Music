@@ -52,4 +52,15 @@
     <string name="update_notification_body_github">バージョン%1$sがGitHubで公開されています。タップしてGitHubのリリースページを開きます。</string>
     <string name="app_language_title">アプリの言語</string>
     <string name="app_language_body">このアプリの言語を変更する</string>
+    <string name="timer_string">スリープタイマー</string>
+    <string name="timer_tile_add_helper">スリープタイマーは、眠りにつくと自動的にアンビエントミュージックをオフにします。</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">残り%d分</item>
+        <item quantity="other">残り%d分</item>
+    </plurals>
+    <string name="sleep_timer_active">スリープタイマー作動中</string>
+    <string name="sleep_timer_tile_add_helper">ヒント：5分間隔で設定するには、目的の値に達するまでスリープタイマーのタイルを複数回押してください。\n 範囲は5分から20分です。 😴🕝\n\nさらに、スリープタイマーはどのアプリでも使用できます！</string>
+    <string name="timer_string_off">オフ</string>
+    <string name="tile_available">利用可能なタイル</string>
+    <string name="timer_stop">タイマーを停止</string>
 </resources>

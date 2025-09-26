@@ -52,4 +52,15 @@
     <string name="update_notification_body_github">Wersja %1$s jest już dostępna na GitHub. Dotknij, aby otworzyć stronę wydania na GitHub.</string>
     <string name="app_language_title">Język aplikacji</string>
     <string name="app_language_body">Zmień język dla tej aplikacji</string>
+    <string name="timer_string">Wyłącznik czasowy</string>
+    <string name="timer_tile_add_helper">Wyłącznik czasowy automatycznie wyłączy muzykę otoczenia, gdy zaśniesz.</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">Pozostała %d minuta</item>
+        <item quantity="other">Pozostało %d minut</item>
+    </plurals>
+    <string name="sleep_timer_active">Wyłącznik czasowy aktywny</string>
+    <string name="sleep_timer_tile_add_helper">Wskazówka: aby ustawić 5-minutowe interwały, naciskaj kafelek wyłącznika czasowego wielokrotnie, aż osiągniesz żądaną wartość.\n Zakres od 5 do 20 minut. 😴🕝\n\nDodatkowo, wyłącznik czasowy może być używany z dowolną aplikacją!</string>
+    <string name="timer_string_off">Wył</string>
+    <string name="tile_available">Dostępny kafelek</string>
+    <string name="timer_stop">Zatrzymaj timer</string>
 </resources>

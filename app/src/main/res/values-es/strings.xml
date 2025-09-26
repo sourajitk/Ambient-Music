@@ -52,4 +52,15 @@
     <string name="update_notification_body_github">La versión %1$s ya está disponible en GitHub. Toca para abrir la página de la versión en GitHub.</string>
     <string name="app_language_title">Idioma de la aplicación</string>
     <string name="app_language_body">Cambiar el idioma de esta aplicación</string>
+    <string name="timer_string">Temporizador de apagado</string>
+    <string name="timer_tile_add_helper">El temporizador de apagado apagará automáticamente la música ambiental cuando te duermas.</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">Queda %d minuto</item>
+        <item quantity="other">Quedan %d minutos</item>
+    </plurals>
+    <string name="sleep_timer_active">Temporizador activo</string>
+    <string name="sleep_timer_tile_add_helper">Sugerencia: para incrementos de 5 minutos, presiona el mosaico del temporizador varias veces hasta alcanzar el valor deseado.\n El rango es de 5 a 20 minutos. 😴🕝\n\n¡Además, el temporizador se puede usar con cualquier aplicación!</string>
+    <string name="timer_string_off">Apagado</string>
+    <string name="tile_available">Mosaico disponible</string>
+    <string name="timer_stop">Detener temporizador</string>
 </resources>

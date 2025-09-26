@@ -52,4 +52,15 @@
     <string name="update_notification_body_github">Version %1$s ist jetzt auf GitHub verfügbar. Tippen Sie, um die GitHub-Release-Seite zu öffnen.</string>
     <string name="app_language_title">App-Sprache</string>
     <string name="app_language_body">Die Sprache für diese App ändern</string>
+    <string name="timer_string">Sleep-Timer</string>
+    <string name="timer_tile_add_helper">Der Sleep-Timer schaltet die Ambient-Musik automatisch aus, wenn Sie einschlafen.</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">Noch %d Minute</item>
+        <item quantity="other">Noch %d Minuten</item>
+    </plurals>
+    <string name="sleep_timer_active">Sleep-Timer aktiv</string>
+    <string name="sleep_timer_tile_add_helper">Hinweis: Für 5-Minuten-Schritte drücken Sie mehrmals auf die Sleep-Timer-Kachel, bis Sie Ihren gewünschten Wert erreichen.\n Der Bereich reicht von 5 Minuten bis 20 Minuten. 😴🕝\n\nAußerdem kann der Sleep-Timer mit jeder App verwendet werden!</string>
+    <string name="timer_string_off">Aus</string>
+    <string name="tile_available">Verfügbare Kachel</string>
+    <string name="timer_stop">Timer stoppen</string>
 </resources>

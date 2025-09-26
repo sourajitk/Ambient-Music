@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2025 Sourajit Karmakar
 
-package com.sourajitk.ambient_music.ui.home
+package com.sourajitk.ambient_music.ui.timer
 
 import android.app.StatusBarManager
 import android.content.ComponentName
@@ -50,16 +50,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sourajitk.ambient_music.R
-import com.sourajitk.ambient_music.tiles.CalmQSTileService
-import com.sourajitk.ambient_music.tiles.ChillQSTileService
-import com.sourajitk.ambient_music.tiles.FocusQSTileService
-import com.sourajitk.ambient_music.tiles.SleepQSTileService
+import com.sourajitk.ambient_music.tiles.SleepTimerQSTileService
 import com.sourajitk.ambient_music.util.TileStateUtil
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(windowSizeClass: WindowSizeClass) {
+fun TimerScreen(windowSizeClass: WindowSizeClass) {
   val context = LocalContext.current
   val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
   val bannerModifier =
@@ -76,16 +75,17 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
     ) {
       item {
         Image(
-          painter = painterResource(id = R.drawable.welcome_banner),
+          painter = painterResource(id = R.drawable.sleep_timer),
           contentDescription = "Welcome Banner",
           modifier = Modifier.fillMaxWidth().height(150.dp),
           contentScale = ContentScale.Fit,
         )
         Spacer(modifier = Modifier.height(32.dp))
       }
+
       item {
         Text(
-          text = stringResource(R.string.minimal_activity_info),
+          text = stringResource(R.string.timer_tile_add_helper),
           style = MaterialTheme.typography.bodyLarge,
           textAlign = TextAlign.Center,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -96,51 +96,30 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
         Card(modifier = bannerModifier, shape = RoundedCornerShape(32.dp)) {
           Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 30.dp)) {
             Text(
-              text = stringResource(R.string.available_genres),
+              text = stringResource(R.string.tile_available),
               style = MaterialTheme.typography.titleLarge,
               modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(20.dp))
-            // Check the Android version before showing the Add tile rows
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_calm),
-                ComponentName(context, CalmQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_chill),
-                ComponentName(context, ChillQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_sleep),
-                ComponentName(context, SleepQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_focus),
-                ComponentName(context, FocusQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-            } else {
-              Text(
-                text = stringResource(R.string.incompatible_android_version),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-              )
-            }
+            AddTileRow(
+              context,
+              stringResource(R.string.timer_string),
+              ComponentName(context, SleepTimerQSTileService::class.java),
+              R.drawable.ic_timer_off,
+            )
           }
         }
         Spacer(modifier = Modifier.height(16.dp))
+      }
+      item {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+          text = stringResource(R.string.sleep_timer_tile_add_helper),
+          style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
+          textAlign = TextAlign.Center,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        )
       }
     }
   }

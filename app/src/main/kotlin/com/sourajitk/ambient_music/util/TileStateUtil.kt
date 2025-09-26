@@ -35,6 +35,7 @@ object TileStateUtil {
         ChillQSTileService::class.java,
         SleepQSTileService::class.java,
         FocusQSTileService::class.java,
+        SleepTimerService::class.java,
       )
 
     tileServices.forEach { serviceClass ->

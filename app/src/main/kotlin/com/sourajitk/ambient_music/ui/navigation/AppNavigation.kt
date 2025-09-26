@@ -3,6 +3,8 @@
 
 package com.sourajitk.ambient_music.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,12 +42,15 @@ import androidx.navigation.compose.rememberNavController
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.ui.home.HomeScreen
 import com.sourajitk.ambient_music.ui.settings.SettingsScreen
+import com.sourajitk.ambient_music.ui.timer.TimerScreen
 
 // Contains all of our routes
 sealed class Screen(val route: String, val label: Int, val icon: ImageVector) {
   object Home : Screen("home", R.string.home_string, Icons.Default.Home)
 
   object Settings : Screen("settings", R.string.settings_string, Icons.Default.Settings)
+
+  object Timer : Screen("timer", R.string.timer_string, Icons.Default.Timer)
 }
 
 // Composable to get the string label
@@ -53,11 +59,12 @@ fun Screen.label(): String {
   return stringResource(id = this.label)
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val navController = rememberNavController()
-  val navItems = listOf(Screen.Home, Screen.Settings)
+  val navItems = listOf(Screen.Home, Screen.Timer, Screen.Settings)
   // For the snackbar
   val snackbarHostState = remember { SnackbarHostState() }
 
@@ -69,6 +76,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
   val topBarTitle =
     when (currentRoute) {
       Screen.Settings.route -> stringResource(R.string.settings_string)
+      Screen.Timer.route -> stringResource(R.string.timer_string)
       else -> stringResource(R.string.app_name) // Default title for Home screen
     }
 
@@ -97,6 +105,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     ) { innerPadding ->
       NavHost(navController, startDestination = Screen.Home.route, Modifier.padding(innerPadding)) {
         composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
+        composable(Screen.Timer.route) { TimerScreen(windowSizeClass) }
         composable(Screen.Settings.route) { SettingsScreen(snackbarHostState = snackbarHostState) }
       }
     }

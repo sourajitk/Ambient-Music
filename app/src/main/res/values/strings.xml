@@ -61,4 +61,21 @@
     <string name="update_notification_body_github">Version %1$s is now available on GitHub. Tap to open the GitHub Release page.</string>
     <string name="app_language_title">App Language</string>
     <string name="app_language_body">Change the language for this app</string>
+    <string name="timer_string">Sleep Timer</string>
+    <string name="timer_tile_add_helper">Sleep Timer will turn off the ambient music automatically
+        when you fall asleep.</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">%d minute remaining</item>
+        <item quantity="other">%d minutes remaining</item>
+    </plurals>
+    <string name="sleep_timer_active">Sleep Timer Active</string>
+    <string name="sleep_timer_tile_add_helper">Hint: For 5 minute increments, press on the
+        sleep timer tile multiple times until you reach your desired value.\n Range is from 5
+        minutes to 20 minutes. 😴🕝\n
+        \n
+        Additionally, the sleep timer can be used with any app that plays back media!
+    </string>
+    <string name="timer_string_off">Off</string>
+    <string name="tile_available">Available Tile</string>
+    <string name="timer_stop">Stop Timer</string>
 </resources>
