@@ -79,6 +79,10 @@ android {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
+
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 spotless {
