@@ -50,4 +50,6 @@
     <string name="update_available_title">Dostępna aktualizacja</string>
     <string name="update_available_subtitle">Nowa wersja jest gotowa do instalacji.</string>
     <string name="update_notification_body_github">Wersja %1$s jest już dostępna na GitHub. Dotknij, aby otworzyć stronę wydania na GitHub.</string>
+    <string name="app_language_title">Język aplikacji</string>
+    <string name="app_language_body">Zmień język dla tej aplikacji</string>
 </resources>

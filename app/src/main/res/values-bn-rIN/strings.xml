@@ -50,4 +50,6 @@
     <string name="update_available_title">আপডেট উপলব্ধ</string>
     <string name="update_available_subtitle">একটি নতুন সংস্করণ ইনস্টল করার জন্য প্রস্তুত।</string>
     <string name="update_notification_body_github">সংস্করণ %1$s এখন GitHub-এ উপলব্ধ। GitHub রিলিজ পৃষ্ঠা খুলতে আলতো চাপুন।</string>
+    <string name="app_language_title">অ্যাপের ভাষা</string>
+    <string name="app_language_body">এই অ্যাপের জন্য ভাষা পরিবর্তন করুন</string>
 </resources>

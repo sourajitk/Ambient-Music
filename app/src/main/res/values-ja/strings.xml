@@ -50,4 +50,6 @@
     <string name="update_available_title">アップデートがあります</string>
     <string name="update_available_subtitle">新しいバージョンをインストールできます。</string>
     <string name="update_notification_body_github">バージョン%1$sがGitHubで公開されています。タップしてGitHubのリリースページを開きます。</string>
+    <string name="app_language_title">アプリの言語</string>
+    <string name="app_language_body">このアプリの言語を変更する</string>
 </resources>

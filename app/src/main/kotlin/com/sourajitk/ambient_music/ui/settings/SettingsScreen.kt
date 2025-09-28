@@ -5,8 +5,8 @@ package com.sourajitk.ambient_music.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
-import android.provider.Settings.Global.getString
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -88,6 +89,21 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
           context.startActivity(intent)
         },
       )
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      item {
+        PreferenceItem(
+          icon = Icons.Default.Translate,
+          title = stringResource(R.string.app_language_title),
+          summary = stringResource(R.string.app_language_body),
+          onClick = {
+            val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+            val uri = Uri.fromParts("package", context.packageName, null)
+            intent.data = uri
+            context.startActivity(intent)
+          },
+        )
+      }
     }
     // Refresh Song Library
     item {
