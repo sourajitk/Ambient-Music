@@ -55,7 +55,6 @@ import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.tiles.SleepTimerQSTileService
 import com.sourajitk.ambient_music.util.TileStateUtil
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TimerScreen(windowSizeClass: WindowSizeClass) {
@@ -101,12 +100,21 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
               modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(20.dp))
-            AddTileRow(
-              context,
-              stringResource(R.string.timer_string),
-              ComponentName(context, SleepTimerQSTileService::class.java),
-              R.drawable.ic_timer_off,
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              AddTileRow(
+                context,
+                stringResource(R.string.timer_string),
+                ComponentName(context, SleepTimerQSTileService::class.java),
+                R.drawable.ic_timer_off,
+              )
+            } else {
+              Text(
+                text = stringResource(R.string.incompatible_android_version),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 8.dp),
+              )
+            }
           }
         }
         Spacer(modifier = Modifier.height(16.dp))
