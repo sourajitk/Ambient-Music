@@ -22,6 +22,9 @@ class SongsRepoInitializer : Application() {
     checkForAppUpdates(this)
     scheduleUpdateChecks(this)
 
+    // Load the song links from the local cache instead of trying to access flushed cache.
+    SongsRepo.initializeFromCache(this)
+
     Log.d(TAG, "Initializing SongsRepo & Fetching JSON")
     SongsRepo.initializeAndRefresh(applicationContext) { success, statusMessage ->
       Log.d(TAG, "SongsRepo init finished. Success: $success, Status: $statusMessage")

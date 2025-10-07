@@ -155,4 +155,31 @@ object SongsRepo {
       }
     }
   }
+
+  // The idea is to not call on the initializer service once the server is is dead.
+  // Instead, we try to access the contents of the JSON directly from the local cache.
+  fun initializeFromCache(context: Context) {
+    Log.d(TAG, "Attempting to initialize songs from cache on startup.")
+    // Synchronously load data from the cache file
+    val cachedSongs = loadFromCache(context)
+    if (cachedSongs.isNotEmpty()) {
+      synchronized(this@SongsRepo) { internalLoadedSongs = cachedSongs }
+      Log.i(TAG, "Successfully pre-loaded ${cachedSongs.size} songs from cache.")
+    }
+  }
+
+  private fun loadFromCache(context: Context): List<SongAsset> {
+    try {
+      val file = File(context.filesDir, LOCAL_CACHE_FILE_NAME)
+      if (file.exists()) {
+        val jsonString = file.readText()
+        Log.d(TAG, "loadFromCache: Cache file found.")
+        return jsonParser.decodeFromString(jsonString)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "loadFromCache: Error reading or parsing cache file.", e)
+    }
+    Log.d(TAG, "loadFromCache: Cache was empty or failed to load.")
+    return emptyList()
+  }
 }
