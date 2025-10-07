@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -49,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sourajitk.ambient_music.R
@@ -66,6 +69,10 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
         } else {
             Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp))
         }
+    var showInfoDialog by remember { mutableStateOf(false) }
+    if (showInfoDialog) {
+        SleepTimerInfoDialog(onDismiss = { showInfoDialog = false })
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         LazyColumn(
@@ -120,17 +127,30 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.sleep_timer_tile_add_helper),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                )
+                TextButton(onClick = { showInfoDialog = true }) {
+                    Text(
+                        text = "Learn more about the Sleep Timer.",
+                        textDecoration = TextDecoration.Underline,
+                        fontSize = 12.5.sp,
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun SleepTimerInfoDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.about_sleep_timer)) },
+        text = { Text(stringResource(R.string.sleep_timer_tile_add_helper)) },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.sleep_time_info_close))
+            }
+        }
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)

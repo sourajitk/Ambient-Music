@@ -69,13 +69,19 @@
         <item quantity="other">%d minutes remaining</item>
     </plurals>
     <string name="sleep_timer_active">Sleep Timer Active</string>
-    <string name="sleep_timer_tile_add_helper">Hint: For 5 minute increments, press on the
-        sleep timer tile multiple times until you reach your desired value.\n Range is from 5
-        minutes to 20 minutes. 😴🕝\n
-        \n
-        Additionally, the sleep timer can be used with any app that plays back media!
+    <string name="sleep_timer_tile_add_helper">Once you’ve added the Sleep Timer tile,
+        you can set a timer in 5-minute increments. \n
+        \nSimply tap the tile repeatedly until you reach your desired duration — anywhere between 5
+        and 20 minutes. 😴🕝 \n
+        \nYou can also extend the timer directly from the notification by adding additional 5-minute
+        increments. \n
+        \nBonus Tip 😮: The sleep timer works with any app that plays media!
     </string>
     <string name="timer_string_off">Off</string>
     <string name="tile_available">Available Tile</string>
     <string name="timer_stop">Stop Timer</string>
+    <string name="home_screen_qs_tile_help">Hint: Is your QS Tile not working? 🤔 Try going to
+        Settings below and pressing on the "Refresh Song Library" button!</string>
+    <string name="about_sleep_timer">About Sleep Timer</string>
+    <string name="sleep_time_info_close">Thanks for the info!</string>
 </resources>

@@ -50,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
@@ -141,6 +142,15 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                Text(
+                    text = stringResource(R.string.home_screen_qs_tile_help),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                )
             }
         }
     }
