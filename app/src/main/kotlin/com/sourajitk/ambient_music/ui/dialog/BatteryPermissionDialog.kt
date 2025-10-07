@@ -26,40 +26,40 @@ import com.sourajitk.ambient_music.R
 
 @Composable
 fun BatteryPermissionDialog(onDismissRequest: () -> Unit) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    modifier = Modifier.widthIn(max = 420.dp),
-    icon = {
-      Icon(
-        Icons.Default.Warning,
-        contentDescription = "Warning",
-        tint = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.height(37.dp).width(27.dp),
-      )
-    },
-    title = {
-      Text(
-        text = stringResource(R.string.battery_optimization_dialog),
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-      )
-    },
-    text = { Text(stringResource(R.string.battery_message), textAlign = TextAlign.Center) },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-          context.startActivity(intent)
-          onDismissRequest()
-        }
-      ) {
-        Text(stringResource(R.string.settings_string))
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
-    },
-  )
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier.widthIn(max = 420.dp),
+        icon = {
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = "Warning",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.height(37.dp).width(27.dp),
+            )
+        },
+        title = {
+            Text(
+                text = stringResource(R.string.battery_optimization_dialog),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
+        },
+        text = { Text(stringResource(R.string.battery_message), textAlign = TextAlign.Center) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    context.startActivity(intent)
+                    onDismissRequest()
+                },
+            ) {
+                Text(stringResource(R.string.settings_string))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
+        },
+    )
 }

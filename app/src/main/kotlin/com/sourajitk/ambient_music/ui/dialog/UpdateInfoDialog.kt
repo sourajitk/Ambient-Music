@@ -31,65 +31,65 @@ import com.sourajitk.ambient_music.util.InstallSourceChecker
 
 @Composable
 fun UpdateInfoDialog(releaseInfo: GitHubRelease, onDismissRequest: () -> Unit) {
-  val context = LocalContext.current
-  val currentVersion = BuildConfig.VERSION_NAME
-  val playStoreUrlString = stringResource(id = R.string.google_play_url)
-  val wasInstalledFromPlayStore = InstallSourceChecker.isFromPlayStore(context)
+    val context = LocalContext.current
+    val currentVersion = BuildConfig.VERSION_NAME
+    val playStoreUrlString = stringResource(id = R.string.google_play_url)
+    val wasInstalledFromPlayStore = InstallSourceChecker.isFromPlayStore(context)
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    modifier = Modifier.widthIn(max = 300.dp),
-    icon = {
-      Icon(
-        Icons.Default.Info,
-        contentDescription = "Update Info",
-        tint = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.height(37.dp).width(27.dp),
-      )
-    },
-    title = {
-      Text(
-        text = stringResource(R.string.update_available),
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-      )
-    },
-    text = {
-      Text(
-        text = stringResource(R.string.update_available_text, releaseInfo.tagName, currentVersion),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth(),
-      )
-    },
-    confirmButton = {
-      Row(
-        modifier = Modifier.fillMaxWidth().height(35.dp),
-        horizontalArrangement = Arrangement.Absolute.Right,
-      ) {
-        TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
-        if (wasInstalledFromPlayStore) {
-          TextButton(
-            onClick = {
-              val browserIntent = Intent(Intent.ACTION_VIEW, playStoreUrlString.toUri())
-              context.startActivity(browserIntent)
-              onDismissRequest()
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        modifier = Modifier.widthIn(max = 300.dp),
+        icon = {
+            Icon(
+                Icons.Default.Info,
+                contentDescription = "Update Info",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.height(37.dp).width(27.dp),
+            )
+        },
+        title = {
+            Text(
+                text = stringResource(R.string.update_available),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.update_available_text, releaseInfo.tagName, currentVersion),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth().height(35.dp),
+                horizontalArrangement = Arrangement.Absolute.Right,
+            ) {
+                TextButton(onClick = onDismissRequest) { Text(stringResource(R.string.later_string)) }
+                if (wasInstalledFromPlayStore) {
+                    TextButton(
+                        onClick = {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, playStoreUrlString.toUri())
+                            context.startActivity(browserIntent)
+                            onDismissRequest()
+                        },
+                    ) {
+                        Text(stringResource(R.string.play_store_button))
+                    }
+                } else {
+                    TextButton(
+                        onClick = {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
+                            context.startActivity(browserIntent)
+                            onDismissRequest()
+                        },
+                    ) {
+                        Text(stringResource(R.string.github_button))
+                    }
+                }
             }
-          ) {
-            Text(stringResource(R.string.play_store_button))
-          }
-        } else {
-          TextButton(
-            onClick = {
-              val browserIntent = Intent(Intent.ACTION_VIEW, releaseInfo.htmlUrl.toUri())
-              context.startActivity(browserIntent)
-              onDismissRequest()
-            }
-          ) {
-            Text(stringResource(R.string.github_button))
-          }
-        }
-      }
-    },
-    dismissButton = {},
-  )
+        },
+        dismissButton = {},
+    )
 }

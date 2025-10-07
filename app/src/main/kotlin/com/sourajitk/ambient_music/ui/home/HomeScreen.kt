@@ -60,150 +60,150 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(windowSizeClass: WindowSizeClass) {
-  val context = LocalContext.current
-  val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
-  val bannerModifier =
-    if (isExpandedScreen) {
-      Modifier.fillMaxWidth(0.6f).clip(RoundedCornerShape(24.dp))
-    } else {
-      Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp))
-    }
-
-  Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-    LazyColumn(
-      modifier = Modifier.fillMaxSize().padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      item {
-        Image(
-          painter = painterResource(id = R.drawable.welcome_banner),
-          contentDescription = "Welcome Banner",
-          modifier = Modifier.fillMaxWidth().height(150.dp),
-          contentScale = ContentScale.Fit,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-      }
-      item {
-        Text(
-          text = stringResource(R.string.minimal_activity_info),
-          style = MaterialTheme.typography.bodyLarge,
-          textAlign = TextAlign.Center,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(25.dp))
-      }
-      item {
-        Card(modifier = bannerModifier, shape = RoundedCornerShape(32.dp)) {
-          Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 30.dp)) {
-            Text(
-              text = stringResource(R.string.available_genres),
-              style = MaterialTheme.typography.titleLarge,
-              modifier = Modifier.align(Alignment.CenterHorizontally),
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            // Check the Android version before showing the Add tile rows
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_calm),
-                ComponentName(context, CalmQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_chill),
-                ComponentName(context, ChillQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_sleep),
-                ComponentName(context, SleepQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-              Spacer(modifier = Modifier.height(12.dp))
-              AddTileRow(
-                context,
-                stringResource(R.string.tile_label_focus),
-                ComponentName(context, FocusQSTileService::class.java),
-                R.drawable.playlist_music,
-              )
-            } else {
-              Text(
-                text = stringResource(R.string.incompatible_android_version),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp),
-              )
-            }
-          }
+    val context = LocalContext.current
+    val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
+    val bannerModifier =
+        if (isExpandedScreen) {
+            Modifier.fillMaxWidth(0.6f).clip(RoundedCornerShape(24.dp))
+        } else {
+            Modifier.fillMaxWidth().padding(horizontal = 8.dp).clip(RoundedCornerShape(24.dp))
         }
-        Spacer(modifier = Modifier.height(16.dp))
-      }
+
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.welcome_banner),
+                    contentDescription = "Welcome Banner",
+                    modifier = Modifier.fillMaxWidth().height(150.dp),
+                    contentScale = ContentScale.Fit,
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+            item {
+                Text(
+                    text = stringResource(R.string.minimal_activity_info),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+            }
+            item {
+                Card(modifier = bannerModifier, shape = RoundedCornerShape(32.dp)) {
+                    Column(modifier = Modifier.padding(vertical = 24.dp, horizontal = 30.dp)) {
+                        Text(
+                            text = stringResource(R.string.available_genres),
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        // Check the Android version before showing the Add tile rows
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            AddTileRow(
+                                context,
+                                stringResource(R.string.tile_label_calm),
+                                ComponentName(context, CalmQSTileService::class.java),
+                                R.drawable.playlist_music,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            AddTileRow(
+                                context,
+                                stringResource(R.string.tile_label_chill),
+                                ComponentName(context, ChillQSTileService::class.java),
+                                R.drawable.playlist_music,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            AddTileRow(
+                                context,
+                                stringResource(R.string.tile_label_sleep),
+                                ComponentName(context, SleepQSTileService::class.java),
+                                R.drawable.playlist_music,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            AddTileRow(
+                                context,
+                                stringResource(R.string.tile_label_focus),
+                                ComponentName(context, FocusQSTileService::class.java),
+                                R.drawable.playlist_music,
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.incompatible_android_version),
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
     }
-  }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 private fun AddTileRow(
-  context: Context,
-  tileName: String,
-  tileComponent: ComponentName,
-  tileIconRes: Int,
+    context: Context,
+    tileName: String,
+    tileComponent: ComponentName,
+    tileIconRes: Int,
 ) {
-  var isTileAdded by remember {
-    mutableStateOf(TileStateUtil.isTileAdded(context, tileComponent.className))
-  }
-
-  Row(
-    modifier = Modifier.fillMaxWidth(),
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.SpaceBetween,
-  ) {
-    Text(text = tileName, style = MaterialTheme.typography.bodyLarge)
-    OutlinedButton(
-      modifier = Modifier.width(70.dp),
-      enabled = !isTileAdded,
-      onClick = {
-        // The API call itself is now safe because the button to trigger it
-        // will only be shown on API 33+
-        val statusBarManager =
-          context.getSystemService(StatusBarManager::class.java) as StatusBarManager
-        statusBarManager.requestAddTileService(
-          tileComponent,
-          tileName,
-          Icon.createWithResource(context, tileIconRes),
-          context.mainExecutor,
-        ) { result ->
-          val message: String
-          if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED) {
-            message = "'$tileName' tile added!"
-            isTileAdded = true
-          } else {
-            message = "Could not add '$tileName' tile."
-          }
-          Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
-      },
-    ) {
-      if (isTileAdded) {
-        Icon(
-          imageVector = Icons.Filled.CheckCircle,
-          contentDescription = "$tileName is added",
-          modifier = Modifier.size(22.dp),
-        )
-        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-      } else {
-        Icon(
-          imageVector = Icons.Filled.AddCircle,
-          contentDescription = "Add $tileName tile",
-          modifier = Modifier.size(22.dp),
-        )
-        Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
-      }
+    var isTileAdded by remember {
+        mutableStateOf(TileStateUtil.isTileAdded(context, tileComponent.className))
     }
-  }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(text = tileName, style = MaterialTheme.typography.bodyLarge)
+        OutlinedButton(
+            modifier = Modifier.width(70.dp),
+            enabled = !isTileAdded,
+            onClick = {
+                // The API call itself is now safe because the button to trigger it
+                // will only be shown on API 33+
+                val statusBarManager =
+                    context.getSystemService(StatusBarManager::class.java) as StatusBarManager
+                statusBarManager.requestAddTileService(
+                    tileComponent,
+                    tileName,
+                    Icon.createWithResource(context, tileIconRes),
+                    context.mainExecutor,
+                ) { result ->
+                    val message: String
+                    if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED) {
+                        message = "'$tileName' tile added!"
+                        isTileAdded = true
+                    } else {
+                        message = "Could not add '$tileName' tile."
+                    }
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            },
+        ) {
+            if (isTileAdded) {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "$tileName is added",
+                    modifier = Modifier.size(22.dp),
+                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.AddCircle,
+                    contentDescription = "Add $tileName tile",
+                    modifier = Modifier.size(22.dp),
+                )
+                Spacer(modifier = Modifier.width(ButtonDefaults.IconSpacing))
+            }
+        }
+    }
 }

@@ -17,20 +17,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 // A reusable composable for a single setting item.
 @Composable
 fun PreferenceItem(
-  icon: ImageVector,
-  title: String,
-  summary: String? = null,
-  trailingContent: @Composable (() -> Unit)? = null,
-  onClick: () -> Unit,
+    icon: ImageVector,
+    title: String,
+    summary: String? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
 ) {
-  ListItem(
-    modifier = Modifier.clickable(onClick = onClick),
-    headlineContent = { Text(title) },
-    supportingContent = { if (summary != null) Text(summary) },
-    leadingContent = {
-      Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
-    },
-    trailingContent = trailingContent,
-    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-  )
+    ListItem(
+        modifier = Modifier.clickable(onClick = onClick),
+        headlineContent = { Text(title) },
+        supportingContent = { if (summary != null) Text(summary) },
+        leadingContent = {
+            Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.primary)
+        },
+        trailingContent = trailingContent,
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
 }

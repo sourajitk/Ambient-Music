@@ -15,90 +15,90 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 
 class SleepQSTileService : TileService() {
 
-  companion object {
-    private const val TAG = "SleepTileService"
-  }
-
-  private val myGenre = "sleep"
-
-  override fun onTileAdded() {
-    super.onTileAdded()
-    TileStateUtil.setTileAdded(applicationContext, this::class.java.name, true)
-    updateTileVisualsBasedOnServiceState()
-  }
-
-  override fun onStartListening() {
-    super.onStartListening()
-    Log.d(TAG, "Sleep Tile: Start")
-    updateTileVisualsBasedOnServiceState()
-  }
-
-  override fun onStopListening() {
-    super.onStopListening()
-    Log.d(TAG, "Sleep Tile: Stop")
-  }
-
-  override fun onClick() {
-    super.onClick()
-    if (SongsRepo.songs.isEmpty()) {
-      Log.w(TAG, "No songs in parsed JSON")
-      updateTileVisualsBasedOnServiceState(forceUnavailable = false)
-      return
+    companion object {
+        private const val TAG = "SleepTileService"
     }
-    val isPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
-    val activeGenre = MusicPlaybackService.currentPlaylistGenre
-    val isMyGenreActiveNow = isPlaying && myGenre.equals(activeGenre, ignoreCase = true)
 
-    if (isMyGenreActiveNow) {
-      applyVisuals(isMyGenreActive = false, forceUnavailable = false)
-      val intent =
-        Intent(this, MusicPlaybackService::class.java).apply {
-          action = MusicPlaybackService.ACTION_TOGGLE_PLAYBACK_QS
+    private val myGenre = "sleep"
+
+    override fun onTileAdded() {
+        super.onTileAdded()
+        TileStateUtil.setTileAdded(applicationContext, this::class.java.name, true)
+        updateTileVisualsBasedOnServiceState()
+    }
+
+    override fun onStartListening() {
+        super.onStartListening()
+        Log.d(TAG, "Sleep Tile: Start")
+        updateTileVisualsBasedOnServiceState()
+    }
+
+    override fun onStopListening() {
+        super.onStopListening()
+        Log.d(TAG, "Sleep Tile: Stop")
+    }
+
+    override fun onClick() {
+        super.onClick()
+        if (SongsRepo.songs.isEmpty()) {
+            Log.w(TAG, "No songs in parsed JSON")
+            updateTileVisualsBasedOnServiceState(forceUnavailable = false)
+            return
         }
-      startForegroundService(intent)
-    } else {
-      applyVisuals(isMyGenreActive = true, forceUnavailable = false)
-      val intent =
-        Intent(this, MusicPlaybackService::class.java).apply {
-          action = MusicPlaybackService.ACTION_PLAY_GENRE_SLEEP
+        val isPlaying = MusicPlaybackService.isServiceCurrentlyPlaying
+        val activeGenre = MusicPlaybackService.currentPlaylistGenre
+        val isMyGenreActiveNow = isPlaying && myGenre.equals(activeGenre, ignoreCase = true)
+
+        if (isMyGenreActiveNow) {
+            applyVisuals(isMyGenreActive = false, forceUnavailable = false)
+            val intent =
+                Intent(this, MusicPlaybackService::class.java).apply {
+                    action = MusicPlaybackService.ACTION_TOGGLE_PLAYBACK_QS
+                }
+            startForegroundService(intent)
+        } else {
+            applyVisuals(isMyGenreActive = true, forceUnavailable = false)
+            val intent =
+                Intent(this, MusicPlaybackService::class.java).apply {
+                    action = MusicPlaybackService.ACTION_PLAY_GENRE_SLEEP
+                }
+            startForegroundService(intent)
         }
-      startForegroundService(intent)
     }
-  }
 
-  /** Fetches state from MusicPlaybackService and updates tile visuals. */
-  private fun updateTileVisualsBasedOnServiceState(forceUnavailable: Boolean = false) {
-    val isPlaying = MusicPlaybackService.Companion.isServiceCurrentlyPlaying
-    val activeGenre = MusicPlaybackService.Companion.currentPlaylistGenre
-    val isMyGenreActive = isPlaying && myGenre.equals(activeGenre, ignoreCase = true)
-    applyVisuals(isMyGenreActive, forceUnavailable)
-  }
-
-  /** Applies the visual changes to the tile based on the given playback state of THIS genre. */
-  private fun applyVisuals(isMyGenreActive: Boolean, forceUnavailable: Boolean) {
-    val tile = qsTile ?: return
-    tile.label = getString(R.string.tile_label_sleep)
-    if (forceUnavailable) {
-      tile.subtitle = getString(R.string.qs_subtitle_no_songs)
-      tile.state = Tile.STATE_UNAVAILABLE
-      tile.icon = Icon.createWithResource(this, R.drawable.ic_music_unavailable)
-    } else {
-      if (isMyGenreActive) {
-        tile.subtitle = getString(R.string.qs_subtitle_playing)
-        tile.state = Tile.STATE_ACTIVE
-        tile.icon = Icon.createWithResource(this, R.drawable.ic_sleep)
-      } else {
-        tile.subtitle = getString(R.string.qs_subtitle_paused)
-        tile.state = Tile.STATE_INACTIVE
-        tile.icon = Icon.createWithResource(this, R.drawable.ic_sleep)
-      }
+    /** Fetches state from MusicPlaybackService and updates tile visuals. */
+    private fun updateTileVisualsBasedOnServiceState(forceUnavailable: Boolean = false) {
+        val isPlaying = MusicPlaybackService.Companion.isServiceCurrentlyPlaying
+        val activeGenre = MusicPlaybackService.Companion.currentPlaylistGenre
+        val isMyGenreActive = isPlaying && myGenre.equals(activeGenre, ignoreCase = true)
+        applyVisuals(isMyGenreActive, forceUnavailable)
     }
-    tile.updateTile()
-  }
 
-  override fun onTileRemoved() {
-    super.onTileRemoved()
-    TileStateUtil.setTileAdded(applicationContext, this::class.java.name, false)
-    Log.d(TAG, "onTileRemoved")
-  }
+    /** Applies the visual changes to the tile based on the given playback state of THIS genre. */
+    private fun applyVisuals(isMyGenreActive: Boolean, forceUnavailable: Boolean) {
+        val tile = qsTile ?: return
+        tile.label = getString(R.string.tile_label_sleep)
+        if (forceUnavailable) {
+            tile.subtitle = getString(R.string.qs_subtitle_no_songs)
+            tile.state = Tile.STATE_UNAVAILABLE
+            tile.icon = Icon.createWithResource(this, R.drawable.ic_music_unavailable)
+        } else {
+            if (isMyGenreActive) {
+                tile.subtitle = getString(R.string.qs_subtitle_playing)
+                tile.state = Tile.STATE_ACTIVE
+                tile.icon = Icon.createWithResource(this, R.drawable.ic_sleep)
+            } else {
+                tile.subtitle = getString(R.string.qs_subtitle_paused)
+                tile.state = Tile.STATE_INACTIVE
+                tile.icon = Icon.createWithResource(this, R.drawable.ic_sleep)
+            }
+        }
+        tile.updateTile()
+    }
+
+    override fun onTileRemoved() {
+        super.onTileRemoved()
+        TileStateUtil.setTileAdded(applicationContext, this::class.java.name, false)
+        Log.d(TAG, "onTileRemoved")
+    }
 }

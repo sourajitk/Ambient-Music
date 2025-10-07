@@ -13,22 +13,22 @@ import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
 object UpdateScheduler {
-  private const val TAG = "UpdateScheduler"
+    private const val TAG = "UpdateScheduler"
 
-  fun scheduleUpdateChecks(context: Context) {
-    val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+    fun scheduleUpdateChecks(context: Context) {
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
-    val updateRequest =
-      PeriodicWorkRequestBuilder<UpdateWorker>(36, TimeUnit.HOURS)
-        .setConstraints(constraints)
-        .build()
+        val updateRequest =
+            PeriodicWorkRequestBuilder<UpdateWorker>(36, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build()
 
-    WorkManager.getInstance(context)
-      .enqueueUniquePeriodicWork(
-        "ambient_update_worker",
-        ExistingPeriodicWorkPolicy.KEEP,
-        updateRequest,
-      )
-    Log.d(TAG, "Periodic updates scheduled.")
-  }
+        WorkManager.getInstance(context)
+            .enqueueUniquePeriodicWork(
+                "ambient_update_worker",
+                ExistingPeriodicWorkPolicy.KEEP,
+                updateRequest,
+            )
+        Log.d(TAG, "Periodic updates scheduled.")
+    }
 }
