@@ -8,6 +8,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.os.CountDownTimer
@@ -25,9 +26,13 @@ class SleepTimerService : Service() {
     private var countDownTimer: CountDownTimer? = null
     private lateinit var audioManager: AudioManager
 
+    private var remainingMillis: Long = 0L
+
     companion object {
         const val ACTION_START = "com.sourajitk.ambient_music.timerservice.ACTION_START"
         const val ACTION_STOP = "com.sourajitk.ambient_music.timerservice.ACTION_STOP"
+        const val ACTION_INCREMENT_TIMER = "com.sourajitk.ambient_music.timerservice.ACTION_INCREMENT_TIMER"
+        const val CUSTOM_TIMER_VALUE = -2
         const val EXTRA_DURATION_MS = "duration_ms"
         private const val NOTIFICATION_ID = 2
         private const val CHANNEL_ID = "SleepTimerChannel"
@@ -49,12 +54,23 @@ class SleepTimerService : Service() {
             ACTION_START -> {
                 val duration = intent.getLongExtra(EXTRA_DURATION_MS, 0L)
                 if (duration > 0) {
-                    currentTimerMinutes = TimeUnit.MILLISECONDS.toMinutes(duration).toInt()
+                    currentTimerMinutes = if (duration == 5000L) {
+                        -1
+                    } else {
+                        TimeUnit.MILLISECONDS.toMinutes(duration).toInt()
+                    }
                     startTimer(duration)
                 }
             }
             ACTION_STOP -> {
                 stopTimerAndService()
+            }
+            ACTION_INCREMENT_TIMER -> {
+                if (countDownTimer != null) {
+                    val newDuration = remainingMillis + TimeUnit.MINUTES.toMillis(5)
+                    currentTimerMinutes = CUSTOM_TIMER_VALUE
+                    startTimer(newDuration)
+                }
             }
         }
         return START_NOT_STICKY
@@ -62,11 +78,13 @@ class SleepTimerService : Service() {
 
     private fun startTimer(durationInMillis: Long) {
         countDownTimer?.cancel()
+        remainingMillis = durationInMillis
         startForeground(NOTIFICATION_ID, createNotification(getString(R.string.sleep_timer_active)))
 
         countDownTimer =
-            object : CountDownTimer(durationInMillis, 1000) {
+            object : CountDownTimer(remainingMillis, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
+                    remainingMillis = millisUntilFinished
                     val minutesLeft = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) + 1
                     val minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
                     val seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60
@@ -92,6 +110,7 @@ class SleepTimerService : Service() {
     private fun stopTimerAndService() {
         countDownTimer?.cancel()
         currentTimerMinutes = 0
+        remainingMillis = 0L
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         requestTileUpdate(this)
@@ -120,19 +139,29 @@ class SleepTimerService : Service() {
                 stopIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
+        
+        val add5MinIntent = Intent(this, SleepTimerService::class.java).apply { action = ACTION_INCREMENT_TIMER }
+        val add5MinPendingIntent =
+            PendingIntent.getService(
+                this,
+                1,
+                add5MinIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.sleep_timer_active))
             .setContentText(text)
             .setSmallIcon(R.drawable.ic_timer_on)
             .setContentIntent(pendingIntent)
+            .addAction(R.drawable.ic_timer_on, getString(R.string.sleep_timer_add_5_mins), add5MinPendingIntent)
             .addAction(R.drawable.ic_timer_off, getString(R.string.timer_stop), stopPendingIntent)
             .build()
     }
 
     private fun updateNotification(text: String) {
         val notification = createNotification(text)
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 

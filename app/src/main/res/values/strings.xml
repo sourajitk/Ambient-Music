@@ -36,7 +36,7 @@
     <string name="available_genres">Available Genre Tiles</string>
     <string name="home_string">Home</string>
     <string name="add_label">Add</string>
-    <string name="hint_text">Hint: Tapping on some settings, open some links 😉</string>
+    <string name="hint_text">Like this app? Please leave a review on Play Store!</string>
     <string name="version_helper">Version</string>
     <string name="check_for_updates">Checking for updates…</string>
     <string name="latest_version_helper">You have the latest version!</string>
@@ -62,8 +62,10 @@
     <string name="app_language_title">App Language</string>
     <string name="app_language_body">Change the language for this app</string>
     <string name="timer_string">Sleep Timer</string>
+    <string name="sleep_timer_add_5_mins">Add 5 minutes</string>
     <string name="timer_tile_add_helper">Sleep Timer will turn off the ambient music automatically
         when you fall asleep.</string>
+    <string name="custom_timer">Custom</string>
     <plurals name="timer_notification_subtitle">
         <item quantity="one">%d minute remaining</item>
         <item quantity="other">%d minutes remaining</item>
@@ -72,10 +74,10 @@
     <string name="sleep_timer_tile_add_helper">Once you’ve added the Sleep Timer tile,
         you can set a timer in 5-minute increments. \n
         \nSimply tap the tile repeatedly until you reach your desired duration — anywhere between 5
-        and 20 minutes. 😴🕝 \n
+        and 20 minutes. \n
         \nYou can also extend the timer directly from the notification by adding additional 5-minute
         increments. \n
-        \nBonus Tip 😮: The sleep timer works with any app that plays media!
+        \nBonus Tip: The sleep timer works with any app that plays media!
     </string>
     <string name="timer_string_off">Off</string>
     <string name="tile_available">Available Tile</string>

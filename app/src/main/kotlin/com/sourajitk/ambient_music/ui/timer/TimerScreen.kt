@@ -149,7 +149,7 @@ private fun SleepTimerInfoDialog(onDismiss: () -> Unit) {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.sleep_time_info_close))
             }
-        }
+        },
     )
 }
 

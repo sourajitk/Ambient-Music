@@ -60,16 +60,25 @@ class SleepTimerQSTileService : TileService() {
     private fun updateTile(currentValue: Int = SleepTimerService.currentTimerMinutes) {
         val tile = qsTile ?: return
 
-        if (currentValue > 0) {
-            tile.state = Tile.STATE_ACTIVE
-            tile.label = getString(R.string.timer_string)
-            tile.subtitle = "$currentValue min"
-            tile.icon = Icon.createWithResource(this, R.drawable.ic_timer_on)
-        } else {
-            tile.state = Tile.STATE_INACTIVE
-            tile.label = getString(R.string.timer_string)
-            tile.subtitle = getString(R.string.timer_string_off)
-            tile.icon = Icon.createWithResource(this, R.drawable.ic_timer_off)
+        when {
+            currentValue == SleepTimerService.CUSTOM_TIMER_VALUE -> {
+                tile.state = Tile.STATE_ACTIVE
+                tile.label = getString(R.string.timer_string)
+                tile.subtitle = getString(R.string.custom_timer)
+                tile.icon = Icon.createWithResource(this, R.drawable.ic_timer_on)
+            }
+            currentValue > 0 -> {
+                tile.state = Tile.STATE_ACTIVE
+                tile.label = getString(R.string.timer_string)
+                tile.subtitle = "$currentValue min"
+                tile.icon = Icon.createWithResource(this, R.drawable.ic_timer_on)
+            }
+            else -> {
+                tile.state = Tile.STATE_INACTIVE
+                tile.label = getString(R.string.timer_string)
+                tile.subtitle = getString(R.string.timer_string_off)
+                tile.icon = Icon.createWithResource(this, R.drawable.ic_timer_off)
+            }
         }
 
         tile.updateTile()
