@@ -85,5 +85,21 @@
     <string name="home_screen_qs_tile_help">Hint: Is your QS Tile not working? 🤔 Try going to
         Settings below and pressing on the "Refresh Song Library" button!</string>
     <string name="about_sleep_timer">About Sleep Timer</string>
-    <string name="sleep_time_info_close">Thanks for the info!</string>
+    <string name="sleep_timer_info_close">Thanks for the info!</string>
+    <string name="sleep_timer_learn_more">Learn more about the Sleep Timer.</string>
+    <string name="faq_title">Frequently Asked Questions</string>
+    <string name="faq_body">This app, like many others, may have quirks not caused by poor design or bugs.
+        Before leaving a bad review, try these quick fixes:
+
+        \n\nQ: The Ambient Music tile only worked once! It does not work again.
+        \nA: The tile needs a background service that may get killed by aggressive memory managers
+        in some Android distros (e.g., HyperOS, ColorOS, OxygenOS). To fix this, just reopen the
+        app and it should setup the tiles. A mitigation was also recently implemented to fix
+        this behavior.
+
+        \n\nQ: I opened the app but the tiles still don\'t work! I even cleared data!
+        \nA: Sometimes the APIs or servers fail temporarily. Tap "Refresh Song Library" in Settings to resync
+        and restart the playback service.\n
+    </string>
+    <string name="faq_learn_more">Having issues? Check out the frequently asked questions!</string>
 </resources>

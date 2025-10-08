@@ -129,7 +129,7 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
             item {
                 TextButton(onClick = { showInfoDialog = true }) {
                     Text(
-                        text = "Learn more about the Sleep Timer.",
+                        text = stringResource(R.string.sleep_timer_learn_more),
                         textDecoration = TextDecoration.Underline,
                         fontSize = 12.5.sp,
                     )
@@ -147,7 +147,7 @@ private fun SleepTimerInfoDialog(onDismiss: () -> Unit) {
         text = { Text(stringResource(R.string.sleep_timer_tile_add_helper)) },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.sleep_time_info_close))
+                Text(stringResource(R.string.sleep_timer_info_close))
             }
         },
     )

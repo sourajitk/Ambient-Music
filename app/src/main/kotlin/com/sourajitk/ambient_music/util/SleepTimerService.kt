@@ -139,7 +139,7 @@ class SleepTimerService : Service() {
                 stopIntent,
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             )
-        
+
         val add5MinIntent = Intent(this, SleepTimerService::class.java).apply { action = ACTION_INCREMENT_TIMER }
         val add5MinPendingIntent =
             PendingIntent.getService(

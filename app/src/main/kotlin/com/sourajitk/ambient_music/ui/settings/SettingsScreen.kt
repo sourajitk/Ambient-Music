@@ -245,7 +245,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
         }
         // Hint Section
         item {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = stringResource(R.string.hint_text),
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
