@@ -82,10 +82,8 @@
     <string name="timer_string_off">Off</string>
     <string name="tile_available">Available Tile</string>
     <string name="timer_stop">Stop Timer</string>
-    <string name="home_screen_qs_tile_help">Hint: Is your QS Tile not working? 🤔 Try going to
-        Settings below and pressing on the "Refresh Song Library" button!</string>
     <string name="about_sleep_timer">About Sleep Timer</string>
-    <string name="sleep_timer_info_close">Thanks for the info!</string>
+    <string name="sleep_timer_info_close">Thanks for the info</string>
     <string name="sleep_timer_learn_more">Learn more about the Sleep Timer.</string>
     <string name="faq_title">Frequently Asked Questions</string>
     <string name="faq_body">This app, like many others, may have quirks not caused by poor design or bugs.
@@ -98,8 +96,8 @@
         this behavior.
 
         \n\nQ: I opened the app but the tiles still don\'t work! I even cleared data!
-        \nA: Sometimes the APIs or servers fail temporarily. Tap "Refresh Song Library" in Settings to resync
-        and restart the playback service.\n
+        \nA: Sometimes the APIs or servers fail temporarily. Tap "Refresh Song Library" in Settings
+        to resync and restart the playback service.
     </string>
     <string name="faq_learn_more">Having issues? Check out the frequently asked questions!</string>
 </resources>
