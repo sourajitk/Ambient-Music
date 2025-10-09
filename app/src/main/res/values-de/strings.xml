@@ -17,8 +17,10 @@
     <string name="tile_label_sleep">Ambient Schlaf</string>
     <string name="tile_label_focus">Ambient Konzentration</string>
     <string name="update_available_text">Ein neues Update für %1$s ist verfügbar!\nSie verwenden v%2$s.</string>
-    <string name="incompatible_android_version">Hinweis: Da Sie eine Android-Version vor 13 verwenden, öffnen Sie bitte das Bearbeitungsmenü der Schnelleinstellungen und fügen Sie die Kachel von dort aus manuell hinzu.</string>
-    <string name="battery_message">Da Sie Android 14 verwenden, kann die Wiedergabe im Hintergrund durch die Akku-Optimierung unterbrochen werden. Um dies zu vermeiden, deaktivieren Sie bitte die Akku-Optimierung für die App.</string>
+    <string name="incompatible_android_version">Hinweis: Da Sie eine Android-Version vor 13 verwenden, öffnen Sie bitte das Bearbeitungsmenü der
+        Schnelleinstellungen und fügen Sie die Kachel von dort aus manuell hinzu.</string>
+    <string name="battery_message">Da Sie Android 14 verwenden, kann die Wiedergabe im Hintergrund durch die Akku-Optimierung unterbrochen werden.
+        Um dies zu vermeiden, deaktivieren Sie bitte die Akku-Optimierung für die App.</string>
     <string name="battery_optimization_dialog">Akkuoptimierung</string>
     <string name="settings_string">Einstellungen</string>
     <string name="later_string">Später</string>
@@ -28,7 +30,7 @@
     <string name="available_genres">Verfügbare Genre-Kacheln</string>
     <string name="home_string">Start</string>
     <string name="add_label">Hinzufügen</string>
-    <string name="hint_text">Hinweis: Durch Tippen auf einige Einstellungen werden Links geöffnet 😉</string>
+    <string name="hint_text">Gefällt Ihnen diese App? Hinterlassen Sie bitte eine Bewertung im Play Store!</string>
     <string name="version_helper">Version</string>
     <string name="check_for_updates">Suche nach Updates...</string>
     <string name="latest_version_helper">Sie haben die neueste Version!</string>
@@ -52,15 +54,40 @@
     <string name="update_notification_body_github">Version %1$s ist jetzt auf GitHub verfügbar. Tippen Sie, um die GitHub-Release-Seite zu öffnen.</string>
     <string name="app_language_title">App-Sprache</string>
     <string name="app_language_body">Die Sprache für diese App ändern</string>
-    <string name="timer_string">Sleep-Timer</string>
-    <string name="timer_tile_add_helper">Der Sleep-Timer schaltet die Ambient-Musik automatisch aus, wenn Sie einschlafen.</string>
+    <string name="timer_string">Einschlaftimer</string>
+    <string name="sleep_timer_add_5_mins">5 Minuten hinzufügen</string>
+    <string name="timer_tile_add_helper">Der Einschlaftimer schaltet die Ambient-Musik automatisch aus, wenn Sie einschlafen.</string>
+    <string name="custom_timer">Benutzerdefiniert</string>
     <plurals name="timer_notification_subtitle">
         <item quantity="one">Noch %d Minute</item>
         <item quantity="other">Noch %d Minuten</item>
     </plurals>
-    <string name="sleep_timer_active">Sleep-Timer aktiv</string>
-    <string name="sleep_timer_tile_add_helper">Hinweis: Für 5-Minuten-Schritte drücken Sie mehrmals auf die Sleep-Timer-Kachel, bis Sie Ihren gewünschten Wert erreichen.\n Der Bereich reicht von 5 Minuten bis 20 Minuten. 😴🕝\n\nAußerdem kann der Sleep-Timer mit jeder App verwendet werden!</string>
+    <string name="sleep_timer_active">Einschlaftimer aktiv</string>
+    <string name="sleep_timer_tile_add_helper">Sobald Sie die Einschlaftimer-Kachel hinzugefügt haben,
+        können Sie einen Timer in 5-Minuten-Schritten einstellen. \n
+        \nTippen Sie einfach wiederholt auf die Kachel, bis Sie Ihre gewünschte Dauer erreichen — irgendwo zwischen 5
+        und 20 Minuten. \n
+        \nSie können den Timer auch direkt in der Benachrichtigung um weitere 5-Minuten-Schritte verlängern. \n
+        \nBonus-Tipp: Der Einschlaftimer funktioniert mit jeder App, die Medien abspielt!
+    </string>
     <string name="timer_string_off">Aus</string>
     <string name="tile_available">Verfügbare Kachel</string>
     <string name="timer_stop">Timer stoppen</string>
+    <string name="about_sleep_timer">Über den Einschlaftimer</string>
+    <string name="sleep_timer_info_close">Danke für die Info!</string>
+    <string name="sleep_timer_learn_more">Mehr über den Einschlaftimer erfahren</string>
+    <string name="faq_title">Häufig gestellte Fragen</string>
+    <string name="faq_body">Diese App kann, wie viele andere auch, Macken aufweisen, die nicht durch schlechtes Design oder Fehler verursacht werden.
+        Bevor Sie eine schlechte Bewertung hinterlassen, versuchen Sie bitte diese schnellen Lösungen:
+
+        \n\nF: Die Ambient-Musik-Kachel funktionierte nur einmal! Sie funktioniert nicht wieder.
+        \nA: Die Kachel benötigt einen Hintergrunddienst, der von aggressiven Speicher-Managern in einigen Android-Distributionen
+        (z. B. HyperOS, ColorOS, OxygenOS) beendet werden kann. Um dies zu beheben, öffnen Sie einfach die App erneut;
+        dies sollte die Kacheln neu einrichten. Kürzlich wurde auch eine Maßnahme implementiert, um dieses Verhalten zu korrigieren.
+
+        \n\nF: Ich habe die App geöffnet, aber die Kacheln funktionieren immer noch nicht! Ich habe sogar Daten gelöscht!
+        \nA: Manchmal fallen die APIs oder Server vorübergehend aus. Tippen Sie in den Einstellungen auf „Musikbibliothek aktualisieren“,
+        um neu zu synchronisieren und den Wiedergabedienst neu zu starten.
+    </string>
+    <string name="faq_learn_more">Haben Sie Probleme? Sehen Sie sich die häufig gestellten Fragen an!</string>
 </resources>
