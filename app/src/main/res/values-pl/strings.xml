@@ -28,7 +28,7 @@
     <string name="available_genres">Dostępne kafelki gatunków</string>
     <string name="home_string">Główna</string>
     <string name="add_label">Dodaj</string>
-    <string name="hint_text">Wskazówka: Dotknięcie niektórych ustawień otwiera linki 😉</string>
+    <string name="hint_text">Podoba Ci się ta aplikacja? Zostaw recenzję w Sklepie Play!</string>
     <string name="version_helper">Wersja</string>
     <string name="check_for_updates">Sprawdzanie aktualizacji…</string>
     <string name="latest_version_helper">Masz najnowszą wersję!</string>
@@ -58,9 +58,33 @@
         <item quantity="one">Pozostała %d minuta</item>
         <item quantity="other">Pozostało %d minut</item>
     </plurals>
-    <string name="sleep_timer_active">Wyłącznik czasowy aktywny</string>
-    <string name="sleep_timer_tile_add_helper">Wskazówka: aby ustawić 5-minutowe interwały, naciskaj kafelek wyłącznika czasowego wielokrotnie, aż osiągniesz żądaną wartość.\n Zakres od 5 do 20 minut. 😴🕝\n\nDodatkowo, wyłącznik czasowy może być używany z dowolną aplikacją!</string>
-    <string name="timer_string_off">Wył</string>
+    <string name="sleep_timer_tile_add_helper">Po dodaniu kafelka Wyłącznika czasowego
+    możesz ustawić czasomierz w 5-minutowych odstępach. \n
+    \nPo prostu dotykaj kafelka wielokrotnie, aż osiągniesz pożądany czas — od 5
+    do 20 minut. \n
+    \nMożesz również wydłużyć czasomierz bezpośrednio z powiadomienia, dodając kolejne 5-minutowe
+    interwały. \n
+    \nWskazówka bonusowa: wyłącznik czasowy działa z każdą aplikacją odtwarzającą media!
+    </string>
+    <string name="timer_string_off">Wył.</string>
     <string name="tile_available">Dostępny kafelek</string>
-    <string name="timer_stop">Zatrzymaj timer</string>
+    <string name="timer_stop">Zatrzymaj czasomierz</string>
+    <string name="about_sleep_timer">O Wyłączniku czasowym</string>
+    <string name="sleep_timer_info_close">Dzięki za informację</string>
+    <string name="sleep_timer_learn_more">Dowiedz się więcej o Wyłączniku czasowym.</string>
+    <string name="faq_title">Często zadawane pytania</string>
+    <string name="faq_body">Ta aplikacja, jak wiele innych, może mieć dziwactwa, które nie są spowodowane złym projektem lub błędami.
+    Zanim wystawisz złą recenzję, wypróbuj te szybkie rozwiązania:
+
+    \n\nQ: Kafelek Muzyki Ambientowej zadziałał tylko raz! Nie działa ponownie.
+    \nA: Kafelek wymaga usługi działającej w tle, która może być zamykana przez agresywne menedżery pamięci
+    w niektórych dystrybucjach Androida (np. HyperOS, ColorOS, OxygenOS). Aby to naprawić, po prostu ponownie otwórz
+    aplikację, a powinna ona skonfigurować kafelki. Niedawno wdrożono również środki łagodzące, aby naprawić
+    to zachowanie.
+
+    \n\nQ: Otworzyłem aplikację, ale kafelki nadal nie działają! Nawet wyczyściłem dane!
+    \nA: Czasami API lub serwery mogą tymczasowo zawodzić. Dotknij „Odśwież bibliotekę utworów” w Ustawieniach,
+    aby ponownie zsynchronizować i zrestartować usługę odtwarzania.
+    </string>
+    <string name="faq_learn_more">Masz problemy? Sprawdź często zadawane pytania.</string>
 </resources>

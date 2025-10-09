@@ -89,5 +89,5 @@
         \nA: Manchmal fallen die APIs oder Server vorübergehend aus. Tippen Sie in den Einstellungen auf „Musikbibliothek aktualisieren“,
         um neu zu synchronisieren und den Wiedergabedienst neu zu starten.
     </string>
-    <string name="faq_learn_more">Haben Sie Probleme? Sehen Sie sich die häufig gestellten Fragen an!</string>
+    <string name="faq_learn_more">Haben Sie Probleme? Sehen Sie sich die häufig gestellten Fragen an.</string>
 </resources>

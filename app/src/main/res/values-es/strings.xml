@@ -28,7 +28,7 @@
     <string name="available_genres">Mosaicos de géneros disponibles</string>
     <string name="home_string">Inicio</string>
     <string name="add_label">Añadir</string>
-    <string name="hint_text">Pista: Al tocar algunos ajustes, se abren enlaces 😉</string>
+    <string name="hint_text">¿Te gusta esta aplicación? ¡Por favor, deja una reseña en la Play Store!</string>
     <string name="version_helper">Versión</string>
     <string name="check_for_updates">Buscando actualizaciones…</string>
     <string name="latest_version_helper">¡Tienes la última versión!</string>
@@ -58,9 +58,32 @@
         <item quantity="one">Queda %d minuto</item>
         <item quantity="other">Quedan %d minutos</item>
     </plurals>
-    <string name="sleep_timer_active">Temporizador activo</string>
-    <string name="sleep_timer_tile_add_helper">Sugerencia: para incrementos de 5 minutos, presiona el mosaico del temporizador varias veces hasta alcanzar el valor deseado.\n El rango es de 5 a 20 minutos. 😴🕝\n\n¡Además, el temporizador se puede usar con cualquier aplicación!</string>
+    <string name="sleep_timer_tile_add_helper">Una vez que hayas añadido el mosaico del Temporizador de suspensión,
+    puedes configurar un temporizador en incrementos de 5 minutos. \n
+    \nSimplemente toca el mosaico repetidamente hasta alcanzar la duración deseada — entre 5
+    y 20 minutos. \n
+    \nTambién puedes extender el temporizador directamente desde la notificación añadiendo incrementos adicionales de 5 minutos. \n
+    \nConsejo extra: ¡El temporizador de suspensión funciona con cualquier aplicación que reproduzca multimedia!
+    </string>
     <string name="timer_string_off">Apagado</string>
     <string name="tile_available">Mosaico disponible</string>
     <string name="timer_stop">Detener temporizador</string>
+    <string name="about_sleep_timer">Acerca del Temporizador de suspensión</string>
+    <string name="sleep_timer_info_close">Gracias por la información</string>
+    <string name="sleep_timer_learn_more">Aprende más sobre el Temporizador de suspensión.</string>
+    <string name="faq_title">Preguntas frecuentes</string>
+    <string name="faq_body">Esta aplicación, como muchas otras, puede tener peculiaridades no causadas por un mal diseño o errores.
+    Antes de dejar una mala reseña, prueba estas soluciones rápidas:
+
+    \n\nQ: ¡El mosaico de Música Ambiental solo funcionó una vez! No vuelve a funcionar.
+    \nA: El mosaico necesita un servicio en segundo plano que puede ser eliminado por gestores de memoria agresivos
+    en algunas distribuciones de Android (p. ej., HyperOS, ColorOS, OxygenOS). Para solucionarlo, simplemente vuelve a abrir
+    la aplicación y debería configurar los mosaicos. Recientemente también se implementó una mitigación para corregir
+    este comportamiento.
+
+    \n\nQ: ¡Abrí la aplicación pero los mosaicos siguen sin funcionar! ¡Incluso borré los datos!
+    \nA: A veces, las API o los servidores fallan temporalmente. Toca \"Actualizar biblioteca de canciones\" en Ajustes
+    para resincronizar y reiniciar el servicio de reproducción.
+    </string>
+    <string name="faq_learn_more">¿Tienes problemas? ¡Consulta las preguntas frecuentes.</string>
 </resources>

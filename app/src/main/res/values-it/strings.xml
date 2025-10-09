@@ -28,7 +28,7 @@
     <string name="available_genres">Riquadri generi disponibili</string>
     <string name="home_string">Home</string>
     <string name="add_label">Aggiungi</string>
-    <string name="hint_text">Suggerimento: toccando alcune impostazioni, si aprono dei link 😉</string>
+    <string name="hint_text">Ti piace questa app? Per favore, lascia una recensione sul Play Store!</string>
     <string name="version_helper">Versione</string>
     <string name="check_for_updates">Verifica aggiornamenti in corso…</string>
     <string name="latest_version_helper">Hai l\'ultima versione!</string>
@@ -58,9 +58,32 @@
         <item quantity="one">Manca %d minuto</item>
         <item quantity="other">Mancano %d minuti</item>
     </plurals>
-    <string name="sleep_timer_active">Timer di spegnimento attivo</string>
-    <string name="sleep_timer_tile_add_helper">Suggerimento: per incrementi di 5 minuti, premi più volte il riquadro del timer di spegnimento finché non raggiungi il valore desiderato.\n L\'intervallo va da 5 a 20 minuti. 😴🕝\n\nInoltre, il timer di spegnimento può essere utilizzato con qualsiasi app!</string>
-    <string name="timer_string_off">Off</string>
+    <string name="sleep_timer_tile_add_helper">Una volta aggiunto il riquadro del Timer di spegnimento,
+    puoi impostare un timer con incrementi di 5 minuti. \n
+    \nBasta toccare ripetutamente il riquadro finché non raggiungi la durata desiderata — tra 5
+    e 20 minuti. \n
+    \nPuoi anche estendere il timer direttamente dalla notifica aggiungendo ulteriori incrementi di 5 minuti. \n
+    \nSuggerimento bonus: il timer di spegnimento funziona con qualsiasi app che riproduce contenuti multimediali!
+    </string>
+    <string name="timer_string_off">Spento</string>
     <string name="tile_available">Riquadro disponibile</string>
     <string name="timer_stop">Ferma timer</string>
+    <string name="about_sleep_timer">Informazioni sul Timer di spegnimento</string>
+    <string name="sleep_timer_info_close">Grazie per le informazioni</string>
+    <string name="sleep_timer_learn_more">Scopri di più sul Timer di spegnimento.</string>
+    <string name="faq_title">Domande frequenti</string>
+    <string name="faq_body">Questa app, come molte altre, potrebbe presentare delle stranezze non causate da una cattiva progettazione o da bug.
+    Prima di lasciare una recensione negativa, prova queste soluzioni rapide:
+
+    \n\nD: Il riquadro Musica Ambientale ha funzionato solo una volta! Non funziona più.
+    \nR: Il riquadro richiede un servizio in background che potrebbe essere terminato da gestori di memoria aggressivi
+    in alcune distribuzioni di Android (es. HyperOS, ColorOS, OxygenOS). Per risolvere, basta riaprire
+    l\'app e dovrebbe impostare i riquadri. Di recente è stata implementata una mitigazione per correggere
+    questo comportamento.
+
+    \n\nD: Ho aperto l\'app ma i riquadri non funzionano ancora! Ho anche cancellato i dati!
+    \nR: A volte le API o i server possono avere problemi temporanei. Tocca \"Aggiorna libreria brani\" nelle Impostazioni
+    per risincronizzare e riavviare il servizio di riproduzione.
+    </string>
+    <string name="faq_learn_more">Hai problemi? Consulta le domande frequenti.</string>
 </resources>

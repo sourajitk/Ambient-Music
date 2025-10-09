@@ -28,7 +28,7 @@
     <string name="available_genres">利用可能なジャンルのタイル</string>
     <string name="home_string">ホーム</string>
     <string name="add_label">追加</string>
-    <string name="hint_text">ヒント：一部の設定をタップするとリンクが開きます😉</string>
+    <string name="hint_text">このアプリが気に入りましたか？Playストアにレビューを残してください！</string>
     <string name="version_helper">バージョン</string>
     <string name="check_for_updates">アップデートを確認中…</string>
     <string name="latest_version_helper">最新バージョンです！</string>
@@ -58,9 +58,32 @@
         <item quantity="one">残り%d分</item>
         <item quantity="other">残り%d分</item>
     </plurals>
-    <string name="sleep_timer_active">スリープタイマー作動中</string>
-    <string name="sleep_timer_tile_add_helper">ヒント：5分間隔で設定するには、目的の値に達するまでスリープタイマーのタイルを複数回押してください。\n 範囲は5分から20分です。 😴🕝\n\nさらに、スリープタイマーはどのアプリでも使用できます！</string>
+    <string name="sleep_timer_tile_add_helper">スリープタイマーのタイルを追加すると、
+    5分単位でタイマーを設定できます。 \n
+    \n希望の時間 — 5分
+    から20分の間 — に達するまで、タイルを繰り返しタップしてください。 \n
+    \n通知から直接タイマーを延長し、さらに5分間追加
+    することもできます。 \n
+    \nボーナスヒント：スリープタイマーは、メディアを再生するどのアプリでも機能します！
+    </string>
     <string name="timer_string_off">オフ</string>
     <string name="tile_available">利用可能なタイル</string>
     <string name="timer_stop">タイマーを停止</string>
+    <string name="about_sleep_timer">スリープタイマーについて</string>
+    <string name="sleep_timer_info_close">情報ありがとうございます</string>
+    <string name="sleep_timer_learn_more">スリープタイマーについてさらに詳しく知る。</string>
+    <string name="faq_title">よくある質問</string>
+    <string name="faq_body">このアプリには、他の多くのアプリと同様に、設計の不備やバグが原因ではない特有の問題がある場合があります。
+    悪いレビューを残す前に、これらの簡単な修正を試してみてください：
+
+    \n\nQ: アンビエントミュージックのタイルが一度しか機能しませんでした！二度と機能しません。
+    \nA: タイルにはバックグラウンドサービスが必要ですが、
+    一部のAndroidディストリビューション（例：HyperOS、ColorOS、OxygenOS）の積極的なメモリマネージャーによって強制終了されることがあります。これを修正するには、アプリを再度開くだけで、
+    タイルがセットアップされるはずです。この動作を修正するための緩和策も最近実装されました。
+
+    \n\nQ: アプリを開きましたが、タイルがまだ機能しません！データを消去してもダメでした！
+    \nA: APIやサーバーが一時的に失敗することがあります。設定で「曲のライブラリを更新」をタップして、
+    再同期し、再生サービスを再起動してください。
+    </string>
+    <string name="faq_learn_more">問題がありますか？よくある質問をチェックしてください。</string>
 </resources>
