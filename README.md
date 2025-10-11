@@ -69,6 +69,8 @@ Enable navigation siderails when the display gets beyond a certain DPI for optim
 ## Credits
 Big thanks to all my testers for constantly testing my app and providing constructive feedback to help make it better throughout all the releases! 😄
 
+Special thanks to @ralph950412 for helping me get these tracks in the first place.
+
 ## Documentation
 Some useful links I referred to while building the app:
 
