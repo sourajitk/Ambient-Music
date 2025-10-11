@@ -65,6 +65,7 @@ class MusicPlaybackService :
         const val ACTION_PLAY_GENRE_CALM = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_CALM"
         const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
         const val ACTION_PLAY_GENRE_FOCUS = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_PRODUCTIVITY"
+        const val ACTION_PLAY_GENRE_SERENITY = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SERENITY"
         private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
         private const val TAG = "MusicPlaybackService"
@@ -173,14 +174,14 @@ class MusicPlaybackService :
                                     }
                                 }
                                 Player.STATE_BUFFERING -> {
-                                    Log.d(TAG, "Apple servers are being slow (buffering)")
+                                    Log.d(TAG, "Buffering media")
                                     performGeneralPostUpdate = false
                                 }
                                 Player.STATE_ENDED -> {
                                     Log.d(TAG, "Idling")
                                 }
                                 Player.STATE_READY -> {
-                                    Log.d(TAG, "Apple sent the data.")
+                                    Log.d(TAG, "Data Received.")
                                 }
                             }
                             if (performGeneralPostUpdate) {
@@ -195,7 +196,7 @@ class MusicPlaybackService :
                             SongsRepo.selectTrack(newIndex)
                             Log.i(
                                 TAG,
-                                "CurrIndex: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
+                                "Current Index: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
                             )
 
                             // Clear old art and fetch new art on transition
@@ -298,6 +299,17 @@ class MusicPlaybackService :
                 }
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("focus")
+            }
+            ACTION_PLAY_GENRE_SERENITY -> {
+                if (SongsRepo.songs.isEmpty()) {
+                    Log.w(TAG, "SongsRepo:Genre is empty.")
+                    isServiceCurrentlyPlaying = false
+                    TileStateUtil.requestTileUpdate(applicationContext)
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
+                startForeground(NOTIFICATION_ID, createNotification())
+                playGenre("serenity")
             }
         }
         return START_STICKY

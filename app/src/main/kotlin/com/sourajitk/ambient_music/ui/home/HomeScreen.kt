@@ -58,6 +58,7 @@ import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.FocusQSTileService
+import com.sourajitk.ambient_music.tiles.SerenityQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 import com.sourajitk.ambient_music.util.TileStateUtil
 
@@ -136,6 +137,13 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
                                 context,
                                 stringResource(R.string.tile_label_focus),
                                 ComponentName(context, FocusQSTileService::class.java),
+                                R.drawable.playlist_music,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            AddTileRow(
+                                context,
+                                stringResource(R.string.tile_label_serenity),
+                                ComponentName(context, SerenityQSTileService::class.java),
                                 R.drawable.playlist_music,
                             )
                         } else {

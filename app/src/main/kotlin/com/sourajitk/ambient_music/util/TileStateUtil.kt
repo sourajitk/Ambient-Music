@@ -11,6 +11,7 @@ import androidx.core.content.edit
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.FocusQSTileService
+import com.sourajitk.ambient_music.tiles.SerenityQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
 
 object TileStateUtil {
@@ -31,6 +32,7 @@ object TileStateUtil {
                 ChillQSTileService::class.java,
                 SleepQSTileService::class.java,
                 FocusQSTileService::class.java,
+                SerenityQSTileService::class.java,
                 SleepTimerService::class.java,
             )
 

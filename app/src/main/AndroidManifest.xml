@@ -92,6 +92,17 @@
         </service>
 
         <service
+            android:name=".tiles.SerenityQSTileService"
+            android:exported="true"
+            android:label="@string/tile_label_serenity"
+            android:icon="@drawable/ic_serenity"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".tiles.SleepTimerQSTileService"
             android:exported="true"
             android:icon="@drawable/ic_timer_off"
