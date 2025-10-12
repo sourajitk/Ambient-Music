@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name" translatable="false">Ambient Music</string>
+    <string name="qs_tile_main_label" translatable="false">Ambient Music</string>
+    <string name="qs_subtitle_playing">Đang phát</string>
+    <string name="qs_subtitle_paused">Đã dừng</string>
+    <string name="qs_subtitle_no_songs">Không có bài hát nào khả dụng</string>
+    <string name="qs_subtitle_unavailable">Không khả dụng</string> <string name="qs_tile_label_play">Phát</string>
+    <string name="qs_tile_label_pause">Dừng</string>
+    <string name="qs_tile_label_default" translatable="false">Ambient Music</string> <string name="qs_tile_notification_title" translatable="false">Ambient Music</string>
+    <string name="qs_tile_notification_playing">Đang phát</string>
+    <string name="qs_tile_notification_paused">Đã dừng</string>
+    <string name="qs_tile_notification_title_default" translatable="false">Ambient Music</string>
+    <string name="qs_tile_notification_artist_default">Dịch vụ phát nhạc</string>
+    <string name="minimal_activity_info">Các ô Cài đặt nhanh đã sẵn sàng để thêm!</string>
+    <string name="qs_tile_notification_artist_unknown">Không rõ nghệ sĩ</string>
+    <string name="qs_tile_notification_title_unknown">Không rõ bài hát</string>
+    <string name="tile_label_calm">Ambient Calm</string>
+    <string name="tile_label_chill">Ambient Chill</string>
+    <string name="tile_label_sleep">Ambient Sleep</string>
+    <string name="tile_label_focus">Ambient Focus</string>
+    <string name="tile_label_serenity">Serenity Sounds</string>
+    <string name="update_available_text">Đã có bản cập nhật mới cho %1$s!\nBạn đang sử dụng v%2$s.</string>
+    <string name="google_play_url" translatable="false">https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music</string>
+    <string name="update_url" translatable="false">https://api.github.com/repos/sourajitk/Ambient-Music/releases/latest</string>
+    <string name="github_latest_rel" translatable="false">https://github.com/sourajitk/Ambient-Music/releases/latest</string>
+    <string name="incompatible_android_version">Lưu ý: Vì bạn đang sử dụng phiên bản cũ hơn Android 13, vui lòng
+        mở mục chỉnh sửa Cài đặt nhanh và thêm ô từ đó.</string>
+    <string name="battery_message">Vì bạn đang sử dụng Android 14, phát nhạc trong nền
+        có thể bị gián đoạn do vấn đề tối ưu hoá pin.
+        Để tránh điều này xảy ra, vui lòng tắt tối ưu hoá pin cho ứng dụng.</string>
+    <string name="battery_optimization_dialog">Tối ưu hoá pin</string>
+    <string name="settings_string">Cài đặt</string>
+    <string name="later_string">Để sau</string>
+    <string name="update_available">Đã có bản cập nhật mới</string>
+    <string name="play_store_button">Đến Cửa hàng Play</string>
+    <string name="github_button">Đến GitHub</string>
+    <string name="available_genres">Các thể loại nhạc khả dụng</string>
+    <string name="home_string">Trang chủ</string>
+    <string name="add_label">Thêm</string>
+    <string name="hint_text">Thích ứng dụng này? Hãy để lại đánh giá trên Cửa hàng Play!</string>
+    <string name="version_helper">Phiên bản</string>
+    <string name="check_for_updates">Đang kiểm tra cập nhật...</string>
+    <string name="latest_version_helper">Bạn đang sử dụng phiên bản mới nhất!</string>
+    <string name="check_for_updates_helper">Nhấn để kiểm tra cập nhật</string>
+    <string name="updates">Cập nhật</string>
+    <string name="donate_text">Hãy ủng hộ tôi để có thêm dự án!</string>
+    <string name="donate_title">Ủng hộ</string>
+    <string name="about_header_title">Về</string>
+    <string name="app_author" translatable="false">Sourajit Karmakar</string>
+    <string name="author_title">Tác giả</string>
+    <string name="refresh_fail_detail">Đang xử lý yêu cầu khác. Vui lòng thử lại sau.</string>
+    <string name="refresh_song_lib">Làm mới thư viện nhạc</string>
+    <string name="cache_clear_helper">Nhấn để xóa bộ nhớ cache và tải xuống các bài mới nhất</string>
+    <string name="cache_clear_fetching">Đang tải xuống các bài mới nhất...</string>
+    <string name="additional_settings_body">Mở cài đặt để quản lý quyền</string>
+    <string name="additional_settings_title">Cài đặt bổ sung</string>
+    <string name="general_header">Chung</string>
+    <string name="source_code_title">Mã nguồn</string>
+    <string name="source_code_body">Xem dự án trên GitHub</string>
+    <string name="update_available_title">Đã có bản cập nhật mới</string>
+    <string name="update_available_subtitle">Phiên bản mới đã sẵn sàng để cài đặt.</string>
+    <string name="update_notification_body_github">Phiên bản %1$s hiện đã có sẵn trên GitHub. Nhấn để mở trang GitHub Release.</string>
+    <string name="app_language_title">Ngôn ngữ</string>
+    <string name="app_language_body">Đổi ngôn ngữ cho ứng dụng</string>
+    <string name="timer_string">Hẹn giờ tắt</string>
+    <string name="sleep_timer_add_5_mins">Thêm 5 phút</string>
+    <string name="timer_tile_add_helper">Đặt hẹn giờ để tắt Ambient Music tự động khi bạn ngủ.</string>
+    <string name="custom_timer">Tuỳ chọn</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">%d phút còn lại</item>
+        <item quantity="other">%d phút còn lại</item>
+    </plurals>
+    <string name="sleep_timer_active">Hẹn giờ tắt đang hoạt động</string>
+    <string name="sleep_timer_tile_add_helper">Sau khi bạn đã thêm ô Hẹn giờ tắt,
+        bạn có thể đặt hẹn giờ trong 5 phút. \n
+        \nChỉ cần nhấn ô liên tục cho đến khi đạt được thời gian mong muốn — bất kỳ từ 5
+        đến 20 phút. \n
+        \nBạn cũng có thể kéo dài hẹn giờ trực tiếp từ thông báo bằng cách thêm 5 phút.\n
+        \nMẹo: Hẹn giờ tắt hoạt động với bất kỳ ứng dụng đang phát nhạc!
+    </string>
+    <string name="timer_string_off">Tắt</string>
+    <string name="tile_available">Các ô Cài đặt nhanh khả dụng</string>
+    <string name="timer_stop">Dừng hẹn giờ</string>
+    <string name="about_sleep_timer">Hẹn giờ tắt</string>
+    <string name="sleep_timer_info_close">Đóng</string>
+    <string name="sleep_timer_learn_more">Tìm hiểu thêm về Hẹn giờ tắt.</string>
+    <string name="faq_title">Các câu hỏi thường gặp</string>
+    <string name="faq_body">Ứng dụng này, giống như nhiều ứng dụng khác, có thể có lỗi không phải do vấn đề thiết kế hoặc lỗi phát sinh.
+        Trước khi để lại đánh giá tệ, hãy thử các giải pháp sau đây:
+
+        \n\nCâu hỏi: Các ô Cài đặt nhanh Ambient Music chỉ hoạt động một lần! Nó không hoạt động lại.
+        \nTrả lời: Các ô Cài đặt nhanh cần một dịch vụ nền có thể bị kill bởi các trình quản lý bộ nhớ
+        trong một số ROM (ví dụ: HyperOS, ColorOS, OxygenOS). Để sửa lỗi này, chỉ cần mở lại
+        ứng dụng và nó sẽ cài đặt các ô. Đã có giải pháp mới được triển khai gần đây để sửa lỗi này.
+
+        \n\nCâu hỏi: Tôi đã mở ứng dụng nhưng các ô vẫn không hoạt động! Tôi thậm chí đã xóa dữ liệu!
+        \nTrả lời: Đôi khi API hoặc máy chủ có thể tạm thời gặp lỗi. Nhấn "Làm mới thư viện nhạc" trong Cài đặt
+        để đồng bộ lại và làm mới lại dịch vụ phát nhạc.
+    </string>
+    <string name="faq_learn_more">Gặp vấn đề? Kiểm tra các câu hỏi thường gặp.</string>
+</resources>
