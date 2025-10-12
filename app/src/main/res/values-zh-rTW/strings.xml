@@ -1,0 +1,86 @@
+<resources>
+    <string name="qs_subtitle_playing">正在播放</string>
+    <string name="qs_subtitle_paused">已暫停</string>
+    <string name="qs_subtitle_no_songs">沒有歌曲可用</string>
+    <string name="qs_subtitle_unavailable">無法使用</string>
+    <string name="qs_tile_label_play">播放</string>
+    <string name="qs_tile_label_pause">暫停</string>
+    <string name="qs_tile_notification_playing">正在播放</string>
+    <string name="qs_tile_notification_paused">已暫停</string>
+    <string name="qs_tile_notification_artist_default">播放服務</string>
+    <string name="minimal_activity_info">已經準備好新增 QS 設定方塊！</string>
+    <string name="qs_tile_notification_artist_unknown">未知的演出者</string>
+    <string name="qs_tile_notification_title_unknown">未知的歌曲</string>
+    <string name="tile_label_calm">平衡身心</string>
+    <string name="tile_label_chill">慵懶放鬆</string>
+    <string name="tile_label_sleep">一夜好眠</string>
+    <string name="tile_label_focus">提升生產力</string>
+    <string name="tile_label_serenity">寧靜之聲</string>
+    <string name="update_available_text">可以更新至 %1$s ！\n目前版本為 v%2$s 。</string>
+    <string name="incompatible_android_version">注意：因為您正在使用比 Android 13 更早的版本，請開啟 Quick Settings 編輯頁面並從那邊手動新增設定方塊。</string>
+    <string name="battery_message">因為您正在使用 Android 14 ，背景播放可能因為電池效能最佳化問題而被中斷。為了避免此情況，請停用這個應用程式的電池效能最佳化。</string>
+    <string name="battery_optimization_dialog">電池效能最佳化</string>
+    <string name="settings_string">設定</string>
+    <string name="later_string">稍後</string>
+    <string name="update_available">有可用的更新</string>
+    <string name="play_store_button">前往 Play 商店</string>
+    <string name="github_button">前往 GitHub</string>
+    <string name="available_genres">可用的類型設定方塊</string>
+    <string name="home_string">首頁</string>
+    <string name="add_label">新增</string>
+    <string name="hint_text">喜歡這個應用程式嗎？請在 Play 商店留下評論！</string>
+    <string name="version_helper">版本</string>
+    <string name="check_for_updates">正在檢查更新…</string>
+    <string name="latest_version_helper">您已擁有最新版本!</string>
+    <string name="check_for_updates_helper">輕觸即可檢查更新</string>
+    <string name="updates">更新</string>
+    <string name="donate_text">支持我開發更多專案！</string>
+    <string name="donate_title">捐贈</string>
+    <string name="about_header_title">關於</string>
+    <string name="author_title">作者</string>
+    <string name="refresh_fail_detail">正在處理另一項查詢。請稍後再嘗試。</string>
+    <string name="refresh_song_lib">重新整理歌曲庫</string>
+    <string name="cache_clear_helper">輕觸即可清除快取以及擷取最新的歌曲</string>
+    <string name="cache_clear_fetching">正在擷取新的歌曲…</string>
+    <string name="additional_settings_body">開啟系統設定以管理權限</string>
+    <string name="additional_settings_title">其他的應用程式設定</string>
+    <string name="general_header">一般</string>
+    <string name="source_code_title">原始碼</string>
+    <string name="source_code_body">在 GitHub 查看此專案</string>
+    <string name="update_available_title">有可用的更新</string>
+    <string name="update_available_subtitle">已經準備好安裝更新。</string>
+    <string name="update_notification_body_github">版本 %1$s 已在 GitHub 上發布。輕觸即可開啟 GitHub Release 頁面。</string>
+    <string name="app_language_title">應用程式語言</string>
+    <string name="app_language_body">更改這個應用程式的語言</string>
+    <string name="timer_string">睡眠計時器</string>
+    <string name="sleep_timer_add_5_mins">增加 5 分鐘</string>
+    <string name="timer_tile_add_helper">當您入眠時，睡眠計時器會自動關閉環境音樂。</string>
+    <string name="custom_timer">自訂</string>
+    <plurals name="timer_notification_subtitle">
+        <item quantity="one">剩餘 %d 分鐘</item>
+        <item quantity="other">剩餘 %d 分鐘</item>
+    </plurals>
+    <string name="sleep_timer_active">睡眠計時器使用中</string>
+    <string name="sleep_timer_tile_add_helper">新增睡眠計時器設定方塊後，您可以設定以 5 分鐘為增量的計時器。\n
+        \n只需反覆輕觸設定方塊直到達到所需的長度—介於 5 到 20 分鐘之間。\n
+        \n您也可以直接從通知中心以 5 分鐘為增量延長計時器。\n
+        \n額外提示：睡眠定時器可與任何播放媒體的應用程式搭配使用！
+    </string>
+    <string name="timer_string_off">關閉</string>
+    <string name="tile_available">可用的設定方塊</string>
+    <string name="timer_stop">暫停計時器</string>
+    <string name="about_sleep_timer">關於睡眠計時器</string>
+    <string name="sleep_timer_info_close">感謝您的資訊</string>
+    <string name="sleep_timer_learn_more">進一步了解睡眠計時器。</string>
+    <string name="faq_title">常見問答</string>
+    <string name="faq_body">就像許多其他應用程式一樣，這款應用程式可能存在一些並非由設計不良或漏洞引起的問題。在留下負面評論之前，請嘗試以下幾個方法：
+
+        \n\nQ: 環境音樂設定方塊只起作用一次！它不再可用了。
+        \nA: 此設定方塊所需要的背景服務，在某些 Android 發行版（例如 HyperOS、ColorOS、OxygenOS）中可能會被記憶體管理器終止。
+        為解決此問題，只需重新打開應用即可。最近也實施了一項緩解措施來修復此問題。
+
+        \n\nQ: 我打開了應用程式，但設定方塊還是無法使用！我甚至清除了數據！
+        \nA: 有時 API 或伺服器會暫時故障。輕觸設定中的「重新整理歌曲庫」即可重新同步並啟動播放服務。
+    </string>
+    <string name="faq_learn_more">遇到問題嗎？查看常見問答。</string>
+</resources>
