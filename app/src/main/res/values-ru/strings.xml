@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Расслабление</string>
     <string name="tile_label_sleep">Сон</string>
     <string name="tile_label_focus">Концентрация</string>
+    <string name="tile_label_serenity">Звуки безмятежности</string>
 	<string name="update_available_text">Доступно обновление до %1$s!\nУстановлено v%2$s.</string>
     <string name="incompatible_android_version">На версии Android ниже 13 необходимо вручную открыть панель уведомлений и добавить кнопку на панель быстрых настроек</string>
 	<string name="battery_message">На Android 14 фоновое воспроизведение может прерываться из-за оптимизации батареи. Для этого отключите оптимизацию для приложения в настройках системы.</string>
@@ -58,6 +59,10 @@
         <item quantity="one">Осталась %d минута</item>
         <item quantity="other">Осталось %d минут</item>
     </plurals>
+    <string name="sleep_timer_add_5_mins">Добавить 5 минут</string>
+    <string name="custom_timer">Особый</string>
+    <string name="sleep_timer_active">Таймер сна активен</string>
+    <string name="sleep_timer_tile_add_helper">После добавления плитки таймера сна вы можете устанавливать таймер с шагом в 5 минут.\n\nПросто нажимайте на плитку несколько раз, пока не достигнете желаемой продолжительности — от 5 до 20 минут.\n\nВы также можете продлить таймер прямо из уведомления, добавляя дополнительные 5-минутные интервалы.\n\nБонусный совет: таймер сна работает с любым приложением, воспроизводящим медиа!</string>
     <string name="timer_string_off">Wył.</string>
     <string name="tile_available">Dostępny kafelek</string>
     <string name="timer_stop">Zatrzymaj czasomierz</string>

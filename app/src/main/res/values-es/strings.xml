@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Ambiente Relajante</string>
     <string name="tile_label_sleep">Ambiente para Dormir</string>
     <string name="tile_label_focus">Ambiente para Concentrarse</string>
+    <string name="tile_label_serenity">Sonidos de serenidad</string>
     <string name="update_available_text">¡Hay una nueva actualización para %1$s disponible!\nEstás en la v%2$s.</string>
     <string name="incompatible_android_version">Nota: Como estás usando una versión de Android anterior a la 13, abre el panel de edición de Ajustes Rápidos y añade el mosaico manualmente desde allí.</string>
     <string name="battery_message">Como estás en Android 14, la reproducción en segundo plano puede interrumpirse debido a problemas de optimización de la batería. Para evitarlo, desactiva las optimizaciones de batería para la aplicación.</string>
@@ -65,7 +66,10 @@
     \nTambién puedes extender el temporizador directamente desde la notificación añadiendo incrementos adicionales de 5 minutos. \n
     \nConsejo extra: ¡El temporizador de suspensión funciona con cualquier aplicación que reproduzca multimedia!
     </string>
-    <string name="timer_string_off">Apagado</string>
+    <string name="sleep_timer_add_5_mins">Añadir 5 minutos</string>
+    <string name="custom_timer">Personalizado</string>
+    <string name="sleep_timer_active">Temporizador activo</string>
+     <string name="timer_string_off">Apagado</string>
     <string name="tile_available">Mosaico disponible</string>
     <string name="timer_stop">Detener temporizador</string>
     <string name="about_sleep_timer">Acerca del Temporizador de suspensión</string>

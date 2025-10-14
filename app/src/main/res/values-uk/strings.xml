@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Розслаблюючий ембієнт</string>
     <string name="tile_label_sleep">Ембієнт для сну</string>
     <string name="tile_label_focus">Ембієнт для концентрації</string>
+    <string name="tile_label_serenity">Звуки спокою</string>
     <string name="update_available_text">Доступне нове оновлення для %1$s!\nВаша версія: v%2$s.</string>
     <string name="incompatible_android_version">Примітка: Оскільки ви використовуєте версію Android, старішу за 13, будь ласка, відкрийте панель редагування швидких налаштувань та додайте плитку вручну.</string>
     <string name="battery_message">Оскільки у вас Android 14, фонове відтворення може перериватися через проблеми з оптимізацією батареї. Щоб уникнути цього, будь ласка, вимкніть оптимізацію батареї для додатка.</string>
@@ -65,6 +66,9 @@
     інтервали. \n
     \nБонусна порада: таймер сну працює з будь-яким додатком, що відтворює медіа!
     </string>
+    <string name="sleep_timer_add_5_mins">Додати 5 хвилин</string>
+    <string name="custom_timer">Власний</string>
+    <string name="sleep_timer_active">Таймер сну активний</string>
     <string name="timer_string_off">Вимк.</string>
     <string name="tile_available">Доступна плитка</string>
     <string name="timer_stop">Зупинити таймер</string>

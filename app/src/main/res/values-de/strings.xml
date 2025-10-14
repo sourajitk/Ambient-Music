@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Ambient Entspannt</string>
     <string name="tile_label_sleep">Ambient Schlaf</string>
     <string name="tile_label_focus">Ambient Konzentration</string>
+    <string name="tile_label_serenity">Ambient Gelassenheit</string>
     <string name="update_available_text">Ein neues Update für %1$s ist verfügbar!\nSie verwenden v%2$s.</string>
     <string name="incompatible_android_version">Hinweis: Da Sie eine Android-Version vor 13 verwenden, öffnen Sie bitte das Bearbeitungsmenü der
         Schnelleinstellungen und fügen Sie die Kachel von dort aus manuell hinzu.</string>

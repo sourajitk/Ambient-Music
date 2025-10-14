@@ -16,6 +16,7 @@
     <string name="tile_label_chill">परिवेश की ठंडक</string>
     <string name="tile_label_sleep">परिवेश की नींद</string>
     <string name="tile_label_focus">परिवेश का फ़ोकस</string>
+    <string name="tile_label_serenity">शांति की ध्वनियाँ</string>
     <string name="update_available_text">%1$s के लिए एक नया अपडेट उपलब्ध है!\nआप संस्करण v%2$s का उपयोग कर रहे हैं।</string>
     <string name="incompatible_android_version">नोट: चूँकि आप Android 13 से पहले के संस्करण का उपयोग कर रहे हैं, इसलिए कृपया क्विक सेटिंग्स संपादन पैनल खोलें और वहाँ से स्वयं टाइल जोड़ें।</string>
     <string name="battery_message">चूँकि आप Android 14 पर हैं, तो बैटरी ऑप्टिमाइज़ेशन समस्याओं के कारण बैकग्राउंड प्लेबैक बाधित हो सकता है। इससे बचने के लिए, कृपया ऐप के लिए बैटरी ऑप्टिमाइज़ेशन बंद कर दें।</string>

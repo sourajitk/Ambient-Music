@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Ambiente Relax </string>
     <string name="tile_label_sleep">Ambiente Notturno</string>
     <string name="tile_label_focus">Ambient Focus</string>
+    <string name="tile_label_serenity">Suoni di serenità</string>
     <string name="update_available_text">È disponibile un nuovo aggiornamento per %1$s!\nStai usando la versione v%2$s.</string>
     <string name="incompatible_android_version">Nota: poiché stai utilizzando una versione di Android precedente alla 13, apri il pannello di modifica delle Impostazioni Rapide e aggiungi manualmente il riquadro da lì.</string>
     <string name="battery_message">Poiché sei su Android 14, la riproduzione in background potrebbe essere interrotta a causa di problemi di ottimizzazione della batteria. Per evitarlo, disattiva le ottimizzazioni della batteria per l\'app.</string>
@@ -66,6 +67,9 @@
     \nSuggerimento bonus: il timer di spegnimento funziona con qualsiasi app che riproduce contenuti multimediali!
     </string>
     <string name="timer_string_off">Spento</string>
+    <string name="sleep_timer_add_5_mins">Aggiungi 5 minuti</string>
+    <string name="custom_timer">Personalizzato</string>
+    <string name="sleep_timer_active">Timer di spegnimento attivo</string>
     <string name="tile_available">Riquadro disponibile</string>
     <string name="timer_stop">Ferma timer</string>
     <string name="about_sleep_timer">Informazioni sul Timer di spegnimento</string>

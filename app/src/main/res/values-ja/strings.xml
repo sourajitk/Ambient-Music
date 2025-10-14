@@ -16,6 +16,7 @@
     <string name="tile_label_chill">アンビエント・チル</string>
     <string name="tile_label_sleep">アンビエント・スリープ</string>
     <string name="tile_label_focus">アンビエント・フォーカス</string>
+    <string name="tile_label_serenity">静寂の音</string>
     <string name="update_available_text">%1$s の新しいアップデートが利用可能です！\n現在のバージョン: v%2$s。</string>
     <string name="incompatible_android_version">注意：Android 13より前のバージョンを使用しているため、クイック設定の編集パネルを開き、そこから手動でタイルを追加してください。</string>
     <string name="battery_message">Android 14では、バッテリー最適化の問題により、バックグラウンド再生が中断されることがあります。これを回避するには、アプリのバッテリー最適化を無効にしてください。</string>
@@ -70,6 +71,9 @@
     <string name="tile_available">利用可能なタイル</string>
     <string name="timer_stop">タイマーを停止</string>
     <string name="about_sleep_timer">スリープタイマーについて</string>
+    <string name="sleep_timer_add_5_mins">5分追加</string>
+    <string name="custom_timer">カスタム</string>
+    <string name="sleep_timer_active">スリープタイマー作動中</string>
     <string name="sleep_timer_info_close">情報ありがとうございます</string>
     <string name="sleep_timer_learn_more">スリープタイマーについてさらに詳しく知る。</string>
     <string name="faq_title">よくある質問</string>

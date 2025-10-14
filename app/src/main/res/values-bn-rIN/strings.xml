@@ -16,6 +16,7 @@
     <string name="tile_label_chill">অ্যাম্বিয়েন্ট চিল</string>
     <string name="tile_label_sleep">অ্যাম্বিয়েন্ট ঘুম</string>
     <string name="tile_label_focus">অ্যাম্বিয়েন্ট ফোকাস</string>
+    <string name="tile_label_serenity">প্রশান্তির শব্দ</string>
     <string name="update_available_text">%1$s-এর জন্য একটি নতুন আপডেট উপলব্ধ!\nআপনি v%2$s সংস্করণ ব্যবহার করছেন।</string>
     <string name="incompatible_android_version">দ্রষ্টব্য: আপনি যেহেতু Android 13-এর আগের সংস্করণ ব্যবহার করছেন, অনুগ্রহ করে কুইক সেটিংস সম্পাদনা প্যানেলটি খুলুন এবং সেখান থেকে টাইলটি ম্যানুয়ালি যোগ করুন।</string>
     <string name="battery_message">আপনি যেহেতু Android 14-এ আছেন, ব্যাটারি অপ্টিমাইজেশন সমস্যার কারণে ব্যাকগ্রাউন্ড প্লেব্যাক বাধাপ্রাপ্ত হতে পারে। এটি এড়াতে, অনুগ্রহ করে অ্যাপটির জন্য ব্যাটারি অপ্টিমাইজেশন নিষ্ক্রিয় করুন।</string>
@@ -53,6 +54,9 @@
     <string name="app_language_title">অ্যাপের ভাষা</string>
     <string name="app_language_body">এই অ্যাপের জন্য ভাষা পরিবর্তন করুন</string>
     <string name="timer_string">স্লিপ টাইমার</string>
+    <string name="sleep_timer_add_5_mins">আরও ৫ মিনিট যোগ করুন</string>
+    <string name="custom_timer">কাস্টম</string>
+    <string name="sleep_timer_active">স্লিপ টাইমার সক্রিয়</string>
     <string name="timer_tile_add_helper">আপনি ঘুমিয়ে পড়লে স্লিপ টাইমার স্বয়ংক্রিয়ভাবে অ্যাম্বিয়েন্ট মিউজিক বন্ধ করে দেবে।</string>
     <plurals name="timer_notification_subtitle">
         <item quantity="one">%d মিনিট বাকি</item>
@@ -85,4 +89,5 @@
     \nউত্তর: কখনও কখনও API বা সার্ভার সাময়িকভাবে ব্যর্থ হতে পারে। পুনরায় সিঙ্ক করতে এবং প্লেব্যাক পরিষেবাটি পুনরায় চালু করতে সেটিংসে \"গানের লাইব্রেরি রিফ্রেশ করুন\"-এ ট্যাপ করুন।
     </string>
     <string name="faq_learn_more">সমস্যা হচ্ছে? প্রায়শই জিজ্ঞাসিত প্রশ্নগুলি দেখুন.</string>
+
 </resources>

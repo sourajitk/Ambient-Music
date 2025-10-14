@@ -16,6 +16,7 @@
     <string name="tile_label_chill">Relaksujący Ambient</string>
     <string name="tile_label_sleep">Ambient do Snu</string>
     <string name="tile_label_focus">Ambient do Skupienia</string>
+    <string name="tile_label_serenity">Dźwięki spokoju</string>
     <string name="update_available_text">Dostępna jest nowa aktualizacja dla %1$s!\nUżywasz wersji v%2$s.</string>
     <string name="incompatible_android_version">Uwaga: Ponieważ używasz wersji Androida starszej niż 13, otwórz panel edycji Szybkich Ustawień i ręcznie dodaj kafelek.</string>
     <string name="battery_message">Ponieważ używasz Androida 14, odtwarzanie w tle może być przerywane z powodu problemów z optymalizacją baterii. Aby tego uniknąć, wyłącz optymalizację baterii dla tej aplikacji.</string>
@@ -58,6 +59,9 @@
         <item quantity="one">Pozostała %d minuta</item>
         <item quantity="other">Pozostało %d minut</item>
     </plurals>
+    <string name="sleep_timer_add_5_mins">Dodaj 5 minut</string>
+    <string name="custom_timer">Niestandardowy</string>
+    <string name="sleep_timer_active">Wyłącznik czasowy aktywny</string>
     <string name="sleep_timer_tile_add_helper">Po dodaniu kafelka Wyłącznika czasowego
     możesz ustawić czasomierz w 5-minutowych odstępach. \n
     \nPo prostu dotykaj kafelka wielokrotnie, aż osiągniesz pożądany czas — od 5
