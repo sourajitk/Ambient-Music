@@ -1,0 +1,63 @@
+name: Build Dogfood APK
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branch:
+      - 'dogfood'
+  workflow_dispatch:
+
+jobs:
+  build_debug:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decode and restore keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "21"
+          cache: "gradle"
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build APK Dogfood
+        run: ./gradlew assembleDebug
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          CI: true
+
+      - name: Rename APK for Release
+        run: |
+          # The output is still a debug APK, just signed differently
+          apk_file=$(find app/build/outputs/apk/debug -name "*-debug.apk")
+          mv "$apk_file" "Ambient-Music-${{ github.ref_name }}-signed.apk"
+
+      - name: Create Pre-Release on GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Dogfood Build (Debugging Only)
+          tag_name: ${{ github.ref_name }}
+          files: Ambient-Music-${{ github.ref_name }}-signed.apk
+          body: |
+            This is a signed debug pre-release for testing purposes only. Do not install unless you intend to bug report or test out the latest features.
+            Built from the [debug branch](https://github.com/sourajitk/Ambient-Music/tree/dogfood).
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
