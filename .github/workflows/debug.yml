@@ -1,0 +1,69 @@
+name: Nightly Dogfood Build
+
+on:
+  # Triggers the workflow at 2:00 AM UTC every day.
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branch:
+      - "dogfood"
+  workflow_dispatch:
+
+jobs:
+  build_nightly:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout dogfood branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'dogfood'
+          fetch-depth: 0
+
+      - name: Generate dynamic tag name
+        id: generate_tag
+        run: echo "tag_name=dogfood-nightly-$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Decode and restore keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "21"
+          cache: "gradle"
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build APK Dogfood
+        run: ./gradlew assembleDebug
+        env:
+          NIGHTLY_TAG_NAME: ${{ env.tag_name }}
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          CI: true
+
+      - name: Rename APK for Release
+        run: |
+          apk_file=$(find app/build/outputs/apk/debug -name "*-debug.apk")
+          mv "$apk_file" "Ambient-Music-${{ env.tag_name }}.apk"
+
+      - name: Create Pre-Release on GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Dogfood Build
+          tag_name: ${{ env.tag_name }}
+          files: Ambient-Music-${{ env.tag_name }}.apk
+          body: |
+            This is an automated nightly pre-release for testing purposes. Should be used to test latest features and for bug reporting.
+            Built from the [dogfood branch](https://github.com/sourajitk/Ambient-Music/tree/dogfood).
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+

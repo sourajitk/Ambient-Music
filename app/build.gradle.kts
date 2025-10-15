@@ -37,9 +37,16 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = commitCount
-        versionName = "3.2.1-$commitHash"
+        val nightlyTagName = System.getenv("NIGHTLY_TAG_NAME")
+        val isDogfoodBuild = System.getenv("GITHUB_REF_NAME") == "dogfood"
+        versionName = when {
+            nightlyTagName != null -> "3.2.1-$nightlyTagName-$commitHash"
+            isDogfoodBuild -> "3.2.1-dogfood-$commitHash"
+            else -> "3.2.1-$commitHash"
+        }
         resValue("string", "app_version", "\"${versionName}\"")
     }
+
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
 
@@ -54,6 +61,11 @@ android {
     }
 
     buildTypes {
+        getByName("release") {
+        }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         getByName("release").apply {
             isMinifyEnabled = true
             isShrinkResources = true
