@@ -160,6 +160,17 @@ class MusicPlaybackService :
                         override fun onIsPlayingChanged(isPlayingValue: Boolean) {
                             Log.d(TAG, "Player status changed ig: $isPlayingValue")
                             isServiceCurrentlyPlaying = isPlayingValue
+                            if (isPlayingValue) {
+                                if (!isReceiverRegistered) {
+                                    registerReceiver(becomingNoisyReceiver, intentFilter)
+                                    isReceiverRegistered = true
+                                }
+                            } else {
+                                if (isReceiverRegistered) {
+                                    unregisterReceiver(becomingNoisyReceiver)
+                                    isReceiverRegistered = false
+                                }
+                            }
                             updateNotification()
                             TileStateUtil.requestTileUpdate(applicationContext)
                         }
@@ -416,18 +427,10 @@ class MusicPlaybackService :
         if (exoPlayer!!.isPlaying) {
             exoPlayer?.pause()
             Log.d(TAG, "togglePlayback: Pause command issued.")
-            if (isReceiverRegistered) {
-                unregisterReceiver(becomingNoisyReceiver)
-                isReceiverRegistered = false
-            }
         } else {
             if (requestAudioFocus()) {
                 exoPlayer?.play()
                 Log.d(TAG, "Playing the audio file.")
-                if (!isReceiverRegistered) {
-                    registerReceiver(becomingNoisyReceiver, intentFilter)
-                    isReceiverRegistered = true
-                }
             }
         }
     }
@@ -439,10 +442,6 @@ class MusicPlaybackService :
         exoPlayer?.clearMediaItems()
         isPlaylistSet = false
         currentAlbumArt = null
-        if (isReceiverRegistered) {
-            unregisterReceiver(becomingNoisyReceiver)
-            isReceiverRegistered = false
-        }
         currentPlaylistGenre = null
     }
 
