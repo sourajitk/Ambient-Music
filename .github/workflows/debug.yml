@@ -34,6 +34,17 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
+      - name: Delete existing release (if exists)
+        run: |
+          gh release delete "dogfood" -y || true
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Delete existing tag and repush
+        run: |
+          git push origin :refs/tags/dogfood || true
+          git push origin HEAD:refs/tags/dogfood || true
+
       - name: Build APK Dogfood
         run: ./gradlew assembleDebug
         env:
@@ -46,7 +57,7 @@ jobs:
         run: |
           # The output is still a debug APK, just signed differently
           apk_file=$(find app/build/outputs/apk/debug -name "*-debug.apk")
-          mv "$apk_file" "Ambient-Music-${{ github.ref_name }}-signed.apk"
+          mv "$apk_file" "Ambient-Music-dogfood-signed.apk"
 
       - name: Create Pre-Release on GitHub
         uses: softprops/action-gh-release@v2
