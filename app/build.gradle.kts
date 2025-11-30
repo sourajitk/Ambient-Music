@@ -30,18 +30,26 @@ val commitHash by project.extra {
 
 android {
     namespace = "com.sourajitk.ambient_music"
-    compileSdk = 36
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 31
-        targetSdk = 36
+        compileSdk {
+            version = release(36) {
+                minorApiLevel = 1
+            }
+        }
         versionCode = commitCount
         val isDogfoodBuild = System.getenv("GITHUB_REF_NAME") == "dogfood"
         versionName = if (isDogfoodBuild) {
-            "3.3.0-dogfood-$commitHash"
+            "3.4.0-dogfood-$commitHash"
         } else {
-            "3.3.0-$commitHash"
+            "3.4.0-$commitHash"
         }
         resValue("string", "app_version", "\"${versionName}\"")
     }
