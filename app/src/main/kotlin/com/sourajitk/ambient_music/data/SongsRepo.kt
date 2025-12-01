@@ -28,7 +28,7 @@ data class SongAsset(
 
 object SongsRepo {
     private const val TAG = "SongsRepoJSONHandler"
-    private const val REMOTE_SONGS_URL = "https://downloads.statixos.com/.am-ms/songs.json"
+    private const val REMOTE_SONGS_URL = "https://www.ambient-music.online/songs.json"
     private const val LOCAL_CACHE_FILE_NAME = "songs_cache.json"
 
     @Volatile private var internalLoadedSongs: List<SongAsset> = emptyList()
