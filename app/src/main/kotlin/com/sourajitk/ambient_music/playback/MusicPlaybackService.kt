@@ -6,6 +6,7 @@ package com.sourajitk.ambient_music.playback
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,8 +14,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.media.AudioAttributes
-import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
 import android.os.IBinder
@@ -34,20 +33,18 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.sourajitk.ambient_music.MainActivity
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
 
-class MusicPlaybackService :
-    Service(),
-    AudioManager.OnAudioFocusChangeListener {
+class MusicPlaybackService : Service() {
 
     private var exoPlayer: ExoPlayer? = null
     private var mediaSession: MediaSession? = null
     private var isPlaylistSet = false
 
     private lateinit var audioManager: AudioManager
-    private lateinit var audioFocusRequest: AudioFocusRequest
     private var wasPausedByFocusLoss = false
 
     private val becomingNoisyReceiver = BecomingNoisyReceiver()
@@ -66,6 +63,7 @@ class MusicPlaybackService :
         const val ACTION_PLAY_GENRE_SLEEP = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SLEEP"
         const val ACTION_PLAY_GENRE_FOCUS = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_PRODUCTIVITY"
         const val ACTION_PLAY_GENRE_SERENITY = "com.sourajitk.ambient_music.ACTION_PLAY_GENRE_SERENITY"
+        const val ACTION_START_IDLE = "com.sourajitk.ambient_music.ACTION_START_IDLE"
         private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
         private const val TAG = "MusicPlaybackService"
@@ -94,146 +92,69 @@ class MusicPlaybackService :
         Log.d(TAG, "onCreate: Service creating.")
         imageLoader = ImageLoader(this)
         initializePlayerAndSession()
-        initializeAudioFocus()
         createNotificationChannel()
-    }
-
-    private fun initializeAudioFocus() {
-        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-
-        val audioAttributes =
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-
-        audioFocusRequest =
-            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setAudioAttributes(audioAttributes)
-                .setAcceptsDelayedFocusGain(true)
-                .setOnAudioFocusChangeListener(this)
-                .build()
-    }
-
-    override fun onAudioFocusChange(focusChange: Int) {
-        when (focusChange) {
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                if (wasPausedByFocusLoss) {
-                    exoPlayer?.play()
-                    wasPausedByFocusLoss = false
-                }
-            }
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                if (exoPlayer?.isPlaying == true) {
-                    exoPlayer?.pause()
-                }
-                abandonAudioFocus()
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK,
-            -> {
-                if (exoPlayer?.isPlaying == true) {
-                    wasPausedByFocusLoss = true
-                    exoPlayer?.pause()
-                }
-            }
-        }
-    }
-
-    private fun requestAudioFocus(): Boolean {
-        val result = audioManager.requestAudioFocus(audioFocusRequest)
-        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-    }
-
-    private fun abandonAudioFocus() {
-        audioManager.abandonAudioFocusRequest(audioFocusRequest)
     }
 
     private fun initializePlayerAndSession() {
         Log.d(TAG, "initializePlayerAndSession")
-        exoPlayer =
-            ExoPlayer.Builder(this).build().apply {
+        val audioAttributes = androidx.media3.common.AudioAttributes.Builder()
+            .setUsage(C.USAGE_MEDIA)
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .build()
+        exoPlayer = ExoPlayer.Builder(this)
+            .setAudioAttributes(audioAttributes, true)
+            .build()
+            .apply {
                 repeatMode = Player.REPEAT_MODE_ALL
-
-                addListener(
-                    object : Player.Listener {
-                        override fun onIsPlayingChanged(isPlayingValue: Boolean) {
-                            Log.d(TAG, "Player status changed ig: $isPlayingValue")
-                            isServiceCurrentlyPlaying = isPlayingValue
-                            if (isPlayingValue) {
-                                if (!isReceiverRegistered) {
-                                    registerReceiver(becomingNoisyReceiver, intentFilter)
-                                    isReceiverRegistered = true
-                                }
-                            } else {
-                                if (isReceiverRegistered) {
-                                    unregisterReceiver(becomingNoisyReceiver)
-                                    isReceiverRegistered = false
-                                }
+                addListener(object : Player.Listener {
+                    override fun onIsPlayingChanged(isPlayingValue: Boolean) {
+                        Log.d(TAG, "Player status changed: $isPlayingValue")
+                        isServiceCurrentlyPlaying = isPlayingValue
+                        if (isPlayingValue) {
+                            if (!isReceiverRegistered) {
+                                registerReceiver(becomingNoisyReceiver, intentFilter)
+                                isReceiverRegistered = true
                             }
-                            updateNotification()
-                            TileStateUtil.requestTileUpdate(applicationContext)
-                        }
-
-                        override fun onPlaybackStateChanged(playbackState: Int) {
-                            Log.d(TAG, "Player.Listener.onPlaybackStateChanged: $playbackState")
-                            var performGeneralPostUpdate = true
-                            when (playbackState) {
-                                Player.STATE_IDLE -> {
-                                    if (isServiceCurrentlyPlaying) {
-                                        isServiceCurrentlyPlaying = false
-                                    }
-                                }
-                                Player.STATE_BUFFERING -> {
-                                    Log.d(TAG, "Buffering media")
-                                    performGeneralPostUpdate = false
-                                }
-                                Player.STATE_ENDED -> {
-                                    Log.d(TAG, "Idling")
-                                }
-                                Player.STATE_READY -> {
-                                    Log.d(TAG, "Data Received.")
-                                }
-                            }
-                            if (performGeneralPostUpdate) {
-                                updateNotification()
-                                TileStateUtil.requestTileUpdate(applicationContext)
+                        } else {
+                            if (isReceiverRegistered) {
+                                unregisterReceiver(becomingNoisyReceiver)
+                                isReceiverRegistered = false
                             }
                         }
+                        updateNotification()
+                        TileStateUtil.requestTileUpdate(applicationContext)
+                    }
+                    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                        super.onMediaItemTransition(mediaItem, reason)
+                        val newIndex = this@apply.currentMediaItemIndex
+                        SongsRepo.selectTrack(newIndex)
+                        Log.i(
+                            TAG,
+                            "Current Index: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
+                        )
 
-                        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                            super.onMediaItemTransition(mediaItem, reason)
-                            val newIndex = this@apply.currentMediaItemIndex
-                            SongsRepo.selectTrack(newIndex)
-                            Log.i(
-                                TAG,
-                                "Current Index: $newIndex Title: ${mediaItem?.mediaMetadata?.title} Reason: $reason",
-                            )
+                        // Clear old art and fetch new art on transition
+                        currentAlbumArt = null
+                        mediaItem?.mediaMetadata?.artworkUri?.let { fetchArtworkAsync(it) }
+                        updateNotification()
+                    }
 
-                            // Clear old art and fetch new art on transition
-                            currentAlbumArt = null
-                            mediaItem?.mediaMetadata?.artworkUri?.let { fetchArtworkAsync(it) }
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == Player.STATE_READY || playbackState == Player.STATE_BUFFERING) {
                             updateNotification()
                         }
+                    }
 
-                        @OptIn(UnstableApi::class)
-                        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                            super.onMediaMetadataChanged(mediaMetadata)
-                            Log.d(TAG, "Player.Listener.onMediaMetadataChanged: Title: ${mediaMetadata.title}")
-                            updateNotification()
-                        }
-
-                        override fun onPlayerError(error: PlaybackException) {
-                            Log.e(TAG, "Player.Listener.ExoPlayer Error: ", error)
-                            isServiceCurrentlyPlaying = false
-                            updateNotification()
-                            TileStateUtil.requestTileUpdate(applicationContext)
-                        }
-                    },
-                )
+                    override fun onPlayerError(error: PlaybackException) {
+                        isServiceCurrentlyPlaying = false
+                        updateNotification()
+                        TileStateUtil.requestTileUpdate(applicationContext)
+                    }
+                })
             }
-
-        mediaSession = MediaSession.Builder(this, exoPlayer!!).setId("AmbientMusicMediaSession").build()
+        mediaSession = MediaSession.Builder(this, exoPlayer!!)
+            .setId("AmbientMusicMediaSession")
+            .build()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -322,6 +243,9 @@ class MusicPlaybackService :
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("serenity")
             }
+            ACTION_START_IDLE -> {
+                startForeground(NOTIFICATION_ID, createNotification())
+            }
         }
         return START_STICKY
     }
@@ -331,37 +255,35 @@ class MusicPlaybackService :
      * serve it exactly what is wants. Usage is present in onStartCommand().
      */
     private fun playGenre(genre: String) {
-        if (requestAudioFocus()) {
-            Log.d(TAG, "Playing genre: $genre")
-            currentPlaylistGenre = genre // Set the current genre
+        Log.d(TAG, "Playing genre: $genre")
+        currentPlaylistGenre = genre // Set the current genre
 
-            // Avoid mixing up genres regardless of playState and which tile is being clicked.
-            val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-            if (genreSongs.isEmpty()) {
-                Log.w(TAG, "No songs found for genre: $genre")
-                return
+        // Avoid mixing up genres regardless of playState and which tile is being clicked.
+        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+        if (genreSongs.isEmpty()) {
+            Log.w(TAG, "No songs found for genre: $genre")
+            return
+        }
+
+        val mediaItems =
+            genreSongs.map { songData ->
+                val metadataBuilder =
+                    MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
+                songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+                MediaItem.Builder()
+                    .setUri(songData.url)
+                    .setMediaId(songData.url)
+                    .setMediaMetadata(metadataBuilder.build())
+                    .build()
             }
 
-            val mediaItems =
-                genreSongs.map { songData ->
-                    val metadataBuilder =
-                        MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
-                    songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
-                    MediaItem.Builder()
-                        .setUri(songData.url)
-                        .setMediaId(songData.url)
-                        .setMediaMetadata(metadataBuilder.build())
-                        .build()
-                }
-
-            exoPlayer?.shuffleModeEnabled = true
-            // Start from a random index within the filtered genre list
-            val startIndex = genreSongs.indices.random()
-            exoPlayer?.setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
-            exoPlayer?.prepare()
-            exoPlayer?.play()
-            isPlaylistSet = true
-        }
+        exoPlayer?.shuffleModeEnabled = true
+        // Start from a random index within the filtered genre list
+        val startIndex = genreSongs.indices.random()
+        exoPlayer?.setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
+        exoPlayer?.prepare()
+        exoPlayer?.play()
+        isPlaylistSet = true
     }
 
     private fun prepareAndSetPlaylist(playRandom: Boolean = false) {
@@ -428,16 +350,13 @@ class MusicPlaybackService :
             exoPlayer?.pause()
             Log.d(TAG, "togglePlayback: Pause command issued.")
         } else {
-            if (requestAudioFocus()) {
-                exoPlayer?.play()
-                Log.d(TAG, "Playing the audio file.")
-            }
+            exoPlayer?.play()
+            Log.d(TAG, "Playing the audio file.")
         }
     }
 
     private fun stopPlaybackAndReleaseSession() {
         Log.d(TAG, "stopPlaybackAndReleaseSession called.")
-        abandonAudioFocus()
         exoPlayer?.stop()
         exoPlayer?.clearMediaItems()
         isPlaylistSet = false
