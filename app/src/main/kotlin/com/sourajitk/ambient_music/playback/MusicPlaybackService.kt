@@ -6,7 +6,6 @@ package com.sourajitk.ambient_music.playback
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -33,7 +32,6 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.sourajitk.ambient_music.MainActivity
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
@@ -77,7 +75,8 @@ class MusicPlaybackService : Service() {
             private set
     }
 
-    // BroadcastReceiver class to handle the event
+    // Handle a Noisy receiver (bluetooth disconnection, media from another source, etc.)
+    // where the state of the current playback should change ideally to paused.
     private inner class BecomingNoisyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY && isServiceCurrentlyPlaying) {
@@ -432,12 +431,16 @@ class MusicPlaybackService : Service() {
     }
 
     private fun updateNotification() {
-        if (exoPlayer != null && mediaSession != null) {
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(NOTIFICATION_ID, createNotification())
-            Log.d(TAG, "Notification updated.")
+        val notification = createNotification()
+        if (!isServiceCurrentlyPlaying) {
+            // startForegrounds allows showing the notification to the user in non-expanded QS.
+            // This change also allows onDestroy() to remove the notification when the service is
+            // dead. Even if the user swiped it away while the app was dead, this call re-registers
+            // the MediaSession with the system UI.
+            startForeground(NOTIFICATION_ID, notification)
         } else {
-            Log.w(TAG, "updateNotification: Player or MediaSession is null.")
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(NOTIFICATION_ID, notification)
         }
     }
 
