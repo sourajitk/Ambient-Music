@@ -30,30 +30,16 @@ val commitHash by project.extra {
 
 android {
     namespace = "com.sourajitk.ambient_music"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 31
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        targetSdk = 36
         versionCode = commitCount
-        val isDogfoodBuild = System.getenv("GITHUB_REF_NAME") == "dogfood"
-        versionName = if (isDogfoodBuild) {
-            "3.3.2-dogfood-$commitHash"
-        } else {
-            "3.3.2-$commitHash"
-        }
+        versionName = "3.3.2-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
-
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
 
@@ -68,9 +54,6 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            signingConfig = signingConfigs.findByName("release")
-        }
         getByName("release").apply {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -103,15 +86,19 @@ android {
 }
 
 spotless {
+    // TODO: Switch completely to LF at some point, but for now keep consistent line
+    //  endings regardless of platform being committed on.
+    lineEndings = com.diffplug.spotless.LineEnding.WINDOWS
     kotlin {
-        ktlint("0.50.0").editorConfigOverride(
+        ktlint().editorConfigOverride(
             mapOf(
                 "ktlint_standard_package-name" to "disabled",
+                "ktlint_standard_function-naming" to "disabled",
                 "indent_size" to "4",
                 "continuation_indent_size" to "4"
             )
         )
-
+        licenseHeaderFile(rootProject.file("spotless/copyright.kt")).updateYearWithLatest(true)
         target("src/**/*.kt")
         targetExclude("build/**/*.kt")
     }

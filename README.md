@@ -28,34 +28,34 @@ This app allows you to play a curated stream of ambient music in the background 
     <img src="https://i.imgur.com/ShtwPFq.png" width="600">
     </div>
 
-* **A QS Tile**
+* **QS Tile**
     For super-quick access, you can add a Quick Settings tile! Just like how you'd access it on iOS! Just swipe down and tap the tile to start or stop the music. You don't even have to find the app or the notification.
     <div align="center">
-      <img src="https://i.imgur.com/L2yGIQL.jpeg" width="309">
+      <img src="https://i.imgur.com/MNPozkd.jpeg" width="309">
       <img src="https://i.imgur.com/Pu8QIWu.png" width="300">
     </div>
 
-* **Easy Information about Updates**
-  Get to know when I update the app based on notifications posted to you! Dismissed the notification but still want to know if you're on the latest version? Tap to check for updates within the app! Includes use of newest APIs for notification broadcasting for the latest version of Android!
+* **Support for Sleep Timer**
+  Want to play some ambient music before bed? Not a problem! Sleep Timer will automatically pause music once set with a timer preset ranging from 5 minutes - 20 minutes with the option to add as many minutes as desired using the notification created by my app. No more overnight battery drain! </br> **Bonus tip: This sleep timer actually works for any media that is being played on the system!**
       <div align="center">
-      <img src="https://i.imgur.com/DRFXLZs.png" width="240">
-      <img src="https://i.imgur.com/bzc8b5w.png" width="240">
-      <img src="https://i.imgur.com/dZw0V9n.png" width="240">
+      <img src="https://i.imgur.com/uuYIR2L.png" width="240">
+      <img src="https://i.imgur.com/t4mndtV.png" width="240">
+      <img src="https://i.imgur.com/BUFyQDz.png" width="240">
     </div>
 
 * **Built with Modern Technologies**
-    This project is built with Kotlin and uses Coroutines to handle all the background stuff like fetching music and caching. UI is completely written using Jetpack Compose. Some new APIs are used too like `requestAddTileService()`
+    This project is built with Kotlin and uses Coroutines to handle the background stuff like fetching music and caching. UI is completely written using Jetpack Compose. Built for Android 16 and supports Material 3 Expressive.
     
     <div align="center">
-      <img src="https://i.imgur.com/PDKLZWi.png" width="240">
-      <img src="https://i.imgur.com/XR1D3ej.png" width="240">
-      <img src="https://i.imgur.com/GPxgUCH.png" width="240">
+      <img src="https://i.imgur.com/445pEvH.png" width="240">
+      <img src="https://i.imgur.com/E1XgQAA.png" width="240">
+      <img src="https://i.imgur.com/TAhgdH3.png" width="240">
     </div>
 
 * **Support for multiple form factors**
 Enable navigation siderails when the display gets beyond a certain DPI for optimal user experience even for unconventional form factors and screen sizes.
     <div align="center">
-      <img src="https://i.imgur.com/q7kvM29.png" width="750">
+      <img src="https://i.imgur.com/PdtfZGW.png" width="750">
     </div>
 
 ## Downloads (Android 12+) [![Github All Releases](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total.svg)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)

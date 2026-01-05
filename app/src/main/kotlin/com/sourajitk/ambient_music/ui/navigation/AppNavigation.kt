@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2025 Sourajit Karmakar
+// Copyright (c) 2025-2026 Sourajit Karmakar
 
 package com.sourajitk.ambient_music.ui.navigation
 
@@ -55,9 +55,7 @@ sealed class Screen(val route: String, val label: Int, val icon: ImageVector) {
 
 // Composable to get the string label
 @Composable
-fun Screen.label(): String {
-    return stringResource(id = this.label)
-}
+fun Screen.label(): String = stringResource(id = this.label)
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
