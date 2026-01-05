@@ -98,7 +98,7 @@ spotless {
                 "continuation_indent_size" to "4"
             )
         )
-
+        licenseHeaderFile(rootProject.file("spotless/copyright.kt")).updateYearWithLatest(true)
         target("src/**/*.kt")
         targetExclude("build/**/*.kt")
     }

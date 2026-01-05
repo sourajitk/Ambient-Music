@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2025 Sourajit Karmakar
+// Copyright (c) 2025-2026 Sourajit Karmakar
 
 package com.sourajitk.ambient_music.ui.settings
 
