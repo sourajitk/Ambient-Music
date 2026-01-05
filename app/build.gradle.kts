@@ -86,10 +86,14 @@ android {
 }
 
 spotless {
+    // TODO: Switch completely to LF at some point, but for now keep consistent line
+    //  endings regardless of platform being committed on.
+    lineEndings = com.diffplug.spotless.LineEnding.WINDOWS
     kotlin {
-        ktlint("0.50.0").editorConfigOverride(
+        ktlint().editorConfigOverride(
             mapOf(
                 "ktlint_standard_package-name" to "disabled",
+                "ktlint_standard_function-naming" to "disabled",
                 "indent_size" to "4",
                 "continuation_indent_size" to "4"
             )
