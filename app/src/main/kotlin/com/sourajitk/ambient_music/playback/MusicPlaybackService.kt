@@ -42,9 +42,6 @@ class MusicPlaybackService : Service() {
     private var mediaSession: MediaSession? = null
     private var isPlaylistSet = false
 
-    private lateinit var audioManager: AudioManager
-    private var wasPausedByFocusLoss = false
-
     private val becomingNoisyReceiver = BecomingNoisyReceiver()
     private val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private var isReceiverRegistered = false
@@ -76,7 +73,7 @@ class MusicPlaybackService : Service() {
     }
 
     // Handle a Noisy receiver (bluetooth disconnection, media from another source, etc.)
-    // where the state of the current playback should change ideally to paused.
+    // where the state of the current playback should change ideally to pause.
     private inner class BecomingNoisyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY && isServiceCurrentlyPlaying) {
@@ -434,7 +431,7 @@ class MusicPlaybackService : Service() {
         val notification = createNotification()
         if (!isServiceCurrentlyPlaying) {
             // startForegrounds allows showing the notification to the user in non-expanded QS.
-            // This change also allows onDestory() to remove the notification when the service is
+            // This change also allows onDestroy() to remove the notification when the service is
             // dead. Even if the user swiped it away while the app was dead, this call re-registers
             // the MediaSession with the system UI.
             startForeground(NOTIFICATION_ID, notification)

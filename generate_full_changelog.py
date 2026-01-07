@@ -6,7 +6,7 @@ import argparse
 
 COMMIT_HISTORY_FILENAME = "commit_history.txt"
 CHANGELOG_FILENAME = "changelog.txt"
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
 
 
 def run_command(command, can_fail=False):
@@ -90,6 +90,13 @@ def generate_changelog_from_history(api_key, history):
         "Group related changes under clear headings like 'New Features', 'Bug Fixes', and 'Improvements'.\n\n"
         "Here are the commit messages:\n"
         f"```\n{history}\n```"
+        "Make sure the changelog of this format in the link given:"
+        "https://github.com/sourajitk/Ambient-Music/releases/tag/v3.3.2"
+        "Don't include any text like: Here's a user-friendly changelog for your new release, crafted by an expert release manager."
+        "Have a one liner at the top summarizing what the changes are from the commit messages."
+        "Like, This release includes dependency updates and some internal improvements."
+        "Do not mention what release number it is like # Release v3.4.0"
+        "All headings should just be bolded, not actua, headers"
     )
 
     headers = {"Content-Type": "application/json"}
