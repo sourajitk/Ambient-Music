@@ -110,6 +110,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.app.update.ktx)
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.lifecycle.runtime.ktx)
