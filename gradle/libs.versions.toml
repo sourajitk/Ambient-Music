@@ -13,6 +13,8 @@ activityCompose = "1.12.2"
 composeBom = "2025.12.01"
 lifecycleViewmodelCompose = "2.10.0"
 loggingInterceptor = "5.3.2"
+material3 = "1.4.0"
+material3AdaptiveNavigationSuite = "1.5.0-alpha11"
 materialIconsExtended = "1.7.8"
 media3Exoplayer = "1.9.0"
 media3Ui = "1.9.0"
@@ -25,6 +27,8 @@ foundationLayout = "1.10.0"
 foundation = "1.10.0"
 
 [libraries]
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }

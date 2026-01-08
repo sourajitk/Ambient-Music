@@ -33,8 +33,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Translate
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -84,7 +84,7 @@ private sealed class UpdateCheckState {
 }
 
 @SuppressLint("CoroutineCreationDuringComposition", "LocalContextGetResourceValueCall", "UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     val context = LocalContext.current
@@ -100,7 +100,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
         )
     }
 
-    Scaffold{ _ ->
+    Scaffold { _ ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 32.dp),
@@ -126,7 +126,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                     )
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -146,7 +146,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                         )
                     }
                     // Refresh Song Library
@@ -189,11 +189,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                         },
                         trailingContent = {
                             if (isRefreshingLibrary) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    strokeWidth = 3.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
+                                CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
                             }
                         },
                     )
@@ -220,7 +216,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                     )
 
                     // Donate
@@ -240,7 +236,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                     )
 
                     // Source Code
@@ -260,7 +256,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                     )
 
                     // Updater Preference w/ Logic
@@ -280,7 +276,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                                 scope.launch {
                                     updateState = UpdateCheckState.Checking
                                     // FOR UX PURPOSES :)
-                                    delay(1500)
+                                    delay(2500)
                                     val update = UpdateChecker.checkForUpdate(context)
                                     updateState =
                                         if (update != null) {
@@ -293,11 +289,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                         },
                         trailingContent = {
                             if (updateState is UpdateCheckState.Checking) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    strokeWidth = 3.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
+                                CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
                             }
                         },
                     )
@@ -305,7 +297,7 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
                     )
 
                     // About Section
