@@ -98,4 +98,6 @@
         để đồng bộ lại và làm mới lại dịch vụ phát nhạc.
     </string>
     <string name="faq_learn_more">Gặp vấn đề? Kiểm tra các câu hỏi thường gặp.</string>
+    <string name="rate_app_title">Đánh giá ứng dụng</string>
+    <string name="rate_app_body">Bạn thích ứng dụng chứ? Hãy đánh giá trên Play Store</string>
 </resources>

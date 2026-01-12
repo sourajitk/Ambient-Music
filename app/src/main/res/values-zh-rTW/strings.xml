@@ -83,4 +83,6 @@
         \nA: 有時 API 或伺服器會暫時故障。輕觸設定中的「重新整理歌曲庫」即可重新同步並啟動播放服務。
     </string>
     <string name="faq_learn_more">遇到問題嗎？查看常見問答。</string>
+    <string name="rate_app_title">评价应用</string>
+    <string name="rate_app_body">喜欢这款应用吗？在 Play 商店中评价它</string>
 </resources>

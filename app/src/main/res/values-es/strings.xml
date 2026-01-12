@@ -90,4 +90,6 @@
     para resincronizar y reiniciar el servicio de reproducción.
     </string>
     <string name="faq_learn_more">¿Tienes problemas? ¡Consulta las preguntas frecuentes.</string>
+    <string name="rate_app_title">Calificar la aplicación</string>
+    <string name="rate_app_body">¿Te gusta la aplicación? Califícala en Play Store</string>
 </resources>

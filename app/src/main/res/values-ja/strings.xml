@@ -90,4 +90,6 @@
     再同期し、再生サービスを再起動してください。
     </string>
     <string name="faq_learn_more">問題がありますか？よくある質問をチェックしてください。</string>
+    <string name="rate_app_title">アプリを評価する</string>
+    <string name="rate_app_body">アプリを気に入りましたか？Playストアで評価してください</string>
 </resources>

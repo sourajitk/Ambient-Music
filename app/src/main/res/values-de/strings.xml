@@ -91,4 +91,6 @@
         um neu zu synchronisieren und den Wiedergabedienst neu zu starten.
     </string>
     <string name="faq_learn_more">Haben Sie Probleme? Sehen Sie sich die häufig gestellten Fragen an.</string>
+    <string name="rate_app_title">App bewerten</string>
+    <string name="rate_app_body">Gefällt dir die App? Bewerte sie im Play Store</string>
 </resources>
