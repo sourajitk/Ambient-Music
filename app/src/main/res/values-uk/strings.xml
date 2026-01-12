@@ -90,4 +90,6 @@
     щоб повторно синхронізувати та перезапустити службу відтворення.
     </string>
     <string name="faq_learn_more">Виникли проблеми? Перегляньте часті запитання.</string>
+    <string name="rate_app_title">Оцінити додаток</string>
+    <string name="rate_app_body">Подобається додаток? Оцініть його у Play Store</string>
 </resources>

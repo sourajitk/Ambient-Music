@@ -37,7 +37,7 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = commitCount
-        versionName = "3.5.0-$commitHash"
+        versionName = "3.6.0-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
     signingConfigs {
@@ -54,10 +54,6 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
-            signingConfig = signingConfigs.findByName("release")
-                ?: signingConfigs.getByName("debug")
-        }
         getByName("release").apply {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -66,6 +62,7 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.findByName("release")
+                ?: signingConfigs.getByName("debug")
         }
     }
 

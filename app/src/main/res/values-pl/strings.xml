@@ -91,4 +91,6 @@
     aby ponownie zsynchronizować i zrestartować usługę odtwarzania.
     </string>
     <string name="faq_learn_more">Masz problemy? Sprawdź często zadawane pytania.</string>
+    <string name="rate_app_title">Oceń aplikację</string>
+    <string name="rate_app_body">Podoba Ci się aplikacja? Oceń ją w Sklepie Play</string>
 </resources>
