@@ -10,10 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,16 +30,16 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -103,229 +101,229 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     Scaffold { _ ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 32.dp, top = 0.dp, start = 16.dp, end = 16.dp),
         ) {
             item { CategoryHeader(stringResource(R.string.general_header)) }
             item {
-                ExpressiveSettingsCard {
-                    // Opens App Info
-                    SettingsListItem(
-                        icon = Icons.Default.Settings,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.additional_settings_title),
-                        summary = stringResource(R.string.additional_settings_body),
+                // Opens App Info
+                SettingsScreenCard(
+                    icon = Icons.Default.Settings,
+                    title = stringResource(R.string.additional_settings_title),
+                    subtitle = stringResource(R.string.additional_settings_body),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 4.dp, bottomEnd = 4.dp),
+                    onClick = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", context.packageName, null)
+                        intent.data = uri
+                        context.startActivity(intent)
+                    },
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(2.dp)) }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                item {
+                    SettingsScreenCard(
+                        icon = Icons.Default.Translate,
+                        title = stringResource(R.string.app_language_title),
+                        subtitle = stringResource(R.string.app_language_body),
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        shape = RoundedCornerShape(4.dp),
                         onClick = {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
                             val uri = Uri.fromParts("package", context.packageName, null)
                             intent.data = uri
                             context.startActivity(intent)
                         },
                     )
+                }
+                item { Spacer(modifier = Modifier.height(2.dp)) }
+            }
 
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    )
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        SettingsListItem(
-                            icon = Icons.Default.Translate,
-                            iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            title = stringResource(R.string.app_language_title),
-                            summary = stringResource(R.string.app_language_body),
-                            onClick = {
-                                val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
-                                val uri = Uri.fromParts("package", context.packageName, null)
-                                intent.data = uri
-                                context.startActivity(intent)
-                            },
-                        )
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            thickness = 0.5.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        )
+            item {
+                // Refresh Song Library
+                val refreshSummary =
+                    if (isRefreshingLibrary) {
+                        stringResource(R.string.cache_clear_fetching)
+                    } else {
+                        stringResource(R.string.cache_clear_helper)
                     }
-                    // Refresh Song Library
-                    val refreshSummary =
+                SettingsScreenCard(
+                    icon = Icons.Default.Refresh,
+                    title = stringResource(R.string.refresh_song_lib),
+                    subtitle = refreshSummary,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 28.dp, bottomEnd = 28.dp),
+                    trailingContent = {
                         if (isRefreshingLibrary) {
-                            stringResource(R.string.cache_clear_fetching)
-                        } else {
-                            stringResource(R.string.cache_clear_helper)
+                            CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
                         }
-                    SettingsListItem(
-                        icon = Icons.Default.Refresh,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.refresh_song_lib),
-                        summary = refreshSummary,
-                        onClick = {
-                            if (!isRefreshingLibrary) {
-                                scope.launch {
-                                    isRefreshingLibrary = true
-                                    var finalStatusMessage = context.getString(R.string.refresh_fail_detail)
-                                    try {
-                                        coroutineScope {
-                                            // For better UX, sync summaryText and show.Snackbar
-                                            val refreshJob =
-                                                async(Dispatchers.IO) {
-                                                    SongsRepo.initializeAndRefresh(context) { _, statusMessage ->
-                                                        finalStatusMessage = statusMessage
-                                                    }
+                    },
+                    onClick = {
+                        if (!isRefreshingLibrary) {
+                            scope.launch {
+                                isRefreshingLibrary = true
+                                var finalStatusMessage = context.getString(R.string.refresh_fail_detail)
+                                try {
+                                    coroutineScope {
+                                        // For better UX, sync summaryText and show.Snackbar
+                                        val refreshJob =
+                                            async(Dispatchers.IO) {
+                                                SongsRepo.initializeAndRefresh(context) { _, statusMessage ->
+                                                    finalStatusMessage = statusMessage
                                                 }
-                                            // This delay is purely for UX purposes.
-                                            delay(1500)
-                                            refreshJob.await()
-                                        }
-                                    } finally {
-                                        // Ensure the refresh state is set back to false for the message to change
-                                        isRefreshingLibrary = false
-                                        snackbarHostState.showSnackbar(message = finalStatusMessage)
+                                            }
+                                        // This delay is purely for UX purposes.
+                                        delay(1500)
+                                        refreshJob.await()
                                     }
+                                } finally {
+                                    // Ensure the refresh state is set back to false for the message to change
+                                    isRefreshingLibrary = false
+                                    snackbarHostState.showSnackbar(message = finalStatusMessage)
                                 }
                             }
-                        },
-                        trailingContent = {
-                            if (isRefreshingLibrary) {
-                                CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
-                            }
-                        },
-                    )
-                }
+                        }
+                    },
+                )
             }
+
+            item { Spacer(modifier = Modifier.height(8.dp)) }
 
             item { CategoryHeader(stringResource(R.string.about_header_title)) }
             item {
-                ExpressiveSettingsCard {
-                    // Author
-                    SettingsListItem(
-                        icon = Icons.Default.Person,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.author_title),
-                        summary = stringResource(R.string.app_author),
-                        onClick = {
-                            val url = "https://github.com/sourajitk/"
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = url.toUri()
-                            context.startActivity(intent)
-                        },
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    )
-
-                    // Donate
-                    SettingsListItem(
-                        icon = Icons.Default.AttachMoney,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.donate_title),
-                        summary = stringResource(R.string.donate_text),
-                        onClick = {
-                            val url = "https://www.paypal.com/paypalme/androbotsdev"
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = url.toUri()
-                            context.startActivity(intent)
-                        },
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    )
-
-                    // Source Code
-                    SettingsListItem(
-                        icon = Icons.Default.Code,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.source_code_title),
-                        summary = stringResource(R.string.source_code_body),
-                        onClick = {
-                            val url = "https://github.com/sourajitk/Ambient-Music"
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = url.toUri()
-                            context.startActivity(intent)
-                        },
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    )
-
-                    // Updater Preference w/ Logic
-                    val updateSummary =
-                        when (updateState) {
-                            is UpdateCheckState.Checking -> stringResource(R.string.check_for_updates)
-                            is UpdateCheckState.UpToDate -> stringResource(R.string.latest_version_helper)
-                            else -> stringResource(R.string.check_for_updates_helper)
-                        }
-                    SettingsListItem(
-                        icon = Icons.Default.Sync,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.updates),
-                        summary = updateSummary,
-                        onClick = {
-                            if (updateState !is UpdateCheckState.Checking) {
-                                scope.launch {
-                                    updateState = UpdateCheckState.Checking
-                                    // FOR UX PURPOSES :)
-                                    delay(2500)
-                                    val update = UpdateChecker.checkForUpdate(context)
-                                    updateState =
-                                        if (update != null) {
-                                            UpdateCheckState.UpdateAvailable(update)
-                                        } else {
-                                            UpdateCheckState.UpToDate
-                                        }
-                                }
-                            }
-                        },
-                        trailingContent = {
-                            if (updateState is UpdateCheckState.Checking) {
-                                CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
-                            }
-                        },
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    )
-
-                    // About Section
-                    SettingsListItem(
-                        icon = Icons.Default.Info,
-                        iconContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        title = stringResource(R.string.version_helper),
-                        summary = stringResource(R.string.app_version),
-                        onClick = {
-                            val url = context.getString(R.string.github_latest_rel)
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = url.toUri()
-                            context.startActivity(intent)
-                        },
-                    )
-                }
+                // Author
+                SettingsScreenCard(
+                    icon = Icons.Default.Person,
+                    title = stringResource(R.string.author_title),
+                    subtitle = stringResource(R.string.app_author),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 4.dp, bottomEnd = 4.dp),
+                    onClick = {
+                        val url = "https://github.com/sourajitk/"
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = url.toUri()
+                        context.startActivity(intent)
+                    },
+                )
             }
+
+            item { Spacer(modifier = Modifier.height(2.dp)) }
+
+            item {
+                // Donate
+                SettingsScreenCard(
+                    icon = Icons.Default.AttachMoney,
+                    title = stringResource(R.string.donate_title),
+                    subtitle = stringResource(R.string.donate_text),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(4.dp),
+                    onClick = {
+                        val url = "https://www.paypal.com/paypalme/androbotsdev"
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = url.toUri()
+                        context.startActivity(intent)
+                    },
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(2.dp)) }
+
+            item {
+                // Source Code
+                SettingsScreenCard(
+                    icon = Icons.Default.Code,
+                    title = stringResource(R.string.source_code_title),
+                    subtitle = stringResource(R.string.source_code_body),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(4.dp),
+                    onClick = {
+                        val url = "https://github.com/sourajitk/Ambient-Music"
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = url.toUri()
+                        context.startActivity(intent)
+                    },
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(2.dp)) }
+
+            item {
+                // Updater Preference w/ Logic
+                val updateSummary =
+                    when (updateState) {
+                        is UpdateCheckState.Checking -> stringResource(R.string.check_for_updates)
+                        is UpdateCheckState.UpToDate -> stringResource(R.string.latest_version_helper)
+                        else -> stringResource(R.string.check_for_updates_helper)
+                    }
+                SettingsScreenCard(
+                    icon = Icons.Default.Sync,
+                    title = stringResource(R.string.updates),
+                    subtitle = updateSummary,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(4.dp),
+                    trailingContent = {
+                        if (updateState is UpdateCheckState.Checking) {
+                            CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
+                        }
+                    },
+                    onClick = {
+                        if (updateState !is UpdateCheckState.Checking) {
+                            scope.launch {
+                                updateState = UpdateCheckState.Checking
+                                // FOR UX PURPOSES :)
+                                delay(2500)
+                                val update = UpdateChecker.checkForUpdate(context)
+                                updateState =
+                                    if (update != null) {
+                                        UpdateCheckState.UpdateAvailable(update)
+                                    } else {
+                                        UpdateCheckState.UpToDate
+                                    }
+                            }
+                        }
+                    },
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(2.dp)) }
+
+            item {
+                // About Section
+                SettingsScreenCard(
+                    icon = Icons.Default.Info,
+                    title = stringResource(R.string.version_helper),
+                    subtitle = stringResource(R.string.app_version),
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 28.dp, bottomEnd = 28.dp),
+                    onClick = {
+                        val url = context.getString(R.string.github_latest_rel)
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = url.toUri()
+                        context.startActivity(intent)
+                    },
+                )
+            }
+
             // Hint Section
             item {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.hint_text),
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -333,67 +331,65 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
 }
 
 @Composable
-private fun ExpressiveSettingsCard(content: @Composable ColumnScope.() -> Unit) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-    ) {
-        Column(modifier = Modifier.padding(vertical = 8.dp)) {
-            content()
-        }
-    }
-}
-
-@Composable
-private fun SettingsListItem(
+fun SettingsScreenCard(
     icon: ImageVector,
-    iconContainerColor: Color,
     title: String,
-    summary: String,
+    subtitle: String,
+    containerColor: Color,
+    iconColor: Color,
+    shape: Shape,
     onClick: () -> Unit,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
-    ListItem(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        headlineContent = {
-            Text(
-                title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
-        },
-        supportingContent = {
-            Text(
-                summary,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        },
-        leadingContent = {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(iconContainerColor),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = shape,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleMedium,
                 )
-            }
-        },
-        trailingContent = trailingContent,
-        // Color for the box surrounding the main content.
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-    )
+            },
+            supportingContent = {
+                if (subtitle.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        fontWeight = FontWeight.Normal,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+            leadingContent = {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(containerColor),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconColor,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            },
+            trailingContent = trailingContent,
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 0.5.dp),
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+            ),
+        )
+    }
 }
 
 @Composable
@@ -403,6 +399,6 @@ private fun CategoryHeader(title: String) {
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 32.dp, top = 16.dp, bottom = 8.dp),
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
     )
 }
