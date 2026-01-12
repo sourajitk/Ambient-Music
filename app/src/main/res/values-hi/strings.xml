@@ -87,4 +87,6 @@
         "गाने की लाइब्रेरी अपडेट करें" पर टैप करें।
     </string>
     <string name="faq_learn_more">समस्याएँ आ रही हैं? अक्सर पूछे जाने वाले प्रश्न देखें!</string>
+    <string name="rate_app_title">ऐप को रेट करें</string>
+    <string name="rate_app_body">ऐप पसंद आया? प्ले स्टोर पर इसे रेट करें</string>
 </resources>

@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
@@ -56,14 +57,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
+import com.sourajitk.ambient_music.util.InstallSourceChecker
 import com.sourajitk.ambient_music.util.UpdateChecker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -87,6 +87,8 @@ private sealed class UpdateCheckState {
 fun SettingsScreen(snackbarHostState: SnackbarHostState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val isFromPlayStore = remember { InstallSourceChecker.isFromPlayStore(context) }
 
     var updateState by remember { mutableStateOf<UpdateCheckState>(UpdateCheckState.Idle) }
     var isRefreshingLibrary by remember { mutableStateOf(false) }
@@ -206,12 +208,41 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                     iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 4.dp, bottomEnd = 4.dp),
                     onClick = {
-                        val url = "https://github.com/sourajitk/"
+                        val url = "https://sourajitk.github.io/"
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.data = url.toUri()
                         context.startActivity(intent)
                     },
                 )
+            }
+
+            /**
+             * Check if the user installed the app from Play Store, if not don't show them the rate
+             * button. If they did install it from the Play Store, remove the updater button since
+             * it is quite redundant as updates are managed by Play store directly.
+             */
+            if (isFromPlayStore) {
+                item { Spacer(modifier = Modifier.height(2.dp)) }
+
+                item {
+                    // Rate the app
+                    SettingsScreenCard(
+                        icon = Icons.Default.Star,
+                        title = stringResource(R.string.rate_app_title),
+                        subtitle = stringResource(R.string.rate_app_body),
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        shape = RoundedCornerShape(4.dp),
+                        onClick = {
+                            val packageName = context.packageName
+                            val marketIntent = Intent(
+                                Intent.ACTION_VIEW,
+                                "market://details?id=$packageName".toUri(),
+                            )
+                            context.startActivity(marketIntent)
+                        },
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(2.dp)) }
@@ -254,45 +285,47 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                 )
             }
 
-            item { Spacer(modifier = Modifier.height(2.dp)) }
+            if (!isFromPlayStore) {
+                item { Spacer(modifier = Modifier.height(2.dp)) }
 
-            item {
-                // Updater Preference w/ Logic
-                val updateSummary =
-                    when (updateState) {
-                        is UpdateCheckState.Checking -> stringResource(R.string.check_for_updates)
-                        is UpdateCheckState.UpToDate -> stringResource(R.string.latest_version_helper)
-                        else -> stringResource(R.string.check_for_updates_helper)
-                    }
-                SettingsScreenCard(
-                    icon = Icons.Default.Sync,
-                    title = stringResource(R.string.updates),
-                    subtitle = updateSummary,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = RoundedCornerShape(4.dp),
-                    trailingContent = {
-                        if (updateState is UpdateCheckState.Checking) {
-                            CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
+                item {
+                    // Updater Preference w/ Logic
+                    val updateSummary =
+                        when (updateState) {
+                            is UpdateCheckState.Checking -> stringResource(R.string.check_for_updates)
+                            is UpdateCheckState.UpToDate -> stringResource(R.string.latest_version_helper)
+                            else -> stringResource(R.string.check_for_updates_helper)
                         }
-                    },
-                    onClick = {
-                        if (updateState !is UpdateCheckState.Checking) {
-                            scope.launch {
-                                updateState = UpdateCheckState.Checking
-                                // FOR UX PURPOSES :)
-                                delay(2500)
-                                val update = UpdateChecker.checkForUpdate(context)
-                                updateState =
-                                    if (update != null) {
-                                        UpdateCheckState.UpdateAvailable(update)
-                                    } else {
-                                        UpdateCheckState.UpToDate
-                                    }
+                    SettingsScreenCard(
+                        icon = Icons.Default.Sync,
+                        title = stringResource(R.string.updates),
+                        subtitle = updateSummary,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        shape = RoundedCornerShape(4.dp),
+                        trailingContent = {
+                            if (updateState is UpdateCheckState.Checking) {
+                                CircularWavyProgressIndicator(modifier = Modifier.size(30.dp))
                             }
-                        }
-                    },
-                )
+                        },
+                        onClick = {
+                            if (updateState !is UpdateCheckState.Checking) {
+                                scope.launch {
+                                    updateState = UpdateCheckState.Checking
+                                    // FOR UX PURPOSES :)
+                                    delay(2500)
+                                    val update = UpdateChecker.checkForUpdate(context)
+                                    updateState =
+                                        if (update != null) {
+                                            UpdateCheckState.UpdateAvailable(update)
+                                        } else {
+                                            UpdateCheckState.UpToDate
+                                        }
+                                }
+                            }
+                        },
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(2.dp)) }
@@ -312,18 +345,6 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                         intent.data = url.toUri()
                         context.startActivity(intent)
                     },
-                )
-            }
-
-            // Hint Section
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.hint_text),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

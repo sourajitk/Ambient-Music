@@ -101,4 +101,6 @@
         to resync and restart the playback service.
     </string>
     <string name="faq_learn_more">Having issues? Check out the frequently asked questions.</string>
+    <string name="rate_app_title">Rate the app</string>
+    <string name="rate_app_body">Like the app? Rate it on Play Store</string>
 </resources>

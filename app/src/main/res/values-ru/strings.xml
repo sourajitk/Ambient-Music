@@ -84,4 +84,6 @@
     aby ponownie zsynchronizować i zrestartować usługę odtwarzania.
 </string>
     <string name="faq_learn_more">Masz problemy? Sprawdź często zadawane pytania.</string>
+    <string name="rate_app_title">Оценить приложение</string>
+    <string name="rate_app_body">Понравилось приложение? Оцените его в Play Store</string>
 </resources>
