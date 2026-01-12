@@ -96,7 +96,8 @@ def generate_changelog_from_history(api_key, history):
         "Have a one liner at the top summarizing what the changes are from the commit messages."
         "Like, This release includes dependency updates and some internal improvements."
         "Do not mention what release number it is like # Release v3.4.0"
-        "All headings should just be bolded, not actua, headers"
+        "All headings should just be bolded, not actual, headers"
+        "Never use emojis"
     )
 
     headers = {"Content-Type": "application/json"}
