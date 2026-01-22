@@ -352,68 +352,6 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
 }
 
 @Composable
-fun SettingsScreenCard(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    containerColor: Color,
-    iconColor: Color,
-    shape: Shape,
-    onClick: () -> Unit,
-    trailingContent: @Composable (() -> Unit)? = null,
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = shape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            },
-            supportingContent = {
-                if (subtitle.isNotEmpty()) {
-                    Text(
-                        text = subtitle,
-                        fontWeight = FontWeight.Normal,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            },
-            leadingContent = {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(containerColor),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconColor,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-            },
-            trailingContent = trailingContent,
-            modifier = Modifier
-                .clickable(onClick = onClick)
-                .padding(vertical = 0.5.dp),
-            colors = ListItemDefaults.colors(
-                containerColor = Color.Transparent,
-            ),
-        )
-    }
-}
-
-@Composable
 private fun CategoryHeader(title: String) {
     Text(
         text = title,
