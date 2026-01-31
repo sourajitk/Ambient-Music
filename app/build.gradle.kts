@@ -36,9 +36,10 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = commitCount
-        versionName = "3.6.0-$commitHash"
+        versionName = "3.6.1-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
+
     signingConfigs {
         val hasSigningEnv = System.getenv("SIGNING_KEYSTORE_PASSWORD") != null
 
@@ -66,22 +67,24 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
         resValues = true
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
-    }
 
     androidResources {
         generateLocaleConfig = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_25)
     }
 }
 

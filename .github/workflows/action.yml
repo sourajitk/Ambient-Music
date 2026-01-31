@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
 
@@ -48,10 +48,10 @@ jobs:
           echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
 
       - name: Set Up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.2.0
         with:
           distribution: "zulu"
-          java-version: "21"
+          java-version: "25.0.2+10"
           cache: "gradle"
 
       - name: Change wrapper permissions
