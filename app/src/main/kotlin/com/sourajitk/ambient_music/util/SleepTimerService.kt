@@ -62,9 +62,11 @@ class SleepTimerService : Service() {
                     startTimer(duration)
                 }
             }
+
             ACTION_STOP -> {
                 stopTimerAndService()
             }
+
             ACTION_INCREMENT_TIMER -> {
                 if (countDownTimer != null) {
                     val newDuration = remainingMillis + TimeUnit.MINUTES.toMillis(5)

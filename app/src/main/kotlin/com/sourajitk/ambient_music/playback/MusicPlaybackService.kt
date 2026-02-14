@@ -165,6 +165,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 togglePlayback()
             }
+
             ACTION_SKIP_TO_NEXT -> {
                 Log.i(TAG, "ACTION_SKIP_TO_NEXT received.")
                 if (SongsRepo.songs.isEmpty() || exoPlayer == null) {
@@ -179,11 +180,13 @@ class MusicPlaybackService : Service() {
                     exoPlayer?.seekToNextMediaItem()
                 }
             }
+
             ACTION_STOP_SERVICE -> {
                 stopPlaybackAndReleaseSession()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
             }
+
             ACTION_PLAY_GENRE_CHILL -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -195,6 +198,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("chill")
             }
+
             ACTION_PLAY_GENRE_CALM -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -206,6 +210,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("calm")
             }
+
             ACTION_PLAY_GENRE_SLEEP -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -217,6 +222,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("sleep")
             }
+
             ACTION_PLAY_GENRE_FOCUS -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -228,6 +234,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("focus")
             }
+
             ACTION_PLAY_GENRE_SERENITY -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -239,6 +246,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("serenity")
             }
+
             ACTION_START_IDLE -> {
                 startForeground(NOTIFICATION_ID, createNotification())
             }
