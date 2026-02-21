@@ -71,6 +71,13 @@ This app allows you to play a curated stream of ambient music in the background 
       <img src="https://i.imgur.com/PdtfZGW.png" width="750">
     </div>
 
+* **Full Android Auto support**
+  Control your Ambient Music straight from the screen on your car! 
+  </br>No interruptions! Safe Drives! 
+  <div align="center">
+    <img src="https://i.imgur.com/BVRuTfJ.jpeg" width="750">
+  </div>
+
 ## Downloads
 
 [![API](https://img.shields.io/badge/31%2B-level?style=for-the-badge&logo=android&logoColor=3cd382&label=API&labelColor=21262d&color=ff663b)](https://developer.android.com/studio/releases/platforms) [![Release](https://img.shields.io/github/v/release/sourajitk/Ambient-Music?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/sourajitk/Ambient-Music/latest) [![Downloads](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total?style=for-the-badge&labelColor=21262d&color=238636)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
