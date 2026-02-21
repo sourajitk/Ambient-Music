@@ -216,11 +216,9 @@ fun SettingsScreen(snackbarHostState: SnackbarHostState) {
                 )
             }
 
-            /**
-             * Check if the user installed the app from Play Store, if not don't show them the rate
-             * button. If they did install it from the Play Store, remove the updater button since
-             * it is quite redundant as updates are managed by Play store directly.
-             */
+            // Check if the user installed the app from Play Store, if not don't show them the rate
+            // button. If they did install it from the Play Store, remove the updater button since
+            // it is quite redundant as updates are managed by Play store directly.
             if (isFromPlayStore) {
                 item { Spacer(modifier = Modifier.height(2.dp)) }
 
