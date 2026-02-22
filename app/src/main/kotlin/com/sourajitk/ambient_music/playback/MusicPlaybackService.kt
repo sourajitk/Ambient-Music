@@ -6,16 +6,17 @@ package com.sourajitk.ambient_music.playback
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
-import android.os.IBinder
+import android.os.Build
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
@@ -28,18 +29,26 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.google.common.collect.ImmutableList
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.sourajitk.ambient_music.MainActivity
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
 
-class MusicPlaybackService : Service() {
+class MusicPlaybackService : MediaLibraryService() {
 
     private var exoPlayer: ExoPlayer? = null
-    private var mediaSession: MediaSession? = null
+    private var mediaLibrarySession: MediaLibrarySession? = null
     private var isPlaylistSet = false
 
     private val becomingNoisyReceiver = BecomingNoisyReceiver()
@@ -62,6 +71,7 @@ class MusicPlaybackService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
         private const val TAG = "MusicPlaybackService"
+        private const val ROOT_ID = "ambient_music_root_id"
 
         @Volatile
         var isServiceCurrentlyPlaying: Boolean = false
@@ -71,6 +81,16 @@ class MusicPlaybackService : Service() {
         var currentPlaylistGenre: String? = null
             private set
     }
+
+    // It tells Media3 to use our manual updateNotification() instead of its internal manager.
+    // This stops the MediaSession notification from being recreating every time along with
+    // actually using our assets to override the default API provided bitmaps.
+    override fun onUpdateNotification(session: MediaSession, startInForegroundRequired: Boolean) {
+        updateNotification()
+    }
+
+    // Override our implementation of mediaLibrarySession.
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? = mediaLibrarySession
 
     // Handle a Noisy receiver (bluetooth disconnection, media from another source, etc.)
     // where the state of the current playback should change ideally to pause.
@@ -148,7 +168,81 @@ class MusicPlaybackService : Service() {
                     }
                 })
             }
-        mediaSession = MediaSession.Builder(this, exoPlayer!!)
+
+        val callback = object : MediaLibrarySession.Callback {
+            // Triggered when Android Auto attempts to connect.
+            // We grant permissions for browsing and subscribing to the media library.
+            override fun onConnect(
+                session: MediaSession,
+                controller: MediaSession.ControllerInfo,
+            ): MediaSession.ConnectionResult {
+                val connectionResult = super.onConnect(session, controller)
+                val sessionCommands = connectionResult.availableSessionCommands.buildUpon()
+                    .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_CHILDREN)
+                    .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_LIBRARY_ROOT)
+                    .add(SessionCommand.COMMAND_CODE_LIBRARY_SUBSCRIBE)
+                    .build()
+                return MediaSession.ConnectionResult.accept(
+                    sessionCommands,
+                    connectionResult.availablePlayerCommands,
+                )
+            }
+
+            // Provides the root folder for the media browser.
+            // This is the "home" folder that Android Auto first looks for.
+            override fun onGetLibraryRoot(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<MediaItem>> {
+                val rootItem = MediaItem.Builder()
+                    .setMediaId(ROOT_ID)
+                    .setMediaMetadata(
+                        MediaMetadata.Builder()
+                            .setIsBrowsable(true)
+                            .setIsPlayable(false)
+                            .setTitle("Ambient Music")
+                            .build(),
+                    )
+                    .build()
+                return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
+            }
+
+            // Returns the list of songs when a controller browses a specific folder ID.
+            // When parentId matches ROOT_ID, we provide all songs from the SongsRepo.
+            @OptIn(UnstableApi::class)
+            override fun onGetChildren(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                parentId: String,
+                page: Int,
+                pageSize: Int,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+                if (parentId == ROOT_ID) {
+                    val items = SongsRepo.songs.map { song ->
+                        MediaItem.Builder()
+                            .setMediaId(song.url)
+                            .setUri(song.url)
+                            .setMediaMetadata(
+                                MediaMetadata.Builder()
+                                    .setTitle(song.title)
+                                    .setArtist(song.artist)
+                                    .setArtworkUri(song.albumArtUrl?.toUri())
+                                    .setIsBrowsable(false)
+                                    .setIsPlayable(true)
+                                    .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+                                    .build(),
+                            )
+                            .build()
+                    }
+                    // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
+                    return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(items), params))
+                }
+                return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
+            }
+        }
+        mediaLibrarySession = MediaLibrarySession.Builder(this, exoPlayer!!, callback)
             .setId("AmbientMusicMediaSession")
             .build()
     }
@@ -165,6 +259,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 togglePlayback()
             }
+
             ACTION_SKIP_TO_NEXT -> {
                 Log.i(TAG, "ACTION_SKIP_TO_NEXT received.")
                 if (SongsRepo.songs.isEmpty() || exoPlayer == null) {
@@ -179,11 +274,13 @@ class MusicPlaybackService : Service() {
                     exoPlayer?.seekToNextMediaItem()
                 }
             }
+
             ACTION_STOP_SERVICE -> {
                 stopPlaybackAndReleaseSession()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
             }
+
             ACTION_PLAY_GENRE_CHILL -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -195,6 +292,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("chill")
             }
+
             ACTION_PLAY_GENRE_CALM -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -206,6 +304,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("calm")
             }
+
             ACTION_PLAY_GENRE_SLEEP -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -217,6 +316,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("sleep")
             }
+
             ACTION_PLAY_GENRE_FOCUS -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -228,6 +328,7 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("focus")
             }
+
             ACTION_PLAY_GENRE_SERENITY -> {
                 if (SongsRepo.songs.isEmpty()) {
                     Log.w(TAG, "SongsRepo:Genre is empty.")
@@ -239,11 +340,12 @@ class MusicPlaybackService : Service() {
                 startForeground(NOTIFICATION_ID, createNotification())
                 playGenre("serenity")
             }
+
             ACTION_START_IDLE -> {
                 startForeground(NOTIFICATION_ID, createNotification())
             }
         }
-        return START_STICKY
+        return super.onStartCommand(intent, flags, startId)
     }
 
     /**
@@ -419,7 +521,7 @@ class MusicPlaybackService : Service() {
                 .setOngoing(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        mediaSession?.let { session ->
+        mediaLibrarySession?.let { session ->
             val mediaStyle =
                 MediaStyleNotificationHelper.MediaStyle(session).setShowActionsInCompactView(0, 1)
             builder.setStyle(mediaStyle)
@@ -441,14 +543,12 @@ class MusicPlaybackService : Service() {
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
-
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: Service destroying.")
         stopPlaybackAndReleaseSession()
-        mediaSession?.release()
-        mediaSession = null
+        mediaLibrarySession?.release()
+        mediaLibrarySession = null
         exoPlayer?.release()
         exoPlayer = null
         isServiceCurrentlyPlaying = false
