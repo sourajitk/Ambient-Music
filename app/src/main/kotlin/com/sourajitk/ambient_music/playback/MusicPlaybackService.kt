@@ -6,17 +6,14 @@ package com.sourajitk.ambient_music.playback
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
@@ -40,7 +37,6 @@ import coil.request.ImageRequest
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.sourajitk.ambient_music.MainActivity
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
@@ -194,16 +190,22 @@ class MusicPlaybackService : MediaLibraryService() {
                 browser: MediaSession.ControllerInfo,
                 params: LibraryParams?,
             ): ListenableFuture<LibraryResult<MediaItem>> {
+                // Catch both "Suggested" and "Recent" queries from Android Auto
+                val isSuggestedOrRecent = (params?.isSuggested == true) || (params?.isRecent == true)
+                val rootIdToReturn = if (isSuggestedOrRecent) "suggested_root_id" else ROOT_ID
+                val rootTitle = if (isSuggestedOrRecent) "For You Recommendations" else "Ambient Music"
                 val rootItem = MediaItem.Builder()
-                    .setMediaId(ROOT_ID)
+                    .setMediaId(rootIdToReturn)
                     .setMediaMetadata(
                         MediaMetadata.Builder()
-                            .setIsBrowsable(false)
+                            .setIsBrowsable(true)
                             .setIsPlayable(false)
-                            .setTitle("Ambient Music")
+                            .setTitle(rootTitle)
+                            .setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED)
                             .build(),
                     )
                     .build()
+
                 return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
             }
 
@@ -222,17 +224,17 @@ class MusicPlaybackService : MediaLibraryService() {
                     val items = SongsRepo.songs
                         .filter { !it.genre.isNullOrEmpty() }
                         .distinctBy { it.genre?.lowercase() }
-                        .map { song ->
-                            val genreName = song.genre?.lowercase() ?: "unknown"
+                        .map { songData ->
+                            val genreName = songData.genre?.lowercase() ?: "unknown"
                             // Grabs the custom title from JSON, or capitalizes the raw genre if null
-                            val displayTitle = song.title
+                            val displayTitle = songData.title
                             MediaItem.Builder()
                                 .setMediaId("genre_$genreName")
                                 .setMediaMetadata(
                                     MediaMetadata.Builder()
                                         .setTitle(displayTitle)
-                                        .setArtist(song.artist)
-                                        .setArtworkUri(song.albumArtUrl?.toUri())
+                                        .setArtist(songData.artist)
+                                        .setArtworkUri(songData.albumArtUrl?.toUri())
                                         .setIsBrowsable(false)
                                         .setIsPlayable(true)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
@@ -244,6 +246,57 @@ class MusicPlaybackService : MediaLibraryService() {
                     return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(items), params))
                 }
                 return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
+            }
+
+            override fun onAddMediaItems(
+                mediaSession: MediaSession,
+                controller: MediaSession.ControllerInfo,
+                mediaItems: List<MediaItem>,
+            ): ListenableFuture<List<MediaItem>> {
+                val resolvedItems = mutableListOf<MediaItem>()
+
+                for (item in mediaItems) {
+                    if (item.mediaId.startsWith("genre_")) {
+                        val genre = item.mediaId.removePrefix("genre_")
+                        currentPlaylistGenre = genre
+                        isPlaylistSet = true
+                        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+                        val shuffledSongs = genreSongs.shuffled()
+                        val playlistItems = shuffledSongs.map { songData ->
+                            val metadataBuilder = MediaMetadata.Builder()
+                                //
+                                .setTitle(songData.title)
+                                .setArtist(songData.artist)
+                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+                            MediaItem.Builder()
+                                .setMediaId(songData.url)
+                                .setUri(songData.url)
+                                .setMediaMetadata(metadataBuilder.build())
+                                .build()
+                        }
+                        resolvedItems.addAll(playlistItems)
+                    } else {
+                        // Android Auto is trying to resume a specific song from Recents/For You.
+                        // We must find it in the repo and attach the URI!
+                        val songData = SongsRepo.songs.find { it.url == item.mediaId }
+                        if (songData != null) {
+                            val metadataBuilder = MediaMetadata.Builder()
+                                .setTitle(songData.title)
+                                .setArtist(songData.artist)
+                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+
+                            resolvedItems.add(
+                                MediaItem.Builder()
+                                    .setMediaId(songData.url)
+                                    // Keep ExoPlayer happy :)
+                                    .setUri(songData.url)
+                                    .setMediaMetadata(metadataBuilder.build())
+                                    .build(),
+                            )
+                        }
+                    }
+                }
+                return Futures.immediateFuture(resolvedItems)
             }
         }
         mediaLibrarySession = MediaLibrarySession.Builder(this, exoPlayer!!, callback)
