@@ -178,7 +178,6 @@ class MusicPlaybackService : MediaLibraryService() {
             ): MediaSession.ConnectionResult {
                 val connectionResult = super.onConnect(session, controller)
                 val sessionCommands = connectionResult.availableSessionCommands.buildUpon()
-                    .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_CHILDREN)
                     .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_LIBRARY_ROOT)
                     .add(SessionCommand.COMMAND_CODE_LIBRARY_SUBSCRIBE)
                     .build()
@@ -199,7 +198,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     .setMediaId(ROOT_ID)
                     .setMediaMetadata(
                         MediaMetadata.Builder()
-                            .setIsBrowsable(true)
+                            .setIsBrowsable(false)
                             .setIsPlayable(false)
                             .setTitle("Ambient Music")
                             .build(),
@@ -220,22 +219,27 @@ class MusicPlaybackService : MediaLibraryService() {
                 params: LibraryParams?,
             ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
                 if (parentId == ROOT_ID) {
-                    val items = SongsRepo.songs.map { song ->
-                        MediaItem.Builder()
-                            .setMediaId(song.url)
-                            .setUri(song.url)
-                            .setMediaMetadata(
-                                MediaMetadata.Builder()
-                                    .setTitle(song.title)
-                                    .setArtist(song.artist)
-                                    .setArtworkUri(song.albumArtUrl?.toUri())
-                                    .setIsBrowsable(false)
-                                    .setIsPlayable(true)
-                                    .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
-                                    .build(),
-                            )
-                            .build()
-                    }
+                    val items = SongsRepo.songs
+                        .filter { !it.genre.isNullOrEmpty() }
+                        .distinctBy { it.genre?.lowercase() }
+                        .map { song ->
+                            val genreName = song.genre?.lowercase() ?: "unknown"
+                            // Grabs the custom title from JSON, or capitalizes the raw genre if null
+                            val displayTitle = song.title
+                            MediaItem.Builder()
+                                .setMediaId("genre_$genreName")
+                                .setMediaMetadata(
+                                    MediaMetadata.Builder()
+                                        .setTitle(displayTitle)
+                                        .setArtist(song.artist)
+                                        .setArtworkUri(song.albumArtUrl?.toUri())
+                                        .setIsBrowsable(false)
+                                        .setIsPlayable(true)
+                                        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+                                        .build(),
+                                )
+                                .build()
+                        }
                     // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
                     return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(items), params))
                 }
