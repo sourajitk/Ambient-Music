@@ -77,6 +77,10 @@ This app allows you to play a curated stream of ambient music in the background 
   <div align="center">
     <img src="https://i.imgur.com/BVRuTfJ.jpeg" width="750">
   </div>
+  </br>
+  <div align="center">
+    <img src="https://i.imgur.com/RaMMFyM.png" width="750">
+  </div>
 
 ## Downloads
 
