@@ -75,7 +75,11 @@ This app allows you to play a curated stream of ambient music in the background 
   Control your Ambient Music straight from the screen on your car! 
   </br>No interruptions! Safe Drives! 
   <div align="center">
-    <img src="https://i.imgur.com/BVRuTfJ.jpeg" width="750">
+    <img src="https://i.imgur.com/ljuQzUt.png" width="750">
+  </div>
+  </br>
+  <div align="center">
+    <img src="https://i.imgur.com/RaLbG5A.png" width="750">
   </div>
 
 ## Downloads
