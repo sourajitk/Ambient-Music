@@ -49,7 +49,7 @@ This app allows you to play a curated stream of ambient music in the background 
   the system!**
   <div align="center">
   <img src="https://i.imgur.com/uuYIR2L.png" width="240">
-  <img src="https://i.imgur.com/t4mndtV.png" width="240">
+  <img src="https://i.imgur.com/bysL2uQ.png" width="240">
   <img src="https://i.imgur.com/BUFyQDz.png" width="240">
     </div>
 
@@ -60,7 +60,7 @@ This app allows you to play a curated stream of ambient music in the background 
 
     <div align="center">
       <img src="https://i.imgur.com/445pEvH.png" width="240">
-      <img src="https://i.imgur.com/E1XgQAA.png" width="240">
+      <img src="https://i.imgur.com/UzHFFh9.png" width="240">
       <img src="https://i.imgur.com/0f8qqal.png" width="240">
     </div>
 
@@ -84,7 +84,7 @@ This app allows you to play a curated stream of ambient music in the background 
 
 ## Downloads
 
-[![API](https://img.shields.io/badge/31%2B-level?style=for-the-badge&logo=android&logoColor=3cd382&label=API&labelColor=21262d&color=ff663b)](https://developer.android.com/studio/releases/platforms) [![Release](https://img.shields.io/github/v/release/sourajitk/Ambient-Music?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/sourajitk/Ambient-Music/latest) [![Downloads](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total?style=for-the-badge&labelColor=21262d&color=238636)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
+[![API](https://img.shields.io/badge/31%2B-level?style=for-the-badge&logo=android&logoColor=3cd382&label=API&labelColor=21262d&color=ff663b)](https://developer.android.com/studio/releases/platforms) [![Release](https://img.shields.io/github/v/release/sourajitk/Ambient-Music?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/sourajitk/Ambient-Music/latest) [![Downloads](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total?style=for-the-badge&labelColor=21262d&color=238636&cacheSeconds=3600)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
 <p align="left">
   <p align="left">
     <a href="https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music"><img src="https://i.imgur.com/ElcHPWC.png" alt="Get it on the Google play store" height="80"></a>

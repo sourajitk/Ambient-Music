@@ -187,10 +187,10 @@ private fun AddTileRow(
                 ) { result ->
                     val message: String
                     if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED) {
-                        message = "'$tileName' tile added!"
+                        message = "$tileName tile added!"
                         isTileAdded = true
                     } else {
-                        message = "Could not add '$tileName' tile."
+                        message = "Could not add $tileName tile."
                     }
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }

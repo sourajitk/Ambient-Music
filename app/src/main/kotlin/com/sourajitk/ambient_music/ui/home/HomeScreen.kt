@@ -116,35 +116,35 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
                                 context,
                                 stringResource(R.string.tile_label_calm),
                                 ComponentName(context, CalmQSTileService::class.java),
-                                R.drawable.playlist_music,
+                                R.drawable.ic_calm,
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             AddTileRow(
                                 context,
                                 stringResource(R.string.tile_label_chill),
                                 ComponentName(context, ChillQSTileService::class.java),
-                                R.drawable.playlist_music,
+                                R.drawable.ic_chill,
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             AddTileRow(
                                 context,
                                 stringResource(R.string.tile_label_sleep),
                                 ComponentName(context, SleepQSTileService::class.java),
-                                R.drawable.playlist_music,
+                                R.drawable.ic_sleep,
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             AddTileRow(
                                 context,
                                 stringResource(R.string.tile_label_focus),
                                 ComponentName(context, FocusQSTileService::class.java),
-                                R.drawable.playlist_music,
+                                R.drawable.ic_focus,
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             AddTileRow(
                                 context,
                                 stringResource(R.string.tile_label_serenity),
                                 ComponentName(context, SerenityQSTileService::class.java),
-                                R.drawable.playlist_music,
+                                R.drawable.ic_serenity,
                             )
                         } else {
                             Text(
@@ -219,10 +219,10 @@ private fun AddTileRow(
                 ) { result ->
                     val message: String
                     if (result == StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED) {
-                        message = "'$tileName' tile added!"
+                        message = "$tileName tile added!"
                         isTileAdded = true
                     } else {
-                        message = "Could not add '$tileName' tile."
+                        message = "Could not add $tileName tile."
                     }
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
