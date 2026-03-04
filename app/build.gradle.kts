@@ -29,7 +29,7 @@ val commitHash by project.extra {
 
 android {
     namespace = "com.sourajitk.ambient_music"
-    compileSdk = 36
+    compileSdkPreview = "CANARY"
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
