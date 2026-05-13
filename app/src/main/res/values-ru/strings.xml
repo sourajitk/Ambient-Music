@@ -63,27 +63,27 @@
     <string name="custom_timer">Особый</string>
     <string name="sleep_timer_active">Таймер сна активен</string>
     <string name="sleep_timer_tile_add_helper">После добавления плитки таймера сна вы можете устанавливать таймер с шагом в 5 минут.\n\nПросто нажимайте на плитку несколько раз, пока не достигнете желаемой продолжительности — от 5 до 20 минут.\n\nВы также можете продлить таймер прямо из уведомления, добавляя дополнительные 5-минутные интервалы.\n\nБонусный совет: таймер сна работает с любым приложением, воспроизводящим медиа!</string>
-    <string name="timer_string_off">Wył.</string>
-    <string name="tile_available">Dostępny kafelek</string>
-    <string name="timer_stop">Zatrzymaj czasomierz</string>
-    <string name="about_sleep_timer">O Wyłączniku czasowym</string>
-    <string name="sleep_timer_info_close">Dzięki za informację</string>
-    <string name="sleep_timer_learn_more">Dowiedz się więcej o Wyłączniku czasowym.</string>
-    <string name="faq_title">Często zadawane pytania</string>
-    <string name="faq_body">Ta aplikacja, jak wiele innych, może mieć dziwactwa, które nie są spowodowane złym projektem lub błędami.
-    Zanim wystawisz złą recenzję, wypróbuj te szybkie rozwiązania:
+    <string name="timer_string_off">Выкл.</string>
+    <string name="tile_available">Доступная плитка</string>
+    <string name="timer_stop">Остановить таймер</string>
+    <string name="about_sleep_timer">О таймере сна</string>
+    <string name="sleep_timer_info_close">Спасибо за информацию</string>
+    <string name="sleep_timer_learn_more">Узнайте больше о таймере сна.</string>
+    <string name="faq_title">Часто задаваемые вопросы</string>
+    <string name="faq_body">Это приложение, как и многие другие, может проявлять странности, которые не связаны с плохим дизайном или ошибками.
+        Прежде чем оставлять плохой отзыв, попробуйте эти быстрые решения:
 
-    \n\nQ: Kafelek Muzyki Ambientowej zadziałał tylko raz! Nie działa ponownie.
-    \nA: Kafelek wymaga usługi działającej w tle, która może być zamykana przez agresywne menedżery pamięci
-    w niektórych dystrybucjach Androida (np. HyperOS, ColorOS, OxygenOS). Aby to naprawić, po prostu ponownie otwórz
-    aplikację, a powinna ona skonfigurować kafelki. Niedawno wdrożono również środki łagodzące, aby naprawić
-    to zachowanie.
+        \n\nВ: Плитка Ambient Music сработала только один раз! Теперь не работает.
+        \nО: Плитка требует службы, работающей в фоновом режиме, которая может быть закрыта агрессивными менеджерами памяти
+        в некоторых версиях Android (например, HyperOS, ColorOS, OxygenOS). Чтобы исправить это, просто откройте
+        приложение снова — оно должно настроить плитки. Недавно также были внедрены меры, чтобы смягчить
+        это поведение.
 
-    \n\nQ: Otworzyłem aplikację, ale kafelki nadal nie działają! Nawet wyczyściłem dane!
-    \nA: Czasami API lub serwery mogą tymczasowo zawodzić. Dotknij „Odśwież bibliotekę utworów” w Ustawieniach,
-    aby ponownie zsynchronizować i zrestartować usługę odtwarzania.
-</string>
-    <string name="faq_learn_more">Masz problemy? Sprawdź często zadawane pytania.</string>
+        \n\nВ: Я открыл приложение, но плитки по-прежнему не работают! Даже очищал данные!
+        \nО: Иногда API или серверы могут временно не работать. Нажмите «Обновить библиотеку треков» в Настройках,
+        чтобы снова синхронизировать и перезапустить службу воспроизведения.
+    </string>
+    <string name="faq_learn_more">Есть проблемы? Ознакомьтесь с часто задаваемыми вопросами.</string>
     <string name="rate_app_title">Оценить приложение</string>
     <string name="rate_app_body">Понравилось приложение? Оцените его в Play Store</string>
 </resources>
