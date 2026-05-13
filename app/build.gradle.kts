@@ -29,12 +29,12 @@ val commitHash by project.extra {
 
 android {
     namespace = "com.sourajitk.ambient_music"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.sourajitk.ambient_music"
         minSdk = 31
-        targetSdk = 36
+        targetSdk = 37
         versionCode = commitCount
         versionName = "4.1.2-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
