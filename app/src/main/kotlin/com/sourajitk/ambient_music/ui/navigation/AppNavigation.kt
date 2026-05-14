@@ -32,6 +32,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
@@ -104,7 +105,13 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
             // Only needed for compact screens
             topBar = {
                 if (!showNavRail) {
-                    CenterAlignedTopAppBar(title = { Text(topBarTitle) })
+                    CenterAlignedTopAppBar(
+                        title = { Text(topBarTitle) },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    )
                 }
             },
             bottomBar = {
@@ -123,7 +130,12 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                 ) {
                     composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
                     composable(Screen.Timer.route) { TimerScreen(windowSizeClass) }
-                    composable(Screen.Settings.route) { SettingsScreen(snackbarHostState = snackbarHostState) }
+                    composable(Screen.Settings.route) {
+                        SettingsScreen(
+                            snackbarHostState = snackbarHostState,
+                            innerPadding = innerPadding,
+                        )
+                    }
                 }
             }
         }
