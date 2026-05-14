@@ -74,7 +74,7 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
         SleepTimerInfoDialog(onDismiss = { showInfoDialog = false })
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainer) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
