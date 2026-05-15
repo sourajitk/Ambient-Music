@@ -34,16 +34,27 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Delete existing release (if exists)
-        run: |
-          gh release delete "dogfood" -y || true
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+      # - name: Delete existing release (if exists)
+      #   run: |
+      #     gh release delete "dogfood" -y || true
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: Delete existing tag and repush
-        run: |
-          git push origin :refs/tags/dogfood || true
-          git push origin HEAD:refs/tags/dogfood || true
+      # - name: Delete existing tag and repush
+      #   run: |
+      #     git push origin :refs/tags/dogfood || true
+      #     git push origin HEAD:refs/tags/dogfood || true
+      - name: Create/Update Pre-Release on GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Dogfood Build (Debugging Only)
+          tag_name: dogfood
+          files: Ambient-Music-dogfood-signed.apk
+          prerelease: true
+          draft: false
+          generate_release_notes: false
+          make_latest: false
+          overwrite_files: true
 
       - name: Build APK Dogfood
         run: ./gradlew assembleDebug
