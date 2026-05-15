@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -62,7 +63,7 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TimerScreen(windowSizeClass: WindowSizeClass) {
+fun TimerScreen(windowSizeClass: WindowSizeClass, innerPadding: PaddingValues) {
     val context = LocalContext.current
     val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
     val bannerModifier =
@@ -80,6 +81,12 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(
+                bottom = innerPadding.calculateBottomPadding() + 32.dp,
+                top = 0.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ),
         ) {
             item {
                 Image(
