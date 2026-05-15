@@ -23,7 +23,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
@@ -141,10 +143,16 @@ fun TimerScreen(windowSizeClass: WindowSizeClass) {
 
 @Composable
 private fun SleepTimerInfoDialog(onDismiss: () -> Unit) {
+    val scrollState = rememberScrollState()
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.about_sleep_timer)) },
-        text = { Text(stringResource(R.string.sleep_timer_tile_add_helper)) },
+        text = {
+            Text(
+                stringResource(R.string.sleep_timer_tile_add_helper),
+                modifier = Modifier.verticalScroll(scrollState),
+            )
+        },
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.sleep_timer_info_close))
