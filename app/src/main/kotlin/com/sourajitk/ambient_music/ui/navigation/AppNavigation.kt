@@ -134,7 +134,12 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                             innerPadding = innerPadding,
                         )
                     }
-                    composable(Screen.Timer.route) { TimerScreen(windowSizeClass) }
+                    composable(Screen.Timer.route) {
+                        TimerScreen(
+                            windowSizeClass,
+                            innerPadding = innerPadding,
+                        )
+                    }
                     composable(Screen.Settings.route) {
                         SettingsScreen(
                             snackbarHostState = snackbarHostState,
