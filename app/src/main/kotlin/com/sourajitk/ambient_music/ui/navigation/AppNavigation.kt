@@ -107,10 +107,10 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                 if (!showNavRail) {
                     CenterAlignedTopAppBar(
                         title = { Text(topBarTitle) },
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        ),
                     )
                 }
             },
@@ -128,7 +128,12 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                         top = innerPadding.calculateTopPadding()
                     ),
                 ) {
-                    composable(Screen.Home.route) { HomeScreen(windowSizeClass) }
+                    composable(Screen.Home.route) {
+                        HomeScreen(
+                            windowSizeClass,
+                            innerPadding = innerPadding,
+                        )
+                    }
                     composable(Screen.Timer.route) { TimerScreen(windowSizeClass) }
                     composable(Screen.Settings.route) {
                         SettingsScreen(
