@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
@@ -64,7 +67,7 @@ import com.sourajitk.ambient_music.util.TileStateUtil
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(windowSizeClass: WindowSizeClass) {
+fun HomeScreen(windowSizeClass: WindowSizeClass, innerPadding: PaddingValues) {
     val context = LocalContext.current
     val isExpandedScreen = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
     var showInfoDialog by remember { mutableStateOf(false) }
@@ -82,6 +85,12 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(
+                bottom = innerPadding.calculateBottomPadding() + 32.dp,
+                top = 0.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ),
         ) {
             item {
                 Image(
@@ -173,10 +182,16 @@ fun HomeScreen(windowSizeClass: WindowSizeClass) {
 
 @Composable
 private fun faqDialog(onDismiss: () -> Unit) {
+    val scrollState = rememberScrollState()
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.faq_title)) },
-        text = { Text(stringResource(R.string.faq_body)) },
+        text = {
+            Text(
+                stringResource(R.string.faq_body),
+                modifier = Modifier.verticalScroll(scrollState),
+            )
+        },
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.sleep_timer_info_close))
