@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
@@ -87,6 +88,7 @@ private sealed class UpdateCheckState {
 fun SettingsScreen(
     snackbarHostState: SnackbarHostState,
     innerPadding: PaddingValues,
+    onNavigateToDownloadGenres: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -127,6 +129,21 @@ fun SettingsScreen(
                     intent.data = uri
                     context.startActivity(intent)
                 },
+            )
+        }
+
+        item { Spacer(modifier = Modifier.height(2.dp)) }
+
+        item {
+            // Offline Listening
+            SettingsScreenCard(
+                icon = Icons.Default.Download,
+                title = stringResource(R.string.offline_listening_title),
+                subtitle = stringResource(R.string.offline_listening_body),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                shape = RoundedCornerShape(4.dp),
+                onClick = onNavigateToDownloadGenres,
             )
         }
 

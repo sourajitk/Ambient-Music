@@ -4,7 +4,9 @@
 package com.sourajitk.ambient_music.data
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -110,6 +112,7 @@ object SongsRepo {
                 TAG,
                 "initializeAndRefresh: Process finished. Songs loaded: ${internalLoadedSongs.size}. Final status: $finalStatusMessage",
             )
+            prefetchAlbumArts(context)
             withContext(Dispatchers.Main) { onFinished?.invoke(overallSuccess, finalStatusMessage) }
         }
     }
@@ -163,6 +166,7 @@ object SongsRepo {
         if (cachedSongs.isNotEmpty()) {
             synchronized(this@SongsRepo) { internalLoadedSongs = cachedSongs }
             Log.i(TAG, "Successfully pre-loaded ${cachedSongs.size} songs from cache.")
+            prefetchAlbumArts(context)
         }
     }
 
@@ -179,5 +183,76 @@ object SongsRepo {
         }
         Log.d(TAG, "loadFromCache: Cache was empty or failed to load.")
         return emptyList()
+    }
+
+    private fun prefetchAlbumArts(context: Context) {
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            val genresWithArt = internalLoadedSongs.groupBy { it.genre }.mapNotNull { (genre, genreSongs) ->
+                if (genre != null) {
+                    genre to genreSongs.firstOrNull()?.albumArtUrl
+                } else {
+                    null
+                }
+            }
+
+            val client = okhttp3.OkHttpClient()
+            for ((genre, albumArtUrl) in genresWithArt) {
+                if (albumArtUrl == null) continue
+                val genreDir = File(context.filesDir, "offline_genres/$genre")
+                if (!genreDir.exists()) genreDir.mkdirs()
+
+                val artFile = File(genreDir, "album_art.jpg")
+                if (!artFile.exists() || artFile.length() == 0L) {
+                    try {
+                        val request = okhttp3.Request.Builder().url(albumArtUrl).build()
+                        val response = client.newCall(request).execute()
+                        if (response.isSuccessful) {
+                            val tempFile = File(genreDir, "album_art_temp.jpg")
+                            response.body?.byteStream()?.use { input ->
+                                java.io.FileOutputStream(tempFile).use { output ->
+                                    input.copyTo(output)
+                                }
+                            }
+                            tempFile.renameTo(artFile)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+    }
+
+    fun getLocalSongUri(context: Context, songData: SongAsset): Uri? {
+        val genre = songData.genre ?: return null
+        val fileName = songData.url.substringAfterLast("/")
+        val file = File(context.filesDir, "offline_genres/$genre/$fileName")
+        return if (file.exists()) file.toUri() else null
+    }
+
+    fun getLocalAlbumArtUri(context: Context, genre: String): Uri? {
+        val file = File(context.filesDir, "offline_genres/$genre/album_art.jpg")
+        return if (file.exists()) file.toUri() else null
+    }
+
+    fun isGenreDownloaded(context: Context, genre: String): Boolean {
+        val genreDir = File(context.filesDir, "offline_genres/$genre")
+        if (!genreDir.exists() || !genreDir.isDirectory) return false
+
+        val genreSongs = songs.filter { it.genre.equals(genre, ignoreCase = true) }
+        if (genreSongs.isEmpty()) return false
+
+        return genreSongs.all { song ->
+            val fileName = song.url.substringAfterLast("/")
+            File(genreDir, fileName).exists()
+        }
+    }
+
+    fun deleteGenreDownloads(context: Context, genre: String): Boolean {
+        val genreDir = File(context.filesDir, "offline_genres/$genre")
+        if (genreDir.exists() && genreDir.isDirectory) {
+            return genreDir.deleteRecursively()
+        }
+        return false
     }
 }
