@@ -3,6 +3,7 @@
 
 package com.sourajitk.ambient_music.ui.navigation
 
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.ui.home.HomeScreen
+import com.sourajitk.ambient_music.ui.offlinemode.DownloadGenresActivity
 import com.sourajitk.ambient_music.ui.settings.SettingsScreen
 import com.sourajitk.ambient_music.ui.timer.TimerScreen
 
@@ -89,9 +91,9 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
             else -> stringResource(R.string.app_name) // Default title for Home screen
         }
 
-    // Determine if we should show the navigation rail (for wider screens)
-    // or the navigation bar (for phone-sized screens).
     val showNavRail = windowSizeClass.widthSizeClass > WindowWidthSizeClass.Compact
+    val showBottomBar = windowSizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
+    val showTopBar = windowSizeClass.widthSizeClass <= WindowWidthSizeClass.Compact
 
     Row(modifier = Modifier.fillMaxSize()) {
         if (showNavRail) {
@@ -104,7 +106,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             // Only needed for compact screens
             topBar = {
-                if (!showNavRail) {
+                if (showTopBar) {
                     CenterAlignedTopAppBar(
                         title = { Text(topBarTitle) },
                         colors = TopAppBarDefaults.topAppBarColors(
@@ -115,7 +117,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                 }
             },
             bottomBar = {
-                if (!showNavRail) {
+                if (showBottomBar) {
                     AppBottomNavigationBar(navController = navController, navItems = navItems)
                 }
             },
@@ -125,7 +127,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                     navController = navController,
                     startDestination = Screen.Home.route,
                     modifier = Modifier.padding(
-                        top = innerPadding.calculateTopPadding()
+                        top = innerPadding.calculateTopPadding(),
                     ),
                 ) {
                     composable(Screen.Home.route) {
@@ -141,9 +143,13 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                         )
                     }
                     composable(Screen.Settings.route) {
+                        val context = androidx.compose.ui.platform.LocalContext.current
                         SettingsScreen(
                             snackbarHostState = snackbarHostState,
                             innerPadding = innerPadding,
+                            onNavigateToDownloadGenres = {
+                                context.startActivity(Intent(context, DownloadGenresActivity::class.java))
+                            },
                         )
                     }
                 }
@@ -151,7 +157,6 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
         }
     }
 }
-
 
 // Split the navbar controllers for two form factors: tablets/foldables and phones.
 @Composable
@@ -164,7 +169,7 @@ fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Scre
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-            contentAlignment = Alignment.BottomCenter,
+        contentAlignment = Alignment.BottomCenter,
     ) {
         Surface(
             shape = CircleShape,
