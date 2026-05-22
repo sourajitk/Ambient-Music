@@ -208,7 +208,7 @@ object SongsRepo {
                         val response = client.newCall(request).execute()
                         if (response.isSuccessful) {
                             val tempFile = File(genreDir, "album_art_temp.jpg")
-                            response.body?.byteStream()?.use { input ->
+                            response.body.byteStream().use { input ->
                                 java.io.FileOutputStream(tempFile).use { output ->
                                     input.copyTo(output)
                                 }

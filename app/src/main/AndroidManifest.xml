@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:name=".ui.settings.DownloadGenresActivity"
+            android:name=".ui.offlinemode.DownloadGenresActivity"
             android:exported="false"
             android:theme="@style/Theme.AmbientMusic"
             android:label="@string/download_genres_title" />

@@ -136,7 +136,7 @@ object GenreDownloader {
                     val request = Request.Builder().url(albumArtUrl).build()
                     val response = client.newCall(request).execute()
                     if (response.isSuccessful) {
-                        response.body?.byteStream()?.use { input ->
+                        response.body.byteStream().use { input ->
                             FileOutputStream(artFile).use { output ->
                                 input.copyTo(output)
                             }
@@ -177,10 +177,10 @@ object GenreDownloader {
                 val response = client.newCall(request).execute()
 
                 if (response.isSuccessful || response.code == 206) {
-                    val contentLength = response.body?.contentLength() ?: 1L
+                    val contentLength = response.body.contentLength()
                     val totalExpectedBytes = downloadedBytes + (if (contentLength > 0) contentLength else 0L)
 
-                    response.body?.byteStream()?.use { input ->
+                    response.body.byteStream().use { input ->
                         FileOutputStream(partFile, downloadedBytes > 0).use { output ->
                             val buffer = ByteArray(8 * 1024)
                             var bytesRead: Int
@@ -188,7 +188,11 @@ object GenreDownloader {
                                 if (!currentCoroutineContext().isActive) break
                                 output.write(buffer, 0, bytesRead)
                                 downloadedBytes += bytesRead
-                                val currentFileProgress = if (totalExpectedBytes > 0) downloadedBytes.toFloat() / totalExpectedBytes else 0f
+                                val currentFileProgress = if (totalExpectedBytes > 0) {
+                                    downloadedBytes.toFloat() / totalExpectedBytes
+                                } else {
+                                    0f
+                                }
                                 val overallProgress = (completedFiles + currentFileProgress) / totalFiles
                                 _downloadProgress.value = _downloadProgress.value + (genre to DownloadStatus(overallProgress, completedFiles, totalFiles))
                             }
