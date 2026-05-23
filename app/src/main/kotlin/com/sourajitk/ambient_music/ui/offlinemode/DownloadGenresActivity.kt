@@ -88,12 +88,14 @@ fun DownloadGenresScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    val genresWithArt = remember {
-        SongsRepo.songs
+    val songs by SongsRepo.songsFlow.collectAsState()
+
+    val genresWithArt = remember(songs) {
+        songs
             .filter { !it.genre.isNullOrEmpty() }
             .groupBy { it.genre!!.lowercase(Locale.ROOT) }
-            .map { (genre, songs) ->
-                val firstSong = songs.firstOrNull { it.albumArtUrl != null } ?: songs.first()
+            .map { (genre, genreSongs) ->
+                val firstSong = genreSongs.firstOrNull { it.albumArtUrl != null } ?: genreSongs.first()
                 genre to firstSong.albumArtUrl
             }
     }
