@@ -99,4 +99,8 @@
     <string name="available_for_offline">ऑफ़लाइन के लिए उपलब्ध</string>
     <string name="storage_usage_header">%2$s में से %1$s उपयोग किया गया</string>
     <string name="storage_distribution_title">शैली के अनुसार स्टोरेज वितरण</string>
+    <string name="widget_description">अपने पसंदीदा एंबियंट संगीत शैलियों को तेज़ी से चलाएं।</string>
+    <string name="offline_listening_title">ऑफ़लाइन सुनना</string>
+    <string name="offline_listening_body">इंटरनेट के बिना प्लेबैक के लिए शैलियां डाउनलोड करें</string>
+    <string name="download_genres_title">शैलियां डाउनलोड करें</string>
 </resources>

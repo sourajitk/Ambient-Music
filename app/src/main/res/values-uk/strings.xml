@@ -102,4 +102,8 @@
     <string name="available_for_offline">Доступно офлайн</string>
     <string name="storage_usage_header">Використано %1$s з %2$s</string>
     <string name="storage_distribution_title">РОЗПОДІЛ ПАМ\'ЯТІ ЗА ЖАНРАМИ</string>
+    <string name="widget_description">Швидко відтворюйте улюблені жанри ембієнт-музики.</string>
+    <string name="offline_listening_title">Офлайн-прослуховування</string>
+    <string name="offline_listening_body">Завантажуйте жанри для відтворення без інтернету</string>
+    <string name="download_genres_title">Завантажити жанри</string>
 </resources>

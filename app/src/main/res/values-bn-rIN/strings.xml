@@ -101,4 +101,8 @@
     <string name="available_for_offline">অফলাইনের জন্য উপলব্ধ</string>
     <string name="storage_usage_header">%2$s এর মধ্যে %1$s ব্যবহৃত</string>
     <string name="storage_distribution_title">জেনার অনুযায়ী স্টোরেজ বণ্টন</string>
+    <string name="widget_description">আপনার প্রিয় অ্যাম্বিয়েন্ট মিউজিক জেনারগুলি দ্রুত প্লে করুন।</string>
+    <string name="offline_listening_title">অফলাইনে শোনা</string>
+    <string name="offline_listening_body">ইন্টারনেট ছাড়া প্লেব্যাকের জন্য জেনার ডাউনলোড করুন</string>
+    <string name="download_genres_title">জেনার ডাউনলোড করুন</string>
 </resources>

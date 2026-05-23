@@ -96,4 +96,8 @@
     <string name="available_for_offline">Доступно офлайн</string>
     <string name="storage_usage_header">Использовано %1$s из %2$s</string>
     <string name="storage_distribution_title">РАСПРЕДЕЛЕНИЕ ПАМЯТИ ПО ЖАНРАМ</string>
+    <string name="widget_description">Быстро воспроизводите любимые жанры эмбиент-музыки.</string>
+    <string name="offline_listening_title">Офлайн-прослушивание</string>
+    <string name="offline_listening_body">Скачивайте жанры для воспроизведения без интернета</string>
+    <string name="download_genres_title">Скачать жанры</string>
 </resources>

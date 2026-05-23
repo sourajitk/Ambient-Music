@@ -102,4 +102,8 @@
     <string name="available_for_offline">オフラインで利用可能</string>
     <string name="storage_usage_header">%2$s 中 %1$s 使用</string>
     <string name="storage_distribution_title">ジャンル別のストレージ分布</string>
+    <string name="widget_description">お気に入りのアンビエント音楽ジャンルをすばやく再生します。</string>
+    <string name="offline_listening_title">オフライン再生</string>
+    <string name="offline_listening_body">インターネットなしで再生するためにジャンルをダウンロード</string>
+    <string name="download_genres_title">ジャンルをダウンロード</string>
 </resources>

@@ -110,4 +110,8 @@
     <string name="available_for_offline">Có sẵn ngoại tuyến</string>
     <string name="storage_usage_header">Đã sử dụng %1$s / %2$s</string>
     <string name="storage_distribution_title">PHÂN BỔ LƯU TRỮ THEO THỂ LOẠI</string>
+    <string name="widget_description">Nhanh chóng phát các thể loại nhạc ambient yêu thích của bạn.</string>
+    <string name="offline_listening_title">Nghe ngoại tuyến</string>
+    <string name="offline_listening_body">Tải xuống các thể loại để phát lại không cần internet</string>
+    <string name="download_genres_title">Tải xuống thể loại</string>
 </resources>

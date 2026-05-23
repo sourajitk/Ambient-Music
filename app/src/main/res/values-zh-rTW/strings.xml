@@ -95,4 +95,8 @@
     <string name="available_for_offline">可離線使用</string>
     <string name="storage_usage_header">已使用 %1$s / %2$s</string>
     <string name="storage_distribution_title">各類型的儲存空間分佈</string>
+    <string name="widget_description">快速播放您最愛的環境音樂類型。</string>
+    <string name="offline_listening_title">離線收聽</string>
+    <string name="offline_listening_body">下載類型以便在無網路時播放</string>
+    <string name="download_genres_title">下載類型</string>
 </resources>

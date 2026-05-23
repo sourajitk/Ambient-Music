@@ -103,4 +103,8 @@
     <string name="available_for_offline">Für Offline-Wiedergabe verfügbar</string>
     <string name="storage_usage_header">%1$s von %2$s verwendet</string>
     <string name="storage_distribution_title">SPEICHERVERTEILUNG PRO GENRE</string>
+    <string name="widget_description">Spiele schnell deine bevorzugten Ambient-Musik-Genres ab.</string>
+    <string name="offline_listening_title">Offline-Hören</string>
+    <string name="offline_listening_body">Genres für die Wiedergabe ohne Internet herunterladen</string>
+    <string name="download_genres_title">Genres herunterladen</string>
 </resources>
