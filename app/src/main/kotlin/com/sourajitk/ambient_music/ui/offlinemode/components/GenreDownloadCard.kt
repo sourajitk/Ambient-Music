@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -124,16 +125,19 @@ fun GenreDownloadCard(
             if (isDownloading) {
                 IconButton(onClick = onStopDownload) {
                     Icon(
-                        Icons.Default.Stop,
+                        Icons.Outlined.Stop,
                         contentDescription = "Stop Download",
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
             } else {
-                Checkbox(
-                    checked = isDownloaded,
-                    onCheckedChange = { onToggleDownload() },
-                )
+                IconButton(onClick = onToggleDownload) {
+                    Icon(
+                        imageVector = if (isDownloaded) Icons.Outlined.Delete else Icons.Outlined.Download,
+                        contentDescription = if (isDownloaded) "Delete Download" else "Download Offline",
+                        tint = if (isDownloaded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    )
+                }
             }
         }
     }

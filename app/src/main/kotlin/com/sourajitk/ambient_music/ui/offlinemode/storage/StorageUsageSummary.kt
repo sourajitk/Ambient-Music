@@ -27,18 +27,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.util.Locale
 
+private val genreColors = listOf(
+    Color(0xFF4285F4), // Blue
+    Color(0xFFEA4335), // Red
+    Color(0xFFFBBC04), // Yellow
+    Color(0xFF34A853), // Green
+    Color(0xFF8F00FF), // Purple
+    Color(0xFF00BCD4), // Cyan
+)
 
 @Composable
 fun StorageUsageSummary(genreSizes: Map<String, Long>) {
-    val genreColors = listOf(
-        MaterialTheme.colorScheme.primary,
-        MaterialTheme.colorScheme.secondary,
-        MaterialTheme.colorScheme.tertiary,
-        MaterialTheme.colorScheme.error,
-        MaterialTheme.colorScheme.primaryContainer,
-        MaterialTheme.colorScheme.tertiaryContainer,
-    )
-
     val totalSize = genreSizes.values.sum()
     if (totalSize == 0L) return
 
@@ -51,8 +50,11 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
             .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(16.dp))
             .padding(16.dp),
     ) {
+        val stat = android.os.StatFs(android.os.Environment.getDataDirectory().path)
+        val totalDeviceStorage = stat.totalBytes
+
         Text(
-            text = "${formatSize(totalSize)} of Ambient Music Data",
+            text = "${formatSize(totalSize)} of device\'s storage used",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium,
@@ -84,7 +86,7 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "STORAGE DETAILS",
+            text = "STORAGE DISTRIBUTION PER GENRE",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold,

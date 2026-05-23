@@ -13,10 +13,10 @@ import java.util.Locale
 fun ConfirmDeleteDialog(
     genre: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val formattedGenre = genre.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Are you sure?") },
@@ -30,6 +30,6 @@ fun ConfirmDeleteDialog(
             TextButton(onClick = onDismiss) {
                 Text("Cancel")
             }
-        }
+        },
     )
 }
