@@ -103,12 +103,12 @@
     <string name="faq_learn_more">Having issues? Check out the frequently asked questions.</string>
     <string name="rate_app_title">Rate the app</string>
     <string name="rate_app_body">Like the app? Rate it on Play Store</string>
-    <string name="widget_description" translatable="false">Quickly play your favorite ambient music genres.</string>
-    <string name="offline_listening_title" translatable="false">Offline Listening</string>
-    <string name="offline_listening_body" translatable="false">Download genres for playback without internet</string>
-    <string name="download_genres_title" translatable="false">Download Genres</string>
+    <string name="widget_description">Quickly play your favorite ambient music genres.</string>
+    <string name="offline_listening_title">Offline Listening</string>
+    <string name="offline_listening_body">Download genres for playback without internet</string>
+    <string name="download_genres_title">Download Genres</string>
     <string name="confirm_delete_title">Are you sure?</string>
-    <string name="confirm_delete_text">Do you want to delete the %1$s data?</string>
+    <string name="confirm_delete_text">Do you want to delete the %1$s genre\'s data?</string>
     <string name="confirm_delete_button">Delete</string>
     <string name="cancel_button">Cancel</string>
     <string name="cellular_data_warning">Downloading the genres using cellular data might incur additional costs from your cellular plan.</string>

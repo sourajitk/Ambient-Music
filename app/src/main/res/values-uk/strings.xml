@@ -101,5 +101,5 @@
     <string name="downloaded_status">Завантажено</string>
     <string name="available_for_offline">Доступно офлайн</string>
     <string name="storage_usage_header">Використано %1$s з %2$s</string>
-    <string name="storage_distribution_title">РОЗПОДІЛ ПАМ'ЯТІ ЗА ЖАНРАМИ</string>
+    <string name="storage_distribution_title">РОЗПОДІЛ ПАМ\'ЯТІ ЗА ЖАНРАМИ</string>
 </resources>
