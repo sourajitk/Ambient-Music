@@ -53,8 +53,11 @@ object WidgetImageManager {
         url: String,
         genre: String,
     ): Boolean {
+        val cachedArtFile = File(context.filesDir, "offline_genres/$genre/album_art.jpg")
+        val requestData = if (cachedArtFile.exists()) cachedArtFile else url
+
         val request = ImageRequest.Builder(context)
-            .data(url)
+            .data(requestData)
             .allowHardware(false)
             .build()
 

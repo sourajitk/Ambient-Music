@@ -196,6 +196,7 @@ object SongsRepo {
             }
 
             val client = okhttp3.OkHttpClient()
+            var anyDownloaded = false
             for ((genre, albumArtUrl) in genresWithArt) {
                 if (albumArtUrl == null) continue
                 val genreDir = File(context.filesDir, "offline_genres/$genre")
@@ -214,11 +215,15 @@ object SongsRepo {
                                 }
                             }
                             tempFile.renameTo(artFile)
+                            anyDownloaded = true
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
+            }
+            if (anyDownloaded) {
+                com.sourajitk.ambient_music.widget.WidgetImageManager.refreshWidgetImages(context)
             }
         }
     }
