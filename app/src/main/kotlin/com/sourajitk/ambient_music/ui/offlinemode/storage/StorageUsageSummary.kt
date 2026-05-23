@@ -42,30 +42,30 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
     if (totalSize == 0L) return
 
     val sortedGenres = genreSizes.entries.filter { it.value > 0 }.sortedByDescending { it.value }
-    
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 24.dp)
             .background(MaterialTheme.colorScheme.surfaceContainerHigh, RoundedCornerShape(16.dp))
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Text(
             text = "${formatSize(totalSize)} of Ambient Music Data",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Progress Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
         ) {
             sortedGenres.forEachIndexed { index, entry ->
                 val weight = (entry.value.toFloat() / totalSize)
@@ -74,45 +74,45 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
                         modifier = Modifier
                             .fillMaxHeight()
                             .weight(weight)
-                            .background(genreColors[index % genreColors.size])
+                            .background(genreColors[index % genreColors.size]),
                     )
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
             text = "STORAGE DETAILS",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(bottom = 12.dp),
         )
-        
+
         sortedGenres.forEachIndexed { index, entry ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     modifier = Modifier
                         .size(12.dp)
-                        .background(genreColors[index % genreColors.size], CircleShape)
+                        .background(genreColors[index % genreColors.size], CircleShape),
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = entry.key.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 Text(
                     text = formatSize(entry.value),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
