@@ -223,7 +223,7 @@ fun DownloadGenresScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Downloading the genres using cellular data might incur additional costs from your cellular plan.",
+                        text = stringResource(R.string.cellular_data_warning),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Left,

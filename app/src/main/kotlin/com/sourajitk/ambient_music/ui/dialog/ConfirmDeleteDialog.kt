@@ -7,6 +7,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.sourajitk.ambient_music.R
 import java.util.Locale
 
 @Composable
@@ -19,16 +21,16 @@ fun ConfirmDeleteDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Are you sure?") },
-        text = { Text("Do you want to delete the $formattedGenre genre\'s data?") },
+        title = { Text(stringResource(R.string.confirm_delete_title)) },
+        text = { Text(stringResource(R.string.confirm_delete_text, formattedGenre)) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Delete")
+                Text(stringResource(R.string.confirm_delete_button))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel_button))
             }
         },
     )

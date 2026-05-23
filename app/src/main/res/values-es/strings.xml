@@ -92,4 +92,14 @@
     <string name="faq_learn_more">¿Tienes problemas? ¡Consulta las preguntas frecuentes.</string>
     <string name="rate_app_title">Calificar la aplicación</string>
     <string name="rate_app_body">¿Te gusta la aplicación? Califícala en Play Store</string>
+    <string name="confirm_delete_title">¿Estás seguro?</string>
+    <string name="confirm_delete_text">¿Quieres eliminar los datos de %1$s?</string>
+    <string name="confirm_delete_button">Eliminar</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="cellular_data_warning">La descarga de géneros mediante datos móviles puede generar costos adicionales en tu plan.</string>
+    <string name="downloading_progress">Descargando... %1$d%% (%2$d/%3$d)</string>
+    <string name="downloaded_status">Descargado</string>
+    <string name="available_for_offline">Disponible sin conexión</string>
+    <string name="storage_usage_header">%1$s de %2$s usado</string>
+    <string name="storage_distribution_title">DISTRIBUCIÓN DE ALMACENAMIENTO POR GÉNERO</string>
 </resources>

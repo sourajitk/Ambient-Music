@@ -93,4 +93,14 @@
     <string name="faq_learn_more">Masz problemy? Sprawdź często zadawane pytania.</string>
     <string name="rate_app_title">Oceń aplikację</string>
     <string name="rate_app_body">Podoba Ci się aplikacja? Oceń ją w Sklepie Play</string>
+    <string name="confirm_delete_title">Jesteś pewien?</string>
+    <string name="confirm_delete_text">Czy chcesz usunąć dane %1$s?</string>
+    <string name="confirm_delete_button">Usuń</string>
+    <string name="cancel_button">Anuluj</string>
+    <string name="cellular_data_warning">Pobieranie gatunków przy użyciu danych komórkowych może wiązać się z dodatkowymi kosztami.</string>
+    <string name="downloading_progress">Pobieranie... %1$d%% (%2$d/%3$d)</string>
+    <string name="downloaded_status">Pobrane</string>
+    <string name="available_for_offline">Dostępne offline</string>
+    <string name="storage_usage_header">Użyto %1$s z %2$s</string>
+    <string name="storage_distribution_title">WYKORZYSTANIE PAMIĘCI WEDŁUG GATUNKU</string>
 </resources>

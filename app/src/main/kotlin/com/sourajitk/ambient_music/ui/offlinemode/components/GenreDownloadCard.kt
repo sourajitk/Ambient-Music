@@ -35,12 +35,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.offline.GenreDownloader
 import java.util.Locale
 
@@ -101,9 +103,9 @@ fun GenreDownloadCard(
                 )
                 Text(
                     text = when {
-                        isDownloading -> "Downloading... ${(status.progress * 100).toInt()}% (${status.completedFiles}/${status.totalFiles})"
-                        isDownloaded -> "Downloaded"
-                        else -> "Available for offline"
+                        isDownloading -> stringResource(R.string.downloading_progress, (status.progress * 100).toInt(), status.completedFiles, status.totalFiles)
+                        isDownloaded -> stringResource(R.string.downloaded_status)
+                        else -> stringResource(R.string.available_for_offline)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

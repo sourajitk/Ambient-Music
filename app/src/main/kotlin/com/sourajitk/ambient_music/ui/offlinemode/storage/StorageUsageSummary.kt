@@ -23,8 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sourajitk.ambient_music.R
 import java.util.Locale
 
 private val genreColors = listOf(
@@ -54,7 +56,7 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
         val totalDeviceStorage = stat.totalBytes
 
         Text(
-            text = "${formatSize(totalSize)} of device\'s storage used",
+            text = stringResource(R.string.storage_usage_header, formatSize(totalSize), formatSize(totalDeviceStorage)),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Medium,
@@ -86,7 +88,7 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "STORAGE DISTRIBUTION PER GENRE",
+            text = stringResource(R.string.storage_distribution_title),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold,
