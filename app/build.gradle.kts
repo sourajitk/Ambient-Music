@@ -142,4 +142,6 @@ dependencies {
     implementation(libs.material3.window.size.class1)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 }

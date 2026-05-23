@@ -7,12 +7,18 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
 import android.service.quicksettings.TileService
+import android.util.Log
 import androidx.core.content.edit
+import androidx.glance.appwidget.updateAll
 import com.sourajitk.ambient_music.tiles.CalmQSTileService
 import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.FocusQSTileService
 import com.sourajitk.ambient_music.tiles.SerenityQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
+import com.sourajitk.ambient_music.widget.AmbientMusicWidget
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object TileStateUtil {
     private const val TILE_PREFS_NAME = "tile_state_prefs"
@@ -38,6 +44,16 @@ object TileStateUtil {
 
         tileServices.forEach { serviceClass ->
             TileService.requestListeningState(context, ComponentName(context, serviceClass))
+        }
+
+        // Also update the Home Screen widget
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                AmbientMusicWidget().updateAll(context)
+                Log.d("TileStateUtil", "Widget updateAll called successfully")
+            } catch (e: Exception) {
+                Log.e("TileStateUtil", "Failed to update widget: ${e.message}")
+            }
         }
     }
 }

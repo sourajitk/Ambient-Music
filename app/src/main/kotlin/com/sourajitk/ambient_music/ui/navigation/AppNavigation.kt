@@ -125,7 +125,7 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
                     navController = navController,
                     startDestination = Screen.Home.route,
                     modifier = Modifier.padding(
-                        top = innerPadding.calculateTopPadding()
+                        top = innerPadding.calculateTopPadding(),
                     ),
                 ) {
                     composable(Screen.Home.route) {
@@ -152,7 +152,6 @@ fun MainAppNavigation(windowSizeClass: WindowSizeClass) {
     }
 }
 
-
 // Split the navbar controllers for two form factors: tablets/foldables and phones.
 @Composable
 fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Screen>) {
@@ -164,7 +163,7 @@ fun AppBottomNavigationBar(navController: NavHostController, navItems: List<Scre
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-            contentAlignment = Alignment.BottomCenter,
+        contentAlignment = Alignment.BottomCenter,
     ) {
         Surface(
             shape = CircleShape,
