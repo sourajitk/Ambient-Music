@@ -104,4 +104,7 @@
     <string name="rate_app_title">Rate the app</string>
     <string name="rate_app_body">Like the app? Rate it on Play Store</string>
     <string name="widget_description">Quickly play your favorite ambient music genres.</string>
+    <string name="offline_listening_title" translatable="false">Offline Listening</string>
+    <string name="offline_listening_body" translatable="false">Download genres for playback without internet</string>
+    <string name="download_genres_title" translatable="false">Download Genres</string>
 </resources>

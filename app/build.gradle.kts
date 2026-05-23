@@ -122,6 +122,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.ui)
     implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)

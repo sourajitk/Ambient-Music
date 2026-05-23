@@ -269,9 +269,10 @@ class MusicPlaybackService : MediaLibraryService() {
                                 .setTitle(songData.title)
                                 .setArtist(songData.artist)
                             songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
                             MediaItem.Builder()
                                 .setMediaId(songData.url)
-                                .setUri(songData.url)
+                                .setUri(mediaUri)
                                 .setMediaMetadata(metadataBuilder.build())
                                 .build()
                         }
@@ -286,11 +287,12 @@ class MusicPlaybackService : MediaLibraryService() {
                                 .setArtist(songData.artist)
                             songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
 
+                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
                             resolvedItems.add(
                                 MediaItem.Builder()
                                     .setMediaId(songData.url)
                                     // Keep ExoPlayer happy :)
-                                    .setUri(songData.url)
+                                    .setUri(mediaUri)
                                     .setMediaMetadata(metadataBuilder.build())
                                     .build(),
                             )
@@ -428,9 +430,19 @@ class MusicPlaybackService : MediaLibraryService() {
             genreSongs.map { songData ->
                 val metadataBuilder =
                     MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
-                songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+                val localArtUri = SongsRepo.getLocalAlbumArtUri(this@MusicPlaybackService, songData.genre ?: "")
+                if (localArtUri != null) {
+                    metadataBuilder.setArtworkUri(localArtUri)
+                } else if (songData.albumArtUrl != null) {
+                    try {
+                        metadataBuilder.setArtworkUri(songData.albumArtUrl.toUri())
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to parse album art URI: ${songData.albumArtUrl}", e)
+                    }
+                }
+                val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
                 MediaItem.Builder()
-                    .setUri(songData.url)
+                    .setUri(mediaUri)
                     .setMediaId(songData.url)
                     .setMediaMetadata(metadataBuilder.build())
                     .build()
@@ -463,7 +475,10 @@ class MusicPlaybackService : MediaLibraryService() {
                 val metadataBuilder =
                     MediaMetadata.Builder().setTitle(songData.title).setArtist(songData.artist)
 
-                if (songData.albumArtUrl != null) {
+                val localArtUri = SongsRepo.getLocalAlbumArtUri(this@MusicPlaybackService, songData.genre ?: "")
+                if (localArtUri != null) {
+                    metadataBuilder.setArtworkUri(localArtUri)
+                } else if (songData.albumArtUrl != null) {
                     try {
                         metadataBuilder.setArtworkUri(songData.albumArtUrl.toUri())
                     } catch (e: Exception) {
@@ -472,8 +487,9 @@ class MusicPlaybackService : MediaLibraryService() {
                     }
                 }
 
+                val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
                 MediaItem.Builder()
-                    .setUri(songData.url)
+                    .setUri(mediaUri)
                     .setMediaId(songData.url)
                     .setMediaMetadata(metadataBuilder.build())
                     .build()

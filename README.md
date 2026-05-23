@@ -2,7 +2,7 @@
     <img src="https://i.imgur.com/UTyWfnm.png" width="1000">
 </div>
 </br>
-This app allows you to play a curated stream of ambient music in the background without any fuss just like you can on iOS! The idea is to have a "set and forget" music player. You hit play, and it handles the rest, providing a seamless stream of ambient tunes. No complex UI or no creating playlists.
+This app allows you to play a curated stream of ambient music in the background without any fuss just like you can on iOS! The idea is to have a "set and forget" music player. You hit play, and it handles the rest, providing a seamless stream of ambient tunes. No complex UI or manually creating playlists.
 
 ## Features
 
@@ -48,8 +48,8 @@ This app allows you to play a curated stream of ambient music in the background 
   drain! </br> **Bonus tip: This sleep timer actually works for any media that is being played on
   the system!**
   <div align="center">
-  <img src="https://i.imgur.com/uuYIR2L.png" width="240">
-  <img src="https://i.imgur.com/bysL2uQ.png" width="240">
+  <img src="https://i.imgur.com/Uux3yVl.png" width="240">
+  <img src="https://i.imgur.com/zvUJIqQ.png" width="240">
   <img src="https://i.imgur.com/BUFyQDz.png" width="240">
     </div>
 
@@ -59,9 +59,9 @@ This app allows you to play a curated stream of ambient music in the background 
   supports Material 3 Expressive.
 
     <div align="center">
-      <img src="https://i.imgur.com/445pEvH.png" width="240">
-      <img src="https://i.imgur.com/UzHFFh9.png" width="240">
-      <img src="https://i.imgur.com/0f8qqal.png" width="240">
+      <img src="https://i.imgur.com/gyMjtSz.png" width="240">
+      <img src="https://i.imgur.com/mch4QGB.png" width="240">
+      <img src="https://i.imgur.com/zGihSKI.png" width="240">
     </div>
 
 * **Support for multiple form factors**
@@ -79,7 +79,7 @@ This app allows you to play a curated stream of ambient music in the background 
   </div>
   </br>
   <div align="center">
-    <img src="https://i.imgur.com/RaLbG5A.png" width="750">
+    <img src="https://i.imgur.com/F0vkXnE.png" width="750">
   </div>
 
 ## Downloads
