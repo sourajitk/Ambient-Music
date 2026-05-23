@@ -89,4 +89,18 @@
     <string name="faq_learn_more">समस्याएँ आ रही हैं? अक्सर पूछे जाने वाले प्रश्न देखें!</string>
     <string name="rate_app_title">ऐप को रेट करें</string>
     <string name="rate_app_body">ऐप पसंद आया? प्ले स्टोर पर इसे रेट करें</string>
+    <string name="confirm_delete_title">क्या आपको यकीन है?</string>
+    <string name="confirm_delete_text">क्या आप %1$s डेटा हटाना चाहते हैं?</string>
+    <string name="confirm_delete_button">हटाएं</string>
+    <string name="cancel_button">रद्द करें</string>
+    <string name="cellular_data_warning">सेलुलर डेटा का उपयोग करके शैलियों को डाउनलोड करने पर अतिरिक्त शुल्क लग सकता है।</string>
+    <string name="downloading_progress">डाउनलोड हो रहा है... %1$d%% (%2$d/%3$d)</string>
+    <string name="downloaded_status">डाउनलोड हो गया</string>
+    <string name="available_for_offline">ऑफ़लाइन के लिए उपलब्ध</string>
+    <string name="storage_usage_header">%2$s में से %1$s उपयोग किया गया</string>
+    <string name="storage_distribution_title">शैली के अनुसार स्टोरेज वितरण</string>
+    <string name="widget_description">अपने पसंदीदा एंबियंट संगीत शैलियों को तेज़ी से चलाएं।</string>
+    <string name="offline_listening_title">ऑफ़लाइन सुनना</string>
+    <string name="offline_listening_body">इंटरनेट के बिना प्लेबैक के लिए शैलियां डाउनलोड करें</string>
+    <string name="download_genres_title">शैलियां डाउनलोड करें</string>
 </resources>

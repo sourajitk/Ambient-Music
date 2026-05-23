@@ -62,7 +62,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                 .fillMaxSize()
                 .background(Color(0xFF1C1C1E))
                 .cornerRadius(24.dp)
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
                 // Row 1: Sleep and Chill
@@ -74,7 +74,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                         genreKey = "sleep",
                         defaultIconRes = R.drawable.ic_sleep,
                         isActive = isPlaying && currentGenre == "sleep",
-                        action = MusicPlaybackService.ACTION_PLAY_GENRE_SLEEP
+                        action = MusicPlaybackService.ACTION_PLAY_GENRE_SLEEP,
                     )
                     Spacer(modifier = GlanceModifier.width(8.dp))
                     GenreTile(
@@ -84,7 +84,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                         genreKey = "chill",
                         defaultIconRes = R.drawable.ic_chill,
                         isActive = isPlaying && currentGenre == "chill",
-                        action = MusicPlaybackService.ACTION_PLAY_GENRE_CHILL
+                        action = MusicPlaybackService.ACTION_PLAY_GENRE_CHILL,
                     )
                 }
                 Spacer(modifier = GlanceModifier.height(8.dp))
@@ -97,7 +97,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                         genreKey = "focus",
                         defaultIconRes = R.drawable.ic_focus,
                         isActive = isPlaying && currentGenre == "focus",
-                        action = MusicPlaybackService.ACTION_PLAY_GENRE_FOCUS
+                        action = MusicPlaybackService.ACTION_PLAY_GENRE_FOCUS,
                     )
                     Spacer(modifier = GlanceModifier.width(8.dp))
                     GenreTile(
@@ -107,7 +107,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                         genreKey = "calm",
                         defaultIconRes = R.drawable.ic_calm,
                         isActive = isPlaying && currentGenre == "calm",
-                        action = MusicPlaybackService.ACTION_PLAY_GENRE_CALM
+                        action = MusicPlaybackService.ACTION_PLAY_GENRE_CALM,
                     )
                 }
             }
@@ -122,13 +122,13 @@ class AmbientMusicWidget : GlanceAppWidget() {
         genreKey: String,
         defaultIconRes: Int,
         isActive: Boolean,
-        action: String
+        action: String,
     ) {
         val context = LocalContext.current
-        
+
         // If this genre is currently playing, the action should toggle (pause)
         val finalAction = if (isActive) MusicPlaybackService.ACTION_TOGGLE_PLAYBACK_QS else action
-        
+
         val playIntent = Intent(context, MusicPlaybackService::class.java).apply {
             this.action = finalAction
             setPackage(context.packageName)
@@ -150,57 +150,57 @@ class AmbientMusicWidget : GlanceAppWidget() {
                 .cornerRadius(if (isActive) 16.dp else 18.dp) // inner corners
                 .background(Color(0xFF2C2C2E))
                 .clickable(actionStartService(playIntent))
-                .padding(10.dp)
+                .padding(10.dp),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {
                 Row(
                     modifier = GlanceModifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = title,
                         style = TextStyle(
                             color = ColorProvider(Color.White),
                             fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         ),
-                        modifier = GlanceModifier.defaultWeight()
+                        modifier = GlanceModifier.defaultWeight(),
                     )
                     Image(
                         provider = imageProvider,
                         contentDescription = title,
                         modifier = GlanceModifier.size(28.dp).cornerRadius(8.dp),
-                        colorFilter = if (albumArt == null) ColorFilter.tint(ColorProvider(Color.White)) else null
+                        colorFilter = if (albumArt == null) ColorFilter.tint(ColorProvider(Color.White)) else null,
                     )
                 }
-                
+
                 Spacer(modifier = GlanceModifier.defaultWeight())
-                
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = GlanceModifier.fillMaxWidth()
+                    modifier = GlanceModifier.fillMaxWidth(),
                 ) {
                     Image(
                         provider = ImageProvider(if (isActive) R.drawable.ic_pause else R.drawable.ic_play_arrow),
                         contentDescription = if (isActive) "Pause" else "Play",
                         modifier = GlanceModifier.size(10.dp),
-                        colorFilter = ColorFilter.tint(ColorProvider(Color.White))
+                        colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     Text(
                         text = if (isActive) "Pause " else "Play ",
                         style = TextStyle(
                             color = ColorProvider(Color(0xFFEBEBF5).copy(alpha = 0.6f)),
-                            fontSize = 9.sp
-                        )
+                            fontSize = 9.sp,
+                        ),
                     )
                     Text(
                         text = subtitle,
                         style = TextStyle(
                             color = ColorProvider(Color(0xFF918AFA)),
                             fontSize = 9.sp,
-                            fontWeight = FontWeight.Medium
-                        )
+                            fontWeight = FontWeight.Medium,
+                        ),
                     )
                 }
             }

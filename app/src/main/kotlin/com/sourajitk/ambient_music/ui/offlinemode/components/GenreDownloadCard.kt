@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -34,14 +35,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.offline.GenreDownloader
-import java.util.Locale
+import com.sourajitk.ambient_music.util.getLocalizedGenreName
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -58,7 +61,7 @@ fun GenreDownloadCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = shape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         onClick = onToggleDownload,
     ) {
@@ -92,7 +95,7 @@ fun GenreDownloadCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = genre.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                    text = getLocalizedGenreName(genre),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
@@ -100,9 +103,9 @@ fun GenreDownloadCard(
                 )
                 Text(
                     text = when {
-                        isDownloading -> "Downloading... ${(status.progress * 100).toInt()}% (${status.completedFiles}/${status.totalFiles})"
-                        isDownloaded -> "Downloaded"
-                        else -> "Available for offline"
+                        isDownloading -> stringResource(R.string.downloading_progress, (status.progress * 100).toInt(), status.completedFiles, status.totalFiles)
+                        isDownloaded -> stringResource(R.string.downloaded_status)
+                        else -> stringResource(R.string.available_for_offline)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -124,16 +127,19 @@ fun GenreDownloadCard(
             if (isDownloading) {
                 IconButton(onClick = onStopDownload) {
                     Icon(
-                        Icons.Default.Stop,
+                        Icons.Outlined.Stop,
                         contentDescription = "Stop Download",
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
             } else {
-                Checkbox(
-                    checked = isDownloaded,
-                    onCheckedChange = { onToggleDownload() },
-                )
+                IconButton(onClick = onToggleDownload) {
+                    Icon(
+                        imageVector = if (isDownloaded) Icons.Outlined.Delete else Icons.Outlined.Download,
+                        contentDescription = if (isDownloaded) "Delete Download" else "Download Offline",
+                        tint = if (isDownloaded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    )
+                }
             }
         }
     }

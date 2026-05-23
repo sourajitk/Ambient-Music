@@ -92,4 +92,18 @@
     <string name="faq_learn_more">Hai problemi? Consulta le domande frequenti.</string>
     <string name="rate_app_title">Vota l\'app</string>
     <string name="rate_app_body">Ti piace l\'app? Nominala sul Play Store</string>>
+    <string name="confirm_delete_title">Sei sicuro?</string>
+    <string name="confirm_delete_text">Vuoi eliminare i dati di %1$s?</string>
+    <string name="confirm_delete_button">Elimina</string>
+    <string name="cancel_button">Annulla</string>
+    <string name="cellular_data_warning">Il download dei generi tramite dati mobili potrebbe comportare costi aggiuntivi.</string>
+    <string name="downloading_progress">Download in corso... %1$d%% (%2$d/%3$d)</string>
+    <string name="downloaded_status">Scaricato</string>
+    <string name="available_for_offline">Disponibile offline</string>
+    <string name="storage_usage_header">%1$s di %2$s utilizzati</string>
+    <string name="storage_distribution_title">DISTRIBUZIONE MEMORIA PER GENERE</string>
+    <string name="widget_description">Riproduci rapidamente i tuoi generi di musica ambient preferiti.</string>
+    <string name="offline_listening_title">Ascolto offline</string>
+    <string name="offline_listening_body">Scarica i generi per la riproduzione senza internet</string>
+    <string name="download_genres_title">Scarica generi</string>
 </resources>

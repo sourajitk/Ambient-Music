@@ -92,4 +92,18 @@
     <string name="faq_learn_more">Виникли проблеми? Перегляньте часті запитання.</string>
     <string name="rate_app_title">Оцінити додаток</string>
     <string name="rate_app_body">Подобається додаток? Оцініть його у Play Store</string>
+    <string name="confirm_delete_title">Ви впевнені?</string>
+    <string name="confirm_delete_text">Бажаєте видалити дані %1$s?</string>
+    <string name="confirm_delete_button">Видалити</string>
+    <string name="cancel_button">Скасувати</string>
+    <string name="cellular_data_warning">Завантаження жанрів через мобільні дані може призвести до додаткових витрат.</string>
+    <string name="downloading_progress">Завантаження... %1$d%% (%2$d/%3$d)</string>
+    <string name="downloaded_status">Завантажено</string>
+    <string name="available_for_offline">Доступно офлайн</string>
+    <string name="storage_usage_header">Використано %1$s з %2$s</string>
+    <string name="storage_distribution_title">РОЗПОДІЛ ПАМ\'ЯТІ ЗА ЖАНРАМИ</string>
+    <string name="widget_description">Швидко відтворюйте улюблені жанри ембієнт-музики.</string>
+    <string name="offline_listening_title">Офлайн-прослуховування</string>
+    <string name="offline_listening_body">Завантажуйте жанри для відтворення без інтернету</string>
+    <string name="download_genres_title">Завантажити жанри</string>
 </resources>

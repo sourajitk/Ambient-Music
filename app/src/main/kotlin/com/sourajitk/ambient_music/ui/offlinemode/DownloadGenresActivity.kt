@@ -9,13 +9,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -32,17 +39,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.data.offline.GenreDownloader
+import com.sourajitk.ambient_music.ui.dialog.ConfirmDeleteDialog
 import com.sourajitk.ambient_music.ui.offlinemode.components.GenreDownloadCard
+import com.sourajitk.ambient_music.ui.offlinemode.storage.StorageUsageSummary
 import com.sourajitk.ambient_music.ui.theme.AmbientMusicTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Locale
 
 class DownloadGenresActivity : ComponentActivity() {
@@ -84,6 +102,30 @@ fun DownloadGenresScreen(
     val downloadedGenres by GenreDownloader.downloadedGenres.collectAsState()
     val downloadProgress by GenreDownloader.downloadProgress.collectAsState()
 
+    var genreSizes by remember { mutableStateOf(emptyMap<String, Long>()) }
+    var genreToConfirmDelete by remember { mutableStateOf<String?>(null) }
+
+    if (genreToConfirmDelete != null) {
+        ConfirmDeleteDialog(
+            genre = genreToConfirmDelete!!,
+            onConfirm = {
+                GenreDownloader.toggleDownload(context, genreToConfirmDelete!!)
+                genreToConfirmDelete = null
+            },
+            onDismiss = { genreToConfirmDelete = null },
+        )
+    }
+
+    LaunchedEffect(downloadedGenres, downloadProgress) {
+        withContext(Dispatchers.IO) {
+            val sizes = genresWithArt.associate { (genre, _) ->
+                val dir = File(context.filesDir, "offline_genres/$genre")
+                genre to (if (dir.exists()) dir.walkTopDown().sumOf { it.length() } else 0L)
+            }
+            genreSizes = sizes
+        }
+    }
+
     LaunchedEffect(genresWithArt) {
         GenreDownloader.loadDownloadedStates(context, genresWithArt.map { it.first })
     }
@@ -95,11 +137,25 @@ fun DownloadGenresScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             LargeTopAppBar(
-                title = { Text(stringResource(R.string.download_genres_title)) },
+                title = { 
+                    val collapsedFraction = scrollBehavior.state.collapsedFraction
+                    val fontSize = lerp(
+                        MaterialTheme.typography.headlineLarge.fontSize,
+                        MaterialTheme.typography.titleLarge.fontSize,
+                        collapsedFraction
+                    )
+                    Text(
+                        text = stringResource(R.string.download_genres_title),
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold
+                    ) 
+                },
                 navigationIcon = {
                     FilledIconButton(
                         onClick = onNavigateBack,
@@ -130,6 +186,9 @@ fun DownloadGenresScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+            item {
+                StorageUsageSummary(genreSizes = genreSizes)
+            }
             itemsIndexed(genresWithArt) { index, (genre, albumArtUrl) ->
                 val isDownloading = downloadingGenres.contains(genre)
                 val isDownloaded = downloadedGenres.contains(genre)
@@ -153,9 +212,37 @@ fun DownloadGenresScreen(
                     isDownloaded = isDownloaded,
                     status = status,
                     shape = shape,
-                    onToggleDownload = { GenreDownloader.toggleDownload(context, genre) },
+                    onToggleDownload = {
+                        if (isDownloaded) {
+                            genreToConfirmDelete = genre
+                        } else {
+                            GenreDownloader.toggleDownload(context, genre)
+                        }
+                    },
                     onStopDownload = { GenreDownloader.stopDownload(context, genre) },
                 )
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "Info",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.cellular_data_warning),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Left,
+                    )
+                }
             }
         }
     }
