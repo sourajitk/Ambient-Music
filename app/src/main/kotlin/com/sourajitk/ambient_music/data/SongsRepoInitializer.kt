@@ -9,6 +9,10 @@ import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
 import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
 import com.sourajitk.ambient_music.util.TileStateUtil
 import com.sourajitk.ambient_music.util.UpdateScheduler.scheduleUpdateChecks
+import com.sourajitk.ambient_music.widget.WidgetImageManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SongsRepoInitializer : Application() {
     companion object {
@@ -31,6 +35,11 @@ class SongsRepoInitializer : Application() {
             if (success) {
                 Log.d(TAG, "SongsRepo successfully loaded songs. Requesting tile update.")
                 TileStateUtil.requestTileUpdate(applicationContext)
+
+                // Refresh widget images
+                CoroutineScope(Dispatchers.IO).launch {
+                    WidgetImageManager.refreshWidgetImages(applicationContext)
+                }
             }
         }
     }

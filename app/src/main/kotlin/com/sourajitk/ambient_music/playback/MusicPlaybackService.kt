@@ -149,6 +149,7 @@ class MusicPlaybackService : MediaLibraryService() {
                         currentAlbumArt = null
                         mediaItem?.mediaMetadata?.artworkUri?.let { fetchArtworkAsync(it) }
                         updateNotification()
+                        TileStateUtil.requestTileUpdate(applicationContext)
                     }
 
                     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -414,6 +415,9 @@ class MusicPlaybackService : MediaLibraryService() {
     private fun playGenre(genre: String) {
         Log.d(TAG, "Playing genre: $genre")
         currentPlaylistGenre = genre // Set the current genre
+
+        // Update the widget immediately to show the "Loading/Active" state
+        TileStateUtil.requestTileUpdate(applicationContext)
 
         // Avoid mixing up genres regardless of playState and which tile is being clicked.
         val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
