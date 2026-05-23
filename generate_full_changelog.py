@@ -6,7 +6,7 @@ import argparse
 
 COMMIT_HISTORY_FILENAME = "commit_history.txt"
 CHANGELOG_FILENAME = "changelog.txt"
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={api_key}"
 
 
 def run_command(command, can_fail=False):

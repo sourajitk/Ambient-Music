@@ -22,17 +22,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+      - name: Create Python virtual environment
+        run: |
+          python -m venv .venv
 
       - name: Install Python dependencies
         run: |
+          source .venv/bin/activate
+          pip install --upgrade pip
           pip install requests google-genai
 
       - name: Generate AI Changelog
-        run: python generate_full_changelog.py --api-key "${{ secrets.GEMINI_API_KEY }}"
+        run: |
+          source .venv/bin/activate
+          python generate_full_changelog.py --api-key "${{ secrets.GEMINI_API_KEY }}"
 
       - name: Read Changelog File
         id: read_changelog

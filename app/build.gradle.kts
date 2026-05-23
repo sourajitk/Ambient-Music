@@ -122,6 +122,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.ui)
     implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)
@@ -142,4 +143,6 @@ dependencies {
     implementation(libs.material3.window.size.class1)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 }
