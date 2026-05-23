@@ -48,6 +48,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.outlined.Info
+import com.sourajitk.ambient_music.ui.dialog.ConfirmDeleteDialog
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -107,6 +110,18 @@ fun DownloadGenresScreen(
     val downloadProgress by GenreDownloader.downloadProgress.collectAsState()
 
     var genreSizes by remember { mutableStateOf(emptyMap<String, Long>()) }
+    var genreToConfirmDelete by remember { mutableStateOf<String?>(null) }
+
+    if (genreToConfirmDelete != null) {
+        ConfirmDeleteDialog(
+            genre = genreToConfirmDelete!!,
+            onConfirm = {
+                GenreDownloader.toggleDownload(context, genreToConfirmDelete!!)
+                genreToConfirmDelete = null
+            },
+            onDismiss = { genreToConfirmDelete = null }
+        )
+    }
 
     LaunchedEffect(downloadedGenres, downloadProgress) {
         withContext(Dispatchers.IO) {
@@ -190,9 +205,37 @@ fun DownloadGenresScreen(
                     isDownloaded = isDownloaded,
                     status = status,
                     shape = shape,
-                    onToggleDownload = { GenreDownloader.toggleDownload(context, genre) },
+                    onToggleDownload = {
+                        if (isDownloaded) {
+                            genreToConfirmDelete = genre
+                        } else {
+                            GenreDownloader.toggleDownload(context, genre)
+                        }
+                    },
                     onStopDownload = { GenreDownloader.stopDownload(context, genre) },
                 )
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "Info",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Downloading the genres using cellular data might incur additional costs from your cellular plan.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Left
+                    )
+                }
             }
         }
     }
