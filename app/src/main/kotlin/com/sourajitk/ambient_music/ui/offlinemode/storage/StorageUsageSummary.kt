@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.util.getLocalizedGenreName
 import java.util.Locale
 
 private val genreColors = listOf(
@@ -109,7 +110,7 @@ fun StorageUsageSummary(genreSizes: Map<String, Long>) {
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = entry.key.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                    text = getLocalizedGenreName(entry.key),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),

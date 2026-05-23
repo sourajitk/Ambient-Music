@@ -44,7 +44,7 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.offline.GenreDownloader
-import java.util.Locale
+import com.sourajitk.ambient_music.util.getLocalizedGenreName
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -95,7 +95,7 @@ fun GenreDownloadCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = genre.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                    text = getLocalizedGenreName(genre),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,

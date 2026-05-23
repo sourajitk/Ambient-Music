@@ -9,7 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.sourajitk.ambient_music.R
-import java.util.Locale
+import com.sourajitk.ambient_music.util.getLocalizedGenreName
 
 @Composable
 fun ConfirmDeleteDialog(
@@ -17,7 +17,7 @@ fun ConfirmDeleteDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val formattedGenre = genre.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    val formattedGenre = getLocalizedGenreName(genre)
 
     AlertDialog(
         onDismissRequest = onDismiss,
