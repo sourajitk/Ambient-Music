@@ -162,7 +162,7 @@ fun DownloadGenresScreen(
                     FilledIconButton(
                         onClick = onNavigateBack,
                         colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                             contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
                     ) {
