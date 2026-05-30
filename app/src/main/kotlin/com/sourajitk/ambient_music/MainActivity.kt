@@ -54,12 +54,10 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setTheme(R.style.Theme_AmbientMusic)
         InAppUpdateManager.checkForUpdate(this)
 

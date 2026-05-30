@@ -52,12 +52,6 @@ fun FloatingNavBarImpl(
         label = "pillContent",
     )
 
-    // Animate the horizontal padding to make it more compact when inactive
-    val horizontalPadding by animateDpAsState(
-        targetValue = if (isSelected) 16.dp else 12.dp,
-        label = "pillPadding",
-    )
-
     Box(
         modifier = Modifier
             .clip(CircleShape)

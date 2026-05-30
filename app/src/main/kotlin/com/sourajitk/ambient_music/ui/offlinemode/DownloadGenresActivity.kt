@@ -67,7 +67,6 @@ class DownloadGenresActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setTheme(R.style.Theme_AmbientMusic)
         setContent {
             AmbientMusicTheme {
@@ -145,18 +144,18 @@ fun DownloadGenresScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             LargeTopAppBar(
-                title = { 
+                title = {
                     val collapsedFraction = scrollBehavior.state.collapsedFraction
                     val fontSize = lerp(
                         MaterialTheme.typography.headlineLarge.fontSize,
                         MaterialTheme.typography.titleLarge.fontSize,
-                        collapsedFraction
+                        collapsedFraction,
                     )
                     Text(
                         text = stringResource(R.string.download_genres_title),
                         fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    ) 
+                        fontWeight = FontWeight.Bold,
+                    )
                 },
                 navigationIcon = {
                     FilledIconButton(
