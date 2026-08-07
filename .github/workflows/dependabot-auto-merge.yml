@@ -2,6 +2,7 @@ name: Dependabot Auto-Merge
 
 on:
   pull_request_target:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
@@ -13,14 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --squash "$PR_URL"
+      - name: Merge Dependabot PR(s)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Running manual batch merge for all open Dependabot PRs..."
+            prs=$(gh pr list --json number,author,url --jq '.[] | select(.author.login=="dependabot[bot]" or .author.login=="app/dependabot") | .url')
+            if [ -z "$prs" ]; then
+              echo "No open Dependabot PRs found."
+            else
+              for url in $prs; do
+                echo "Merging $url..."
+                gh pr merge --squash "$url" || echo "Failed to merge $url"
+              done
+            fi
+          else
+            echo "Merging PR ${{ github.event.pull_request.html_url }}..."
+            gh pr merge --squash "${{ github.event.pull_request.html_url }}"
+          fi
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
