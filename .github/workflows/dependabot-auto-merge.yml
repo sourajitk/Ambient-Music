@@ -1,6 +1,8 @@
 name: Dependabot Auto-Merge
 
-on: pull_request_target
+on:
+  pull_request_target:
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -9,7 +11,7 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Dependabot metadata
         id: metadata
