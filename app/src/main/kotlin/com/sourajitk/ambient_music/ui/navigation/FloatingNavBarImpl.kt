@@ -5,7 +5,6 @@ package com.sourajitk.ambient_music.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -50,12 +49,6 @@ fun FloatingNavBarImpl(
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
         label = "pillContent",
-    )
-
-    // Animate the horizontal padding to make it more compact when inactive
-    val horizontalPadding by animateDpAsState(
-        targetValue = if (isSelected) 16.dp else 12.dp,
-        label = "pillPadding",
     )
 
     Box(

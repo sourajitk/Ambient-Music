@@ -9,6 +9,9 @@ import android.util.Log
 import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -33,7 +36,14 @@ object SongsRepo {
     private const val REMOTE_SONGS_URL = "https://www.ambient-music.online/songs.json"
     private const val LOCAL_CACHE_FILE_NAME = "songs_cache.json"
 
+    private val _songsFlow = MutableStateFlow<List<SongAsset>>(emptyList())
+    val songsFlow: StateFlow<List<SongAsset>> = _songsFlow.asStateFlow()
+
     @Volatile private var internalLoadedSongs: List<SongAsset> = emptyList()
+        set(value) {
+            field = value
+            _songsFlow.value = value
+        }
     var currentTrackIndex = 0
         private set
 

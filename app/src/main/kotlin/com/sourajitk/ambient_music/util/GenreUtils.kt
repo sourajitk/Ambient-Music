@@ -18,9 +18,9 @@ fun getLocalizedGenreName(genre: String): String {
         "serenity" -> R.string.tile_label_serenity
         else -> null
     }
-    
-    // Some tile labels are like "Ambient Calm", we can strip "Ambient " to just get "Calm" if it's localized nicely, 
+
+    // Some tile labels are like "Ambient Calm", we can strip "Ambient " to just get "Calm" if it's localized nicely,
     // but returning the full translated string is best here since it's already translated.
-    return resId?.let { stringResource(id = it).removePrefix("Ambient ") } 
+    return resId?.let { stringResource(id = it).removePrefix("Ambient ") }
         ?: genre.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 }

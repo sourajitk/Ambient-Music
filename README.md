@@ -71,6 +71,25 @@ This app allows you to play a curated stream of ambient music in the background 
       <img src="https://i.imgur.com/PdtfZGW.png" width="750">
     </div>
 
+* **Support for widgets**
+  Start playing ambient music straight from your home screen or lock screen using a handy widget! Just like on iOS, you can control the playback from here with the least amount of finger taps!
+  </br>
+  <div align="center">
+    <img src="https://i.imgur.com/dfJaQb2.png" width="600">
+  </div>
+  </br>
+  <div align="center">
+    <img src="https://i.imgur.com/ffN7mR7.png" width="600">
+  </div>
+
+* **Full offline listening support**
+  On a flight? Or somewhere you don't have internet? No worries! Save any and all ambient music genres using the offline listening mode. Just download the genres you would like to save and you're good to go! Play the music using the QS tile or the widget just as you would otherwise.
+  </br>
+  <div align="center">
+    <img src="https://i.imgur.com/BuEDi1u.png" width="300">
+    <img src="https://i.imgur.com/zUFqUPD.png" width="300">
+  </div>
+
 * **Full Android Auto support**
   Control your Ambient Music straight from the screen on your car! 
   </br>No interruptions! Safe Drives! 

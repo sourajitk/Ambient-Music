@@ -67,7 +67,6 @@ class DownloadGenresActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setTheme(R.style.Theme_AmbientMusic)
         setContent {
             AmbientMusicTheme {
@@ -88,12 +87,14 @@ fun DownloadGenresScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    val genresWithArt = remember {
-        SongsRepo.songs
+    val songs by SongsRepo.songsFlow.collectAsState()
+
+    val genresWithArt = remember(songs) {
+        songs
             .filter { !it.genre.isNullOrEmpty() }
             .groupBy { it.genre!!.lowercase(Locale.ROOT) }
-            .map { (genre, songs) ->
-                val firstSong = songs.firstOrNull { it.albumArtUrl != null } ?: songs.first()
+            .map { (genre, genreSongs) ->
+                val firstSong = genreSongs.firstOrNull { it.albumArtUrl != null } ?: genreSongs.first()
                 genre to firstSong.albumArtUrl
             }
     }
@@ -143,24 +144,24 @@ fun DownloadGenresScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             LargeTopAppBar(
-                title = { 
+                title = {
                     val collapsedFraction = scrollBehavior.state.collapsedFraction
                     val fontSize = lerp(
                         MaterialTheme.typography.headlineLarge.fontSize,
                         MaterialTheme.typography.titleLarge.fontSize,
-                        collapsedFraction
+                        collapsedFraction,
                     )
                     Text(
                         text = stringResource(R.string.download_genres_title),
                         fontSize = fontSize,
-                        fontWeight = FontWeight.Bold
-                    ) 
+                        fontWeight = FontWeight.Bold,
+                    )
                 },
                 navigationIcon = {
                     FilledIconButton(
                         onClick = onNavigateBack,
                         colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                             contentColor = MaterialTheme.colorScheme.onSurface,
                         ),
                     ) {

@@ -88,7 +88,7 @@ jobs:
           mv "$aab_file" "Ambient-Music-${{ github.ref_name }}.aab"
 
       - name: Upload Release to GitHub
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             Ambient-Music-${{ github.ref_name }}.apk
