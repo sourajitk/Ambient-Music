@@ -1,0 +1,38 @@
+name: Dependabot Post-Merge Build
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build App
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'app/dependabot')) || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: "zulu"
+          java-version: "25.0.2+10"
+          cache: "gradle"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build App
+        run: ./gradlew assemble
+        env:
+          SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          CI: true
