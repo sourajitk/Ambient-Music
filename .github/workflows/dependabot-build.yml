@@ -19,6 +19,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
 
+      - name: Decode and restore keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > release-keystore.jks
+
       - name: Set Up JDK
         uses: actions/setup-java@v5.7.0
         with:
