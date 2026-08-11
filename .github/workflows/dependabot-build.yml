@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     name: Build App
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'app/dependabot')) || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
