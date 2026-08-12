@@ -3,6 +3,10 @@ name: Dependabot Post-Merge Build
 on:
   pull_request:
     types: [closed]
+  workflow_run:
+    workflows: ["Dependabot Auto-Merge"]
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
@@ -12,7 +16,10 @@ jobs:
   build:
     name: Build App
     runs-on: self-hosted
-    if: (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'app/dependabot')) || github.event_name == 'workflow_dispatch'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'app/dependabot'))
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.1
