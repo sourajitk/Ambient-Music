@@ -4,6 +4,22 @@
 </br>
 This app allows you to play a curated stream of ambient music in the background without any fuss just like you can on iOS! The idea is to have a "set and forget" music player. You hit play, and it handles the rest, providing a seamless stream of ambient tunes. No complex UI or manually creating playlists.
 
+## Featured In
+
+<img src="https://www.androidauthority.com/wp-content/uploads/2025/07/Photo-of-an-Android-phone-running-Ambient-Music.jpg.webp" width="550">
+
+[Android Authority](https://www.androidauthority.com/apple-ambient-music-on-android-3578211)
+
+## Downloads
+
+[![API](https://img.shields.io/badge/31%2B-level?style=for-the-badge&logo=android&logoColor=3cd382&label=API&labelColor=21262d&color=ff663b)](https://developer.android.com/studio/releases/platforms) [![Release](https://img.shields.io/github/v/release/sourajitk/Ambient-Music?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/sourajitk/Ambient-Music/latest) [![Downloads](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total?style=for-the-badge&labelColor=21262d&color=238636&cacheSeconds=3600)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
+<p align="left">
+  <p align="left">
+    <a href="https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music"><img src="https://i.imgur.com/ElcHPWC.png" alt="Get it on the Google play store" height="80"></a>
+    <a href="https://github.com/sourajitk/Ambient-Music/releases"><img src="https://raw.githubusercontent.com/andOTP/andOTP/master/assets/badges/get-it-on-github.png" alt="Get it on Github" height="80"></a>
+  </p>
+</p>
+
 ## Features
 
 * **Tracks Fetched on Demand**
@@ -101,16 +117,6 @@ This app allows you to play a curated stream of ambient music in the background 
     <img src="https://i.imgur.com/F0vkXnE.png" width="750">
   </div>
 
-## Downloads
-
-[![API](https://img.shields.io/badge/31%2B-level?style=for-the-badge&logo=android&logoColor=3cd382&label=API&labelColor=21262d&color=ff663b)](https://developer.android.com/studio/releases/platforms) [![Release](https://img.shields.io/github/v/release/sourajitk/Ambient-Music?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/sourajitk/Ambient-Music/latest) [![Downloads](https://img.shields.io/github/downloads/sourajitk/Ambient-Music/total?style=for-the-badge&labelColor=21262d&color=238636&cacheSeconds=3600)](https://tooomm.github.io/github-release-stats/?username=Sourajitk&repository=Ambient-Music)
-<p align="left">
-  <p align="left">
-    <a href="https://play.google.com/store/apps/details?id=com.sourajitk.ambient_music"><img src="https://i.imgur.com/ElcHPWC.png" alt="Get it on the Google play store" height="80"></a>
-    <a href="https://github.com/sourajitk/Ambient-Music/releases"><img src="https://raw.githubusercontent.com/andOTP/andOTP/master/assets/badges/get-it-on-github.png" alt="Get it on Github" height="80"></a>
-  </p>
-</p>
-
 ## Credits
 
 Big thanks to all my testers for constantly testing my app and providing constructive feedback to
@@ -127,12 +133,6 @@ Some useful links I referred to while building the app:
 - [requestAddTileService](https://developer.android.com/reference/android/service/quicksettings/TileService#requestAddTileService(android.content.ComponentName))
 - [Window Size Classes](https://developer.android.com/guide/topics/large-screens/support-different-screen-sizes)
 - [NavigationRail in Compose](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#NavigationRail(kotlin.Function1))
-
-## Featured In
-
-<img src="https://www.androidauthority.com/wp-content/uploads/2025/07/Photo-of-an-Android-phone-running-Ambient-Music.jpg.webp" width="550">
-
-[Android Authority](https://www.androidauthority.com/apple-ambient-music-on-android-3578211)
 
 ## License
 
