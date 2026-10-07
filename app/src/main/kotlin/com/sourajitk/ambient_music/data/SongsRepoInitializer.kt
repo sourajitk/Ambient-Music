@@ -5,8 +5,8 @@ package com.sourajitk.ambient_music.data
 
 import android.app.Application
 import android.util.Log
-import com.sourajitk.ambient_music.ui.notification.checkForAppUpdates
 import com.sourajitk.ambient_music.ui.notification.createUpdateNotificationChannel
+import com.sourajitk.ambient_music.util.InstallSourceChecker
 import com.sourajitk.ambient_music.util.TileStateUtil
 import com.sourajitk.ambient_music.util.UpdateScheduler.scheduleUpdateChecks
 import com.sourajitk.ambient_music.widget.WidgetImageManager
@@ -22,9 +22,13 @@ class SongsRepoInitializer : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // This runs on every process start (including Android Auto binding the media service), so
+        // keep it lean. Update checks are handled by the periodic UpdateWorker and MainActivity,
+        // and are irrelevant for Play Store installs.
         createUpdateNotificationChannel(this)
-        checkForAppUpdates(this)
-        scheduleUpdateChecks(this)
+        if (!InstallSourceChecker.isFromPlayStore(this)) {
+            scheduleUpdateChecks(this)
+        }
 
         // Load the song links from the local cache instead of trying to access flushed cache.
         SongsRepo.initializeFromCache(this)
