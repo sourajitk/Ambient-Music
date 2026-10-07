@@ -37,9 +37,16 @@ import coil.request.ImageRequest
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
 import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.data.SongAsset
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class MusicPlaybackService : MediaLibraryService() {
 
@@ -53,6 +60,8 @@ class MusicPlaybackService : MediaLibraryService() {
 
     private var currentAlbumArt: Bitmap? = null
     private lateinit var imageLoader: ImageLoader
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     companion object {
         const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
@@ -68,6 +77,11 @@ class MusicPlaybackService : MediaLibraryService() {
         private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
         private const val TAG = "MusicPlaybackService"
         private const val ROOT_ID = "ambient_music_root_id"
+        private const val SUGGESTED_ROOT_ID = "suggested_root_id"
+        private const val GENRE_ID_PREFIX = "genre_"
+
+        // How long a browse request from Android Auto waits for the song list on a cold start.
+        private const val SONGS_WAIT_TIMEOUT_MS = 5_000L
 
         @Volatile
         var isServiceCurrentlyPlaying: Boolean = false
@@ -105,6 +119,84 @@ class MusicPlaybackService : MediaLibraryService() {
         imageLoader = ImageLoader(this)
         initializePlayerAndSession()
         createNotificationChannel()
+
+        // Android Auto caches browse results, so tell it whenever the song list changes
+        // (e.g. the remote JSON finishes downloading after the first browse request).
+        serviceScope.launch {
+            SongsRepo.songsFlow.collect {
+                val genreCount = buildGenreItems().size
+                mediaLibrarySession?.notifyChildrenChanged(ROOT_ID, genreCount, null)
+                mediaLibrarySession?.notifyChildrenChanged(SUGGESTED_ROOT_ID, genreCount, null)
+                Log.d(TAG, "notifyChildrenChanged: $genreCount genres")
+            }
+        }
+    }
+
+    // Builds the browsable genre list: one playable item per genre, titled by its first song.
+    private fun buildGenreItems(): List<MediaItem> = SongsRepo.songs
+        .filter { !it.genre.isNullOrEmpty() }
+        .distinctBy { it.genre?.lowercase() }
+        .map { songData ->
+            val genreName = songData.genre?.lowercase() ?: "unknown"
+            MediaItem.Builder()
+                .setMediaId("$GENRE_ID_PREFIX$genreName")
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle(songData.title)
+                        .setArtist(songData.artist)
+                        .setArtworkUri(songData.albumArtUrl?.toUri())
+                        .setIsBrowsable(false)
+                        .setIsPlayable(true)
+                        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+                        .build(),
+                )
+                .build()
+        }
+
+    private fun buildSongMediaItem(songData: SongAsset): MediaItem {
+        val metadataBuilder = MediaMetadata.Builder()
+            .setTitle(songData.title)
+            .setArtist(songData.artist)
+        songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+        val mediaUri = SongsRepo.getLocalSongUri(this, songData)?.toString() ?: songData.url
+        return MediaItem.Builder()
+            .setMediaId(songData.url)
+            .setUri(mediaUri)
+            .setMediaMetadata(metadataBuilder.build())
+            .build()
+    }
+
+    // Runs [block] once songs are available. On a cold start (e.g. a fresh install) the song list
+    // may still be downloading, so wait briefly instead of answering with an empty result.
+    private fun <T> withSongs(block: () -> T): ListenableFuture<T> {
+        if (SongsRepo.songs.isNotEmpty()) return Futures.immediateFuture(block())
+        val future = SettableFuture.create<T>()
+        serviceScope.launch {
+            try {
+                SongsRepo.awaitSongs(SONGS_WAIT_TIMEOUT_MS)
+            } finally {
+                future.set(block())
+            }
+        }
+        return future
+    }
+
+    private fun resolveMediaItems(mediaItems: List<MediaItem>): List<MediaItem> {
+        val resolvedItems = mutableListOf<MediaItem>()
+        for (item in mediaItems) {
+            if (item.mediaId.startsWith(GENRE_ID_PREFIX)) {
+                val genre = item.mediaId.removePrefix(GENRE_ID_PREFIX)
+                currentPlaylistGenre = genre
+                isPlaylistSet = true
+                val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+                resolvedItems.addAll(genreSongs.shuffled().map { buildSongMediaItem(it) })
+            } else {
+                // Android Auto is trying to resume a specific song from Recents/For You.
+                // We must find it in the repo and attach the URI!
+                SongsRepo.songs.find { it.url == item.mediaId }?.let { resolvedItems.add(buildSongMediaItem(it)) }
+            }
+        }
+        return resolvedItems
     }
 
     private fun initializePlayerAndSession() {
@@ -193,7 +285,7 @@ class MusicPlaybackService : MediaLibraryService() {
             ): ListenableFuture<LibraryResult<MediaItem>> {
                 // Catch both "Suggested" and "Recent" queries from Android Auto
                 val isSuggestedOrRecent = (params?.isSuggested == true) || (params?.isRecent == true)
-                val rootIdToReturn = if (isSuggestedOrRecent) "suggested_root_id" else ROOT_ID
+                val rootIdToReturn = if (isSuggestedOrRecent) SUGGESTED_ROOT_ID else ROOT_ID
                 val rootTitle = if (isSuggestedOrRecent) "For You Recommendations" else "Ambient Music"
                 val rootItem = MediaItem.Builder()
                     .setMediaId(rootIdToReturn)
@@ -210,8 +302,7 @@ class MusicPlaybackService : MediaLibraryService() {
                 return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
             }
 
-            // Returns the list of songs when a controller browses a specific folder ID.
-            // When parentId matches ROOT_ID, we provide all songs from the SongsRepo.
+            // Returns the genre list for both the main root and the "suggested" root.
             @OptIn(UnstableApi::class)
             override fun onGetChildren(
                 session: MediaLibrarySession,
@@ -221,86 +312,32 @@ class MusicPlaybackService : MediaLibraryService() {
                 pageSize: Int,
                 params: LibraryParams?,
             ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
-                if (parentId == ROOT_ID) {
-                    val items = SongsRepo.songs
-                        .filter { !it.genre.isNullOrEmpty() }
-                        .distinctBy { it.genre?.lowercase() }
-                        .map { songData ->
-                            val genreName = songData.genre?.lowercase() ?: "unknown"
-                            // Grabs the custom title from JSON, or capitalizes the raw genre if null
-                            val displayTitle = songData.title
-                            MediaItem.Builder()
-                                .setMediaId("genre_$genreName")
-                                .setMediaMetadata(
-                                    MediaMetadata.Builder()
-                                        .setTitle(displayTitle)
-                                        .setArtist(songData.artist)
-                                        .setArtworkUri(songData.albumArtUrl?.toUri())
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
-                                        .build(),
-                                )
-                                .build()
-                        }
-                    // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
-                    return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(items), params))
+                if (parentId != ROOT_ID && parentId != SUGGESTED_ROOT_ID) {
+                    return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
                 }
-                return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
+                // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
+                return withSongs { LibraryResult.ofItemList(ImmutableList.copyOf(buildGenreItems()), params) }
+            }
+
+            // Resolves a single item by ID, used by Android Auto for resumption and search results.
+            override fun onGetItem(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                mediaId: String,
+            ): ListenableFuture<LibraryResult<MediaItem>> = withSongs {
+                val item = if (mediaId.startsWith(GENRE_ID_PREFIX)) {
+                    buildGenreItems().find { it.mediaId == mediaId }
+                } else {
+                    SongsRepo.songs.find { it.url == mediaId }?.let { buildSongMediaItem(it) }
+                }
+                item?.let { LibraryResult.ofItem(it, null) } ?: LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
             }
 
             override fun onAddMediaItems(
                 mediaSession: MediaSession,
                 controller: MediaSession.ControllerInfo,
                 mediaItems: List<MediaItem>,
-            ): ListenableFuture<List<MediaItem>> {
-                val resolvedItems = mutableListOf<MediaItem>()
-
-                for (item in mediaItems) {
-                    if (item.mediaId.startsWith("genre_")) {
-                        val genre = item.mediaId.removePrefix("genre_")
-                        currentPlaylistGenre = genre
-                        isPlaylistSet = true
-                        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-                        val shuffledSongs = genreSongs.shuffled()
-                        val playlistItems = shuffledSongs.map { songData ->
-                            val metadataBuilder = MediaMetadata.Builder()
-                                //
-                                .setTitle(songData.title)
-                                .setArtist(songData.artist)
-                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
-                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
-                            MediaItem.Builder()
-                                .setMediaId(songData.url)
-                                .setUri(mediaUri)
-                                .setMediaMetadata(metadataBuilder.build())
-                                .build()
-                        }
-                        resolvedItems.addAll(playlistItems)
-                    } else {
-                        // Android Auto is trying to resume a specific song from Recents/For You.
-                        // We must find it in the repo and attach the URI!
-                        val songData = SongsRepo.songs.find { it.url == item.mediaId }
-                        if (songData != null) {
-                            val metadataBuilder = MediaMetadata.Builder()
-                                .setTitle(songData.title)
-                                .setArtist(songData.artist)
-                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
-
-                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
-                            resolvedItems.add(
-                                MediaItem.Builder()
-                                    .setMediaId(songData.url)
-                                    // Keep ExoPlayer happy :)
-                                    .setUri(mediaUri)
-                                    .setMediaMetadata(metadataBuilder.build())
-                                    .build(),
-                            )
-                        }
-                    }
-                }
-                return Futures.immediateFuture(resolvedItems)
-            }
+            ): ListenableFuture<List<MediaItem>> = withSongs { resolveMediaItems(mediaItems) }
         }
         mediaLibrarySession = MediaLibrarySession.Builder(this, exoPlayer!!, callback)
             .setId("AmbientMusicMediaSession")
@@ -628,6 +665,7 @@ class MusicPlaybackService : MediaLibraryService() {
         mediaLibrarySession = null
         exoPlayer?.release()
         exoPlayer = null
+        serviceScope.cancel()
         isServiceCurrentlyPlaying = false
         isPlaylistSet = false
         Log.d(TAG, "MusicPlaybackService destroyed and resources released.")
