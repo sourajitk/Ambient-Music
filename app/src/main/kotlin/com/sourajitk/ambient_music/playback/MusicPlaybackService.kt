@@ -260,22 +260,16 @@ class MusicPlaybackService : MediaLibraryService() {
             }
 
         val callback = object : MediaLibrarySession.Callback {
-            // Triggered when Android Auto attempts to connect.
-            // We grant permissions for browsing and subscribing to the media library.
-            override fun onConnect(
+            // Triggered when a controller (Android Auto, System UI, the media notification) connects.
+            // Grant every controller the full default player and library commands. Don't override
+            // the deprecated synchronous onConnect(): since Media3 1.11 its default returns EMPTY
+            // commands, which removed the playback controls from the media notification and
+            // blocked Android Auto from browsing.
+            @OptIn(UnstableApi::class)
+            override fun onConnectAsync(
                 session: MediaSession,
                 controller: MediaSession.ControllerInfo,
-            ): MediaSession.ConnectionResult {
-                val connectionResult = super.onConnect(session, controller)
-                val sessionCommands = connectionResult.availableSessionCommands.buildUpon()
-                    .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_LIBRARY_ROOT)
-                    .add(SessionCommand.COMMAND_CODE_LIBRARY_SUBSCRIBE)
-                    .build()
-                return MediaSession.ConnectionResult.accept(
-                    sessionCommands,
-                    connectionResult.availablePlayerCommands,
-                )
-            }
+            ): ListenableFuture<MediaSession.ConnectionResult> = Futures.immediateFuture(MediaSession.ConnectionResult.AcceptedResultBuilder(session).build())
 
             // Provides the root folder for the media browser.
             // This is the "home" folder that Android Auto first looks for.
