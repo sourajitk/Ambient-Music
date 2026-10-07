@@ -42,11 +42,13 @@ import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.SongAsset
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
+import com.sourajitk.ambient_music.util.genreLabelRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MusicPlaybackService : MediaLibraryService() {
 
@@ -83,6 +85,12 @@ class MusicPlaybackService : MediaLibraryService() {
 
         // How long a browse request from Android Auto waits for the song list on a cold start.
         private const val SONGS_WAIT_TIMEOUT_MS = 5_000L
+
+        private val GENERIC_SEARCH_WORDS = setOf("ambient", "music", "play", "some", "the", "a", "on", "me", "sounds", "songs")
+
+        // Extra words people may use for a genre, matching names used elsewhere in the app (the
+        // widget calls the focus genre "Productivity").
+        private val GENRE_SEARCH_KEYWORDS = mapOf("focus" to "productivity")
 
         @Volatile
         var isServiceCurrentlyPlaying: Boolean = false
@@ -182,15 +190,59 @@ class MusicPlaybackService : MediaLibraryService() {
         return future
     }
 
+    private fun buildGenrePlaylist(genre: String): List<MediaItem> {
+        currentPlaylistGenre = genre
+        isPlaylistSet = true
+        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+        return genreSongs.shuffled().map { buildSongMediaItem(it) }
+    }
+
+    private fun normalizeForSearch(text: String): String = text.lowercase(Locale.getDefault()).replace(Regex("[^\\p{L}\\p{N}]+"), " ").trim()
+
+    // Returns the genres matching a search query, best match first. Every song in a genre shares
+    // the same title and artist, so genres are the only meaningful search results. Words such as
+    // "ambient" or "music" appear in every genre's metadata, so they only count when nothing more
+    // specific was asked for (e.g. "ambient music" returns every genre).
+    private fun searchGenres(query: String): List<MediaItem> {
+        val queryWords = normalizeForSearch(query).split(" ").filter { it.isNotEmpty() }
+        val specificWords = queryWords.filterNot { it in GENERIC_SEARCH_WORDS }.ifEmpty { queryWords }
+        if (specificWords.isEmpty()) return emptyList()
+        return buildGenreItems()
+            .map { item ->
+                val genre = item.mediaId.removePrefix(GENRE_ID_PREFIX)
+                val searchableText = normalizeForSearch(
+                    listOfNotNull(
+                        genre,
+                        genreLabelRes(genre)?.let { getString(it) },
+                        item.mediaMetadata.title,
+                        item.mediaMetadata.artist,
+                        GENRE_SEARCH_KEYWORDS[genre],
+                    ).joinToString(" "),
+                )
+                val searchableWords = searchableText.split(" ")
+                val compactText = searchableText.replace(" ", "")
+                // Short words must match a whole word, longer ones may match inside one (e.g. "lofi").
+                val score = specificWords.count { word ->
+                    word in searchableWords || (word.length >= 3 && compactText.contains(word))
+                }
+                item to score
+            }
+            .filter { it.second > 0 }
+            .sortedByDescending { it.second }
+            .map { it.first }
+    }
+
     private fun resolveMediaItems(mediaItems: List<MediaItem>): List<MediaItem> {
         val resolvedItems = mutableListOf<MediaItem>()
         for (item in mediaItems) {
-            if (item.mediaId.startsWith(GENRE_ID_PREFIX)) {
-                val genre = item.mediaId.removePrefix(GENRE_ID_PREFIX)
-                currentPlaylistGenre = genre
-                isPlaylistSet = true
-                val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-                resolvedItems.addAll(genreSongs.shuffled().map { buildSongMediaItem(it) })
+            val searchQuery = item.requestMetadata.searchQuery
+            if (item.mediaId.isEmpty() && searchQuery != null) {
+                // Voice request, e.g. "Play chill music on Ambient Music". An empty or unmatched
+                // query still plays something rather than failing the request.
+                val genreItem = searchGenres(searchQuery).firstOrNull() ?: buildGenreItems().randomOrNull()
+                genreItem?.let { resolvedItems.addAll(buildGenrePlaylist(it.mediaId.removePrefix(GENRE_ID_PREFIX))) }
+            } else if (item.mediaId.startsWith(GENRE_ID_PREFIX)) {
+                resolvedItems.addAll(buildGenrePlaylist(item.mediaId.removePrefix(GENRE_ID_PREFIX)))
             } else {
                 // Android Auto is trying to resume a specific song from Recents/For You.
                 // We must find it in the repo and attach the URI!
@@ -326,6 +378,31 @@ class MusicPlaybackService : MediaLibraryService() {
                     SongsRepo.songs.find { it.url == mediaId }?.let { buildSongMediaItem(it) }
                 }
                 item?.let { LibraryResult.ofItem(it, null) } ?: LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
+            }
+
+            // Android Auto's search box. Media3 asks for the results through onGetSearchResult()
+            // once notifySearchResultChanged() reports how many there are.
+            override fun onSearch(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<Void>> = withSongs {
+                session.notifySearchResultChanged(browser, query, searchGenres(query).size, params)
+                LibraryResult.ofVoid()
+            }
+
+            override fun onGetSearchResult(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                page: Int,
+                pageSize: Int,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> = withSongs {
+                val results = searchGenres(query)
+                val pageItems = if (pageSize > 0) results.drop(page * pageSize).take(pageSize) else results
+                LibraryResult.ofItemList(ImmutableList.copyOf(pageItems), params)
             }
 
             override fun onAddMediaItems(
