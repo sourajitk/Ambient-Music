@@ -7,20 +7,28 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import com.sourajitk.ambient_music.widget.WidgetImageManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Locale
 
 @Serializable
 data class SongAsset(
@@ -35,9 +43,21 @@ object SongsRepo {
     private const val TAG = "SongsRepoJSONHandler"
     private const val REMOTE_SONGS_URL = "https://www.ambient-music.online/songs.json"
     private const val LOCAL_CACHE_FILE_NAME = "songs_cache.json"
+    private const val OFFLINE_DIR_NAME = "offline_genres"
+
+    sealed interface LoadState {
+        object Loading : LoadState
+
+        object Loaded : LoadState
+
+        data class Failed(val message: String) : LoadState
+    }
 
     private val _songsFlow = MutableStateFlow<List<SongAsset>>(emptyList())
     val songsFlow: StateFlow<List<SongAsset>> = _songsFlow.asStateFlow()
+
+    private val _loadState = MutableStateFlow<LoadState>(LoadState.Loading)
+    val loadState: StateFlow<LoadState> = _loadState.asStateFlow()
 
     @Volatile private var internalLoadedSongs: List<SongAsset> = emptyList()
         set(value) {
@@ -47,107 +67,96 @@ object SongsRepo {
     var currentTrackIndex = 0
         private set
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val refreshMutex = Mutex()
     private val client = OkHttpClient()
     private val jsonParser = Json {
         ignoreUnknownKeys = true
         isLenient = true
     }
 
-    // The initialization step has 2 basic steps: clearing the local cache and fetch from out remote.
+    // Fire-and-forget wrapper around refresh() for callers that aren't in a coroutine.
     fun initializeAndRefresh(context: Context, onFinished: ((Boolean, String) -> Unit)? = null) {
-        Log.d(TAG, "initializeAndRefresh: Starting song data refresh process...")
-        CoroutineScope(Dispatchers.IO).launch {
+        val appContext = context.applicationContext
+        scope.launch {
+            val (success, message) = refresh(appContext)
+            withContext(Dispatchers.Main) { onFinished?.invoke(success, message) }
+        }
+    }
+
+    // Fetches the remote JSON and replaces the in-memory list and the local cache on success.
+    // The existing cache is never removed before a successful fetch, so a failed refresh (e.g.
+    // while offline) still leaves the last known song list available on the next cold start.
+    suspend fun refresh(context: Context): Pair<Boolean, String> = refreshMutex.withLock {
+        withContext(Dispatchers.IO) {
+            Log.d(TAG, "refresh: Starting song data refresh process...")
+            if (songs.isEmpty()) _loadState.value = LoadState.Loading
+
             var finalStatusMessage: String
             var overallSuccess = false
-
-            // Clear Local Cache
-            Log.d(TAG, "initializeAndRefresh: Clearing local cache...")
-            clearCache(context)
-
-            // Attempt to fetch the JSON from remote
-            Log.d(
-                TAG,
-                "initializeAndRefresh: Attempting to fetch songs from remote URL: $REMOTE_SONGS_URL",
-            )
             try {
                 val request = Request.Builder().url(REMOTE_SONGS_URL).build()
                 client.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
                         val jsonString = response.body.string()
-                        val loggableJson =
-                            if (jsonString.length > 500) jsonString.substring(0, 500) + "..." else jsonString
-                        Log.d(
-                            TAG,
-                            "initializeAndRefresh: Successfully fetched JSON string from remote (snippet): $loggableJson",
-                        )
-
                         val remoteSongs = jsonParser.decodeFromString<List<SongAsset>>(jsonString)
                         synchronized(this@SongsRepo) {
                             internalLoadedSongs = remoteSongs
-                            if (
-                                currentTrackIndex >= internalLoadedSongs.size && internalLoadedSongs.isNotEmpty()
-                            ) {
+                            if (currentTrackIndex >= internalLoadedSongs.size) {
                                 currentTrackIndex = 0
                             }
-                            // Save the newly fetched data to cache
-                            saveToCache(context, jsonString)
                         }
-                        Log.i(
-                            TAG,
-                            "initializeAndRefresh: Successfully parsed and updated ${remoteSongs.size} songs from remote.",
-                        )
+                        saveToCache(context, jsonString)
+                        Log.i(TAG, "refresh: Successfully parsed and updated ${remoteSongs.size} songs from remote.")
                         finalStatusMessage = "Fetched ${remoteSongs.size} songs from remote."
                         overallSuccess = true
                     } else {
-                        val errorBody = response.body.string()
-                        Log.e(
-                            TAG,
-                            "initializeAndRefresh: Remote fetch failed: ${response.code} ${response.message}. Error body: $errorBody",
-                        )
+                        Log.e(TAG, "refresh: Remote fetch failed: ${response.code} ${response.message}")
                         finalStatusMessage = "Remote fetch failed: ${response.code}."
                     }
                 }
             } catch (e: IOException) {
-                Log.e(TAG, "initializeAndRefresh: IOException during remote fetch: ", e)
+                Log.e(TAG, "refresh: IOException during remote fetch: ", e)
                 finalStatusMessage = "Network error during fetch."
             } catch (e: SerializationException) {
-                Log.e(TAG, "initializeAndRefresh: SerializationException during remote JSON parsing: ", e)
+                Log.e(TAG, "refresh: SerializationException during remote JSON parsing: ", e)
                 finalStatusMessage = "Error parsing remote data."
             } catch (e: Exception) {
-                Log.e(TAG, "initializeAndRefresh: Generic exception during remote fetch/parsing: ", e)
+                Log.e(TAG, "refresh: Generic exception during remote fetch/parsing: ", e)
                 finalStatusMessage = "Unexpected error during fetch."
             }
 
-            Log.d(
-                TAG,
-                "initializeAndRefresh: Process finished. Songs loaded: ${internalLoadedSongs.size}. Final status: $finalStatusMessage",
-            )
-            prefetchAlbumArts(context)
-            withContext(Dispatchers.Main) { onFinished?.invoke(overallSuccess, finalStatusMessage) }
-        }
-    }
-
-    private fun clearCache(context: Context) {
-        try {
-            val file = File(context.filesDir, LOCAL_CACHE_FILE_NAME)
-            if (file.exists()) {
-                if (file.delete()) {
-                    Log.i(TAG, "clearCache: Successfully deleted cache file: $LOCAL_CACHE_FILE_NAME")
-                } else {
-                    Log.w(TAG, "clearCache: Failed to delete cache file: $LOCAL_CACHE_FILE_NAME")
+            // Fall back to whatever we had cached if the fetch failed and nothing is loaded yet.
+            if (!overallSuccess && songs.isEmpty()) {
+                val cachedSongs = loadFromCache(context)
+                if (cachedSongs.isNotEmpty()) {
+                    synchronized(this@SongsRepo) { internalLoadedSongs = cachedSongs }
                 }
-            } else {
-                Log.d(TAG, "clearCache: Cache file did not exist, no need to delete.")
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "clearCache: Error deleting cache file: ", e)
+
+            _loadState.value = if (songs.isNotEmpty()) LoadState.Loaded else LoadState.Failed(finalStatusMessage)
+            Log.d(TAG, "refresh: Finished. Songs loaded: ${songs.size}. Final status: $finalStatusMessage")
+            prefetchAlbumArts(context)
+            overallSuccess to finalStatusMessage
         }
     }
 
+    // Suspends until the song list is non-empty, or the timeout elapses.
+    suspend fun awaitSongs(timeoutMs: Long): List<SongAsset> {
+        songs.takeIf { it.isNotEmpty() }?.let { return it }
+        return withTimeoutOrNull(timeoutMs) { songsFlow.first { it.isNotEmpty() } } ?: songs
+    }
+
+    // Write to a temp file first so an interrupted write can never leave a corrupt cache behind.
     private fun saveToCache(context: Context, jsonString: String) {
         try {
             val file = File(context.filesDir, LOCAL_CACHE_FILE_NAME)
-            file.writeText(jsonString)
+            val tempFile = File(context.filesDir, "$LOCAL_CACHE_FILE_NAME.tmp")
+            tempFile.writeText(jsonString)
+            if (!tempFile.renameTo(file)) {
+                file.writeText(jsonString)
+                tempFile.delete()
+            }
             Log.i(TAG, "saveToCache: Successfully saved songs to cache: $LOCAL_CACHE_FILE_NAME")
         } catch (e: IOException) {
             Log.e(TAG, "saveToCache: Error saving songs to cache: ", e)
@@ -175,6 +184,7 @@ object SongsRepo {
         val cachedSongs = loadFromCache(context)
         if (cachedSongs.isNotEmpty()) {
             synchronized(this@SongsRepo) { internalLoadedSongs = cachedSongs }
+            _loadState.value = LoadState.Loaded
             Log.i(TAG, "Successfully pre-loaded ${cachedSongs.size} songs from cache.")
             prefetchAlbumArts(context)
         }
@@ -196,8 +206,8 @@ object SongsRepo {
     }
 
     private fun prefetchAlbumArts(context: Context) {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-            val genresWithArt = internalLoadedSongs.groupBy { it.genre }.mapNotNull { (genre, genreSongs) ->
+        scope.launch {
+            val genresWithArt = songs.groupBy { it.genre?.lowercase(Locale.ROOT) }.mapNotNull { (genre, genreSongs) ->
                 if (genre != null) {
                     genre to genreSongs.firstOrNull()?.albumArtUrl
                 } else {
@@ -205,53 +215,56 @@ object SongsRepo {
                 }
             }
 
-            val client = okhttp3.OkHttpClient()
             var anyDownloaded = false
             for ((genre, albumArtUrl) in genresWithArt) {
                 if (albumArtUrl == null) continue
-                val genreDir = File(context.filesDir, "offline_genres/$genre")
+                val genreDir = genreDir(context, genre)
                 if (!genreDir.exists()) genreDir.mkdirs()
 
                 val artFile = File(genreDir, "album_art.jpg")
                 if (!artFile.exists() || artFile.length() == 0L) {
                     try {
-                        val request = okhttp3.Request.Builder().url(albumArtUrl).build()
-                        val response = client.newCall(request).execute()
-                        if (response.isSuccessful) {
-                            val tempFile = File(genreDir, "album_art_temp.jpg")
-                            response.body.byteStream().use { input ->
-                                java.io.FileOutputStream(tempFile).use { output ->
-                                    input.copyTo(output)
+                        val request = Request.Builder().url(albumArtUrl).build()
+                        client.newCall(request).execute().use { response ->
+                            if (response.isSuccessful) {
+                                val tempFile = File(genreDir, "album_art_temp.jpg")
+                                response.body.byteStream().use { input ->
+                                    FileOutputStream(tempFile).use { output ->
+                                        input.copyTo(output)
+                                    }
                                 }
+                                tempFile.renameTo(artFile)
+                                anyDownloaded = true
                             }
-                            tempFile.renameTo(artFile)
-                            anyDownloaded = true
                         }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Log.e(TAG, "prefetchAlbumArts: Failed to fetch art for $genre", e)
                     }
                 }
             }
             if (anyDownloaded) {
-                com.sourajitk.ambient_music.widget.WidgetImageManager.refreshWidgetImages(context)
+                WidgetImageManager.refreshWidgetImages(context)
             }
         }
     }
 
+    // Offline files always live in a lowercased genre directory, regardless of the JSON's casing.
+    fun genreDir(context: Context, genre: String): File = File(context.filesDir, "$OFFLINE_DIR_NAME/${genre.lowercase(Locale.ROOT)}")
+
     fun getLocalSongUri(context: Context, songData: SongAsset): Uri? {
         val genre = songData.genre ?: return null
         val fileName = songData.url.substringAfterLast("/")
-        val file = File(context.filesDir, "offline_genres/$genre/$fileName")
+        val file = File(genreDir(context, genre), fileName)
         return if (file.exists()) file.toUri() else null
     }
 
     fun getLocalAlbumArtUri(context: Context, genre: String): Uri? {
-        val file = File(context.filesDir, "offline_genres/$genre/album_art.jpg")
+        val file = File(genreDir(context, genre), "album_art.jpg")
         return if (file.exists()) file.toUri() else null
     }
 
     fun isGenreDownloaded(context: Context, genre: String): Boolean {
-        val genreDir = File(context.filesDir, "offline_genres/$genre")
+        val genreDir = genreDir(context, genre)
         if (!genreDir.exists() || !genreDir.isDirectory) return false
 
         val genreSongs = songs.filter { it.genre.equals(genre, ignoreCase = true) }
@@ -264,7 +277,7 @@ object SongsRepo {
     }
 
     fun deleteGenreDownloads(context: Context, genre: String): Boolean {
-        val genreDir = File(context.filesDir, "offline_genres/$genre")
+        val genreDir = genreDir(context, genre)
         if (genreDir.exists() && genreDir.isDirectory) {
             return genreDir.deleteRecursively()
         }
