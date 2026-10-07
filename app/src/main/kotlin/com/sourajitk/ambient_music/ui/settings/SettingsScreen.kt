@@ -66,8 +66,6 @@ import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.ui.dialog.UpdateInfoDialog
 import com.sourajitk.ambient_music.util.InstallSourceChecker
 import com.sourajitk.ambient_music.util.UpdateChecker
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -195,17 +193,10 @@ fun SettingsScreen(
                             isRefreshingLibrary = true
                             var finalStatusMessage = context.getString(R.string.refresh_fail_detail)
                             try {
-                                coroutineScope {
-                                    // For better UX, sync summaryText and show.Snackbar
-                                    val refreshJob =
-                                        async(Dispatchers.IO) {
-                                            SongsRepo.initializeAndRefresh(context) { _, statusMessage ->
-                                                finalStatusMessage = statusMessage
-                                            }
-                                        }
-                                    // This delay is purely for UX purposes.
-                                    delay(1500)
-                                    refreshJob.await()
+                                // Waits for both the refresh and a minimum delay, which is purely for UX purposes.
+                                finalStatusMessage = coroutineScope {
+                                    launch { delay(1500) }
+                                    SongsRepo.refresh(context.applicationContext).second
                                 }
                             } finally {
                                 // Ensure the refresh state is set back to false for the message to change
