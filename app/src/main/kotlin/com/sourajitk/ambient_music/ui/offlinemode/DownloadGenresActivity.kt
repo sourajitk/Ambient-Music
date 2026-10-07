@@ -23,8 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
@@ -88,6 +91,7 @@ fun DownloadGenresScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val songs by SongsRepo.songsFlow.collectAsState()
+    val loadState by SongsRepo.loadState.collectAsState()
 
     val genresWithArt = remember(songs) {
         songs
@@ -190,6 +194,14 @@ fun DownloadGenresScreen(
             item {
                 StorageUsageSummary(genreSizes = genreSizes)
             }
+            if (genresWithArt.isEmpty()) {
+                item {
+                    GenresUnavailable(
+                        isLoading = loadState is SongsRepo.LoadState.Loading,
+                        onRetry = { SongsRepo.initializeAndRefresh(context) },
+                    )
+                }
+            }
             itemsIndexed(genresWithArt) { index, (genre, albumArtUrl) ->
                 val isDownloading = downloadingGenres.contains(genre)
                 val isDownloaded = downloadedGenres.contains(genre)
@@ -201,7 +213,7 @@ fun DownloadGenresScreen(
                     index == genresWithArt.size - 1 -> RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 28.dp, bottomEnd = 28.dp)
                     else -> RoundedCornerShape(4.dp)
                 }
-                val localArtUri = remember(genre) {
+                val localArtUri = remember(genre, downloadedGenres) {
                     SongsRepo.getLocalAlbumArtUri(context, genre)
                 }
                 val imageModel = localArtUri ?: albumArtUrl
@@ -244,6 +256,40 @@ fun DownloadGenresScreen(
                         textAlign = TextAlign.Left,
                     )
                 }
+            }
+        }
+    }
+}
+
+// Shown instead of the genre list while the song library is loading or after it failed to load,
+// so the screen is never blank.
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun GenresUnavailable(isLoading: Boolean, onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 48.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (isLoading) {
+            CircularWavyProgressIndicator(modifier = Modifier.size(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.genres_loading),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.genres_load_failed),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            FilledTonalButton(onClick = onRetry) {
+                Text(stringResource(R.string.retry_button))
             }
         }
     }

@@ -117,4 +117,7 @@
     <string name="available_for_offline">Available for offline</string>
     <string name="storage_usage_header">%1$s of %2$s used</string>
     <string name="storage_distribution_title">STORAGE DISTRIBUTION PER GENRE</string>
+    <string name="genres_loading">Loading genres…</string>
+    <string name="genres_load_failed">Couldn\'t load the song library. Check your connection and try again.</string>
+    <string name="retry_button">Retry</string>
 </resources>
