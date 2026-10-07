@@ -62,6 +62,7 @@ class MusicPlaybackService : MediaLibraryService() {
     private lateinit var imageLoader: ImageLoader
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var isForegroundService = false
 
     companion object {
         const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
@@ -117,8 +118,8 @@ class MusicPlaybackService : MediaLibraryService() {
         super.onCreate()
         Log.d(TAG, "onCreate: Service creating.")
         imageLoader = ImageLoader(this)
-        initializePlayerAndSession()
         createNotificationChannel()
+        initializePlayerAndSession()
 
         // Android Auto caches browse results, so tell it whenever the song list changes
         // (e.g. the remote JSON finishes downloading after the first browse request).
@@ -353,7 +354,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 togglePlayback()
             }
 
@@ -367,7 +368,7 @@ class MusicPlaybackService : MediaLibraryService() {
                         TileStateUtil.requestTileUpdate(applicationContext)
                     }
                 } else {
-                    startForeground(NOTIFICATION_ID, createNotification())
+                    promoteToForeground(createNotification())
                     exoPlayer?.seekToNextMediaItem()
                 }
             }
@@ -386,7 +387,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("chill")
             }
 
@@ -398,7 +399,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("calm")
             }
 
@@ -410,7 +411,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("sleep")
             }
 
@@ -422,7 +423,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("focus")
             }
 
@@ -434,12 +435,12 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("serenity")
             }
 
             ACTION_START_IDLE -> {
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -632,7 +633,7 @@ class MusicPlaybackService : MediaLibraryService() {
                 .setContentText(artist)
                 .setSmallIcon(R.drawable.ic_music_note)
                 .setLargeIcon(currentAlbumArt)
-                .setOngoing(true)
+                .setOngoing(isServiceCurrentlyPlaying)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         mediaLibrarySession?.let { session ->
@@ -643,16 +644,40 @@ class MusicPlaybackService : MediaLibraryService() {
         return builder.build()
     }
 
+    // Only called from paths where starting a foreground service is allowed (startForegroundService
+    // intents from tiles/widget, or playback just started).
+    private fun promoteToForeground(notification: Notification) {
+        startForeground(NOTIFICATION_ID, notification)
+        isForegroundService = true
+    }
+
+    // Foreground while playing; when paused, drop foreground status but keep the notification so
+    // playback can be resumed. Since Media3's own notification handling is bypassed through
+    // onUpdateNotification(), this also has to guard against Android 12+ refusing to start a
+    // foreground service while the app is in the background.
     private fun updateNotification() {
         val notification = createNotification()
-        if (!isServiceCurrentlyPlaying) {
-            // startForegrounds allows showing the notification to the user in non-expanded QS.
-            // This change also allows onDestroy() to remove the notification when the service is
-            // dead. Even if the user swiped it away while the app was dead, this call re-registers
-            // the MediaSession with the system UI.
-            startForeground(NOTIFICATION_ID, notification)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (isServiceCurrentlyPlaying) {
+            if (isForegroundService) {
+                notificationManager.notify(NOTIFICATION_ID, notification)
+                return
+            }
+            try {
+                // A service that is only bound (e.g. by Android Auto) must also be started, or it
+                // is destroyed as soon as the controller unbinds.
+                startForegroundService(Intent(this, MusicPlaybackService::class.java))
+                promoteToForeground(notification)
+            } catch (e: IllegalStateException) {
+                // ForegroundServiceStartNotAllowedException extends IllegalStateException.
+                Log.w(TAG, "updateNotification: Not allowed to start foreground service.", e)
+                notificationManager.notify(NOTIFICATION_ID, notification)
+            }
         } else {
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            if (isForegroundService) {
+                stopForeground(STOP_FOREGROUND_DETACH)
+                isForegroundService = false
+            }
             notificationManager.notify(NOTIFICATION_ID, notification)
         }
     }
@@ -668,6 +693,10 @@ class MusicPlaybackService : MediaLibraryService() {
         serviceScope.cancel()
         isServiceCurrentlyPlaying = false
         isPlaylistSet = false
+        isForegroundService = false
+        // The paused notification is detached from the service, so remove it explicitly. This has
+        // to run after the player is stopped, since stopping triggers a final updateNotification().
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
         Log.d(TAG, "MusicPlaybackService destroyed and resources released.")
     }
 }
