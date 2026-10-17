@@ -20,6 +20,8 @@ This app allows you to play a curated stream of ambient music in the background 
   </p>
 </p>
 
+##### __Note: For whatever reason, app update reviews on Play Console has been taking extremely long. I have found no possible solution to expedite the process and therefore, sadly, Play Store updates are just going to be delayed versus GitHub releases.__
+
 ## Features
 
 * **Tracks Fetched on Demand**
