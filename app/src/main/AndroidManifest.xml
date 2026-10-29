@@ -41,12 +41,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.offlinemode.DownloadGenresActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AmbientMusic"
-            android:label="@string/download_genres_title" />
-
         <!-- For Android Auto -->
         <meta-data
             android:name="com.google.android.gms.car.application"
