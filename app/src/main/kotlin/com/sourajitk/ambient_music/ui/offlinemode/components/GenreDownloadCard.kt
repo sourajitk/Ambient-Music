@@ -3,6 +3,7 @@
 
 package com.sourajitk.ambient_music.ui.offlinemode.components
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -75,7 +76,9 @@ fun GenreDownloadCard(
             val request = remember(albumArtUrl) {
                 ImageRequest.Builder(context)
                     .data(albumArtUrl)
-                    .crossfade(true)
+                    // Local art (a Uri) decodes within a frame or two, so a crossfade only makes it
+                    // flash in from the grey placeholder every time the page opens.
+                    .crossfade(albumArtUrl !is Uri)
                     .diskCachePolicy(CachePolicy.ENABLED)
                     .memoryCachePolicy(CachePolicy.ENABLED)
                     .build()
