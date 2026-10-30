@@ -149,7 +149,7 @@ class AmbientMusicWidget : GlanceAppWidget() {
                 .padding(if (isActive) 2.dp else 0.dp)
                 .cornerRadius(if (isActive) 16.dp else 18.dp) // inner corners
                 .background(Color(0xFF2C2C2E))
-                .clickable(actionStartService(playIntent))
+                .clickable(actionStartService(playIntent, isForegroundService = true))
                 .padding(10.dp),
         ) {
             Column(modifier = GlanceModifier.fillMaxSize()) {

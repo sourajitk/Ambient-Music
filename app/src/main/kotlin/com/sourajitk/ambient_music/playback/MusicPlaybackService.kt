@@ -37,9 +37,18 @@ import coil.request.ImageRequest
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
 import com.sourajitk.ambient_music.R
+import com.sourajitk.ambient_music.data.SongAsset
 import com.sourajitk.ambient_music.data.SongsRepo
 import com.sourajitk.ambient_music.util.TileStateUtil
+import com.sourajitk.ambient_music.util.genreLabelRes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MusicPlaybackService : MediaLibraryService() {
 
@@ -53,6 +62,9 @@ class MusicPlaybackService : MediaLibraryService() {
 
     private var currentAlbumArt: Bitmap? = null
     private lateinit var imageLoader: ImageLoader
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var isForegroundService = false
 
     companion object {
         const val ACTION_TOGGLE_PLAYBACK_QS = "com.sourajitk.ambient_music.ACTION_TOGGLE_PLAYBACK_QS"
@@ -68,6 +80,17 @@ class MusicPlaybackService : MediaLibraryService() {
         private const val NOTIFICATION_CHANNEL_ID = "MusicPlaybackChannel"
         private const val TAG = "MusicPlaybackService"
         private const val ROOT_ID = "ambient_music_root_id"
+        private const val SUGGESTED_ROOT_ID = "suggested_root_id"
+        private const val GENRE_ID_PREFIX = "genre_"
+
+        // How long a browse request from Android Auto waits for the song list on a cold start.
+        private const val SONGS_WAIT_TIMEOUT_MS = 5_000L
+
+        private val GENERIC_SEARCH_WORDS = setOf("ambient", "music", "play", "some", "the", "a", "on", "me", "sounds", "songs")
+
+        // Extra words people may use for a genre, matching names used elsewhere in the app (the
+        // widget calls the focus genre "Productivity").
+        private val GENRE_SEARCH_KEYWORDS = mapOf("focus" to "productivity")
 
         @Volatile
         var isServiceCurrentlyPlaying: Boolean = false
@@ -103,8 +126,130 @@ class MusicPlaybackService : MediaLibraryService() {
         super.onCreate()
         Log.d(TAG, "onCreate: Service creating.")
         imageLoader = ImageLoader(this)
-        initializePlayerAndSession()
         createNotificationChannel()
+        initializePlayerAndSession()
+
+        // Android Auto caches browse results, so tell it whenever the song list changes
+        // (e.g. the remote JSON finishes downloading after the first browse request).
+        serviceScope.launch {
+            SongsRepo.songsFlow.collect {
+                val genreCount = buildGenreItems().size
+                mediaLibrarySession?.notifyChildrenChanged(ROOT_ID, genreCount, null)
+                mediaLibrarySession?.notifyChildrenChanged(SUGGESTED_ROOT_ID, genreCount, null)
+                Log.d(TAG, "notifyChildrenChanged: $genreCount genres")
+            }
+        }
+    }
+
+    // Builds the browsable genre list: one playable item per genre, titled by its first song.
+    private fun buildGenreItems(): List<MediaItem> = SongsRepo.songs
+        .filter { !it.genre.isNullOrEmpty() }
+        .distinctBy { it.genre?.lowercase() }
+        .map { songData ->
+            val genreName = songData.genre?.lowercase() ?: "unknown"
+            MediaItem.Builder()
+                .setMediaId("$GENRE_ID_PREFIX$genreName")
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setTitle(songData.title)
+                        .setArtist(songData.artist)
+                        .setArtworkUri(songData.albumArtUrl?.toUri())
+                        .setIsBrowsable(false)
+                        .setIsPlayable(true)
+                        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+                        .build(),
+                )
+                .build()
+        }
+
+    private fun buildSongMediaItem(songData: SongAsset): MediaItem {
+        val metadataBuilder = MediaMetadata.Builder()
+            .setTitle(songData.title)
+            .setArtist(songData.artist)
+        songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
+        val mediaUri = SongsRepo.getLocalSongUri(this, songData)?.toString() ?: songData.url
+        return MediaItem.Builder()
+            .setMediaId(songData.url)
+            .setUri(mediaUri)
+            .setMediaMetadata(metadataBuilder.build())
+            .build()
+    }
+
+    // Runs [block] once songs are available. On a cold start (e.g. a fresh install) the song list
+    // may still be downloading, so wait briefly instead of answering with an empty result.
+    private fun <T> withSongs(block: () -> T): ListenableFuture<T> {
+        if (SongsRepo.songs.isNotEmpty()) return Futures.immediateFuture(block())
+        val future = SettableFuture.create<T>()
+        serviceScope.launch {
+            try {
+                SongsRepo.awaitSongs(SONGS_WAIT_TIMEOUT_MS)
+            } finally {
+                future.set(block())
+            }
+        }
+        return future
+    }
+
+    private fun buildGenrePlaylist(genre: String): List<MediaItem> {
+        currentPlaylistGenre = genre
+        isPlaylistSet = true
+        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
+        return genreSongs.shuffled().map { buildSongMediaItem(it) }
+    }
+
+    private fun normalizeForSearch(text: String): String = text.lowercase(Locale.getDefault()).replace(Regex("[^\\p{L}\\p{N}]+"), " ").trim()
+
+    // Returns the genres matching a search query, best match first. Every song in a genre shares
+    // the same title and artist, so genres are the only meaningful search results. Words such as
+    // "ambient" or "music" appear in every genre's metadata, so they only count when nothing more
+    // specific was asked for (e.g. "ambient music" returns every genre).
+    private fun searchGenres(query: String): List<MediaItem> {
+        val queryWords = normalizeForSearch(query).split(" ").filter { it.isNotEmpty() }
+        val specificWords = queryWords.filterNot { it in GENERIC_SEARCH_WORDS }.ifEmpty { queryWords }
+        if (specificWords.isEmpty()) return emptyList()
+        return buildGenreItems()
+            .map { item ->
+                val genre = item.mediaId.removePrefix(GENRE_ID_PREFIX)
+                val searchableText = normalizeForSearch(
+                    listOfNotNull(
+                        genre,
+                        genreLabelRes(genre)?.let { getString(it) },
+                        item.mediaMetadata.title,
+                        item.mediaMetadata.artist,
+                        GENRE_SEARCH_KEYWORDS[genre],
+                    ).joinToString(" "),
+                )
+                val searchableWords = searchableText.split(" ")
+                val compactText = searchableText.replace(" ", "")
+                // Short words must match a whole word, longer ones may match inside one (e.g. "lofi").
+                val score = specificWords.count { word ->
+                    word in searchableWords || (word.length >= 3 && compactText.contains(word))
+                }
+                item to score
+            }
+            .filter { it.second > 0 }
+            .sortedByDescending { it.second }
+            .map { it.first }
+    }
+
+    private fun resolveMediaItems(mediaItems: List<MediaItem>): List<MediaItem> {
+        val resolvedItems = mutableListOf<MediaItem>()
+        for (item in mediaItems) {
+            val searchQuery = item.requestMetadata.searchQuery
+            if (item.mediaId.isEmpty() && searchQuery != null) {
+                // Voice request, e.g. "Play chill music on Ambient Music". An empty or unmatched
+                // query still plays something rather than failing the request.
+                val genreItem = searchGenres(searchQuery).firstOrNull() ?: buildGenreItems().randomOrNull()
+                genreItem?.let { resolvedItems.addAll(buildGenrePlaylist(it.mediaId.removePrefix(GENRE_ID_PREFIX))) }
+            } else if (item.mediaId.startsWith(GENRE_ID_PREFIX)) {
+                resolvedItems.addAll(buildGenrePlaylist(item.mediaId.removePrefix(GENRE_ID_PREFIX)))
+            } else {
+                // Android Auto is trying to resume a specific song from Recents/For You.
+                // We must find it in the repo and attach the URI!
+                SongsRepo.songs.find { it.url == item.mediaId }?.let { resolvedItems.add(buildSongMediaItem(it)) }
+            }
+        }
+        return resolvedItems
     }
 
     private fun initializePlayerAndSession() {
@@ -167,22 +312,16 @@ class MusicPlaybackService : MediaLibraryService() {
             }
 
         val callback = object : MediaLibrarySession.Callback {
-            // Triggered when Android Auto attempts to connect.
-            // We grant permissions for browsing and subscribing to the media library.
-            override fun onConnect(
+            // Triggered when a controller (Android Auto, System UI, the media notification) connects.
+            // Grant every controller the full default player and library commands. Don't override
+            // the deprecated synchronous onConnect(): since Media3 1.11 its default returns EMPTY
+            // commands, which removed the playback controls from the media notification and
+            // blocked Android Auto from browsing.
+            @OptIn(UnstableApi::class)
+            override fun onConnectAsync(
                 session: MediaSession,
                 controller: MediaSession.ControllerInfo,
-            ): MediaSession.ConnectionResult {
-                val connectionResult = super.onConnect(session, controller)
-                val sessionCommands = connectionResult.availableSessionCommands.buildUpon()
-                    .add(SessionCommand.COMMAND_CODE_LIBRARY_GET_LIBRARY_ROOT)
-                    .add(SessionCommand.COMMAND_CODE_LIBRARY_SUBSCRIBE)
-                    .build()
-                return MediaSession.ConnectionResult.accept(
-                    sessionCommands,
-                    connectionResult.availablePlayerCommands,
-                )
-            }
+            ): ListenableFuture<MediaSession.ConnectionResult> = Futures.immediateFuture(MediaSession.ConnectionResult.AcceptedResultBuilder(session).build())
 
             // Provides the root folder for the media browser.
             // This is the "home" folder that Android Auto first looks for.
@@ -193,7 +332,7 @@ class MusicPlaybackService : MediaLibraryService() {
             ): ListenableFuture<LibraryResult<MediaItem>> {
                 // Catch both "Suggested" and "Recent" queries from Android Auto
                 val isSuggestedOrRecent = (params?.isSuggested == true) || (params?.isRecent == true)
-                val rootIdToReturn = if (isSuggestedOrRecent) "suggested_root_id" else ROOT_ID
+                val rootIdToReturn = if (isSuggestedOrRecent) SUGGESTED_ROOT_ID else ROOT_ID
                 val rootTitle = if (isSuggestedOrRecent) "For You Recommendations" else "Ambient Music"
                 val rootItem = MediaItem.Builder()
                     .setMediaId(rootIdToReturn)
@@ -210,8 +349,7 @@ class MusicPlaybackService : MediaLibraryService() {
                 return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
             }
 
-            // Returns the list of songs when a controller browses a specific folder ID.
-            // When parentId matches ROOT_ID, we provide all songs from the SongsRepo.
+            // Returns the genre list for both the main root and the "suggested" root.
             @OptIn(UnstableApi::class)
             override fun onGetChildren(
                 session: MediaLibrarySession,
@@ -221,86 +359,57 @@ class MusicPlaybackService : MediaLibraryService() {
                 pageSize: Int,
                 params: LibraryParams?,
             ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
-                if (parentId == ROOT_ID) {
-                    val items = SongsRepo.songs
-                        .filter { !it.genre.isNullOrEmpty() }
-                        .distinctBy { it.genre?.lowercase() }
-                        .map { songData ->
-                            val genreName = songData.genre?.lowercase() ?: "unknown"
-                            // Grabs the custom title from JSON, or capitalizes the raw genre if null
-                            val displayTitle = songData.title
-                            MediaItem.Builder()
-                                .setMediaId("genre_$genreName")
-                                .setMediaMetadata(
-                                    MediaMetadata.Builder()
-                                        .setTitle(displayTitle)
-                                        .setArtist(songData.artist)
-                                        .setArtworkUri(songData.albumArtUrl?.toUri())
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
-                                        .build(),
-                                )
-                                .build()
-                        }
-                    // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
-                    return Futures.immediateFuture(LibraryResult.ofItemList(ImmutableList.copyOf(items), params))
+                if (parentId != ROOT_ID && parentId != SUGGESTED_ROOT_ID) {
+                    return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
                 }
-                return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
+                // Wrap items in ImmutableList.copyOf to satisfy Media3 requirement and fix type inference error
+                return withSongs { LibraryResult.ofItemList(ImmutableList.copyOf(buildGenreItems()), params) }
+            }
+
+            // Resolves a single item by ID, used by Android Auto for resumption and search results.
+            override fun onGetItem(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                mediaId: String,
+            ): ListenableFuture<LibraryResult<MediaItem>> = withSongs {
+                val item = if (mediaId.startsWith(GENRE_ID_PREFIX)) {
+                    buildGenreItems().find { it.mediaId == mediaId }
+                } else {
+                    SongsRepo.songs.find { it.url == mediaId }?.let { buildSongMediaItem(it) }
+                }
+                item?.let { LibraryResult.ofItem(it, null) } ?: LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
+            }
+
+            // Android Auto's search box. Media3 asks for the results through onGetSearchResult()
+            // once notifySearchResultChanged() reports how many there are.
+            override fun onSearch(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<Void>> = withSongs {
+                session.notifySearchResultChanged(browser, query, searchGenres(query).size, params)
+                LibraryResult.ofVoid()
+            }
+
+            override fun onGetSearchResult(
+                session: MediaLibrarySession,
+                browser: MediaSession.ControllerInfo,
+                query: String,
+                page: Int,
+                pageSize: Int,
+                params: LibraryParams?,
+            ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> = withSongs {
+                val results = searchGenres(query)
+                val pageItems = if (pageSize > 0) results.drop(page * pageSize).take(pageSize) else results
+                LibraryResult.ofItemList(ImmutableList.copyOf(pageItems), params)
             }
 
             override fun onAddMediaItems(
                 mediaSession: MediaSession,
                 controller: MediaSession.ControllerInfo,
                 mediaItems: List<MediaItem>,
-            ): ListenableFuture<List<MediaItem>> {
-                val resolvedItems = mutableListOf<MediaItem>()
-
-                for (item in mediaItems) {
-                    if (item.mediaId.startsWith("genre_")) {
-                        val genre = item.mediaId.removePrefix("genre_")
-                        currentPlaylistGenre = genre
-                        isPlaylistSet = true
-                        val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-                        val shuffledSongs = genreSongs.shuffled()
-                        val playlistItems = shuffledSongs.map { songData ->
-                            val metadataBuilder = MediaMetadata.Builder()
-                                //
-                                .setTitle(songData.title)
-                                .setArtist(songData.artist)
-                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
-                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
-                            MediaItem.Builder()
-                                .setMediaId(songData.url)
-                                .setUri(mediaUri)
-                                .setMediaMetadata(metadataBuilder.build())
-                                .build()
-                        }
-                        resolvedItems.addAll(playlistItems)
-                    } else {
-                        // Android Auto is trying to resume a specific song from Recents/For You.
-                        // We must find it in the repo and attach the URI!
-                        val songData = SongsRepo.songs.find { it.url == item.mediaId }
-                        if (songData != null) {
-                            val metadataBuilder = MediaMetadata.Builder()
-                                .setTitle(songData.title)
-                                .setArtist(songData.artist)
-                            songData.albumArtUrl?.let { metadataBuilder.setArtworkUri(it.toUri()) }
-
-                            val mediaUri = SongsRepo.getLocalSongUri(this@MusicPlaybackService, songData)?.toString() ?: songData.url
-                            resolvedItems.add(
-                                MediaItem.Builder()
-                                    .setMediaId(songData.url)
-                                    // Keep ExoPlayer happy :)
-                                    .setUri(mediaUri)
-                                    .setMediaMetadata(metadataBuilder.build())
-                                    .build(),
-                            )
-                        }
-                    }
-                }
-                return Futures.immediateFuture(resolvedItems)
-            }
+            ): ListenableFuture<List<MediaItem>> = withSongs { resolveMediaItems(mediaItems) }
         }
         mediaLibrarySession = MediaLibrarySession.Builder(this, exoPlayer!!, callback)
             .setId("AmbientMusicMediaSession")
@@ -316,7 +425,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 togglePlayback()
             }
 
@@ -330,7 +439,7 @@ class MusicPlaybackService : MediaLibraryService() {
                         TileStateUtil.requestTileUpdate(applicationContext)
                     }
                 } else {
-                    startForeground(NOTIFICATION_ID, createNotification())
+                    promoteToForeground(createNotification())
                     exoPlayer?.seekToNextMediaItem()
                 }
             }
@@ -349,7 +458,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("chill")
             }
 
@@ -361,7 +470,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("calm")
             }
 
@@ -373,7 +482,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("sleep")
             }
 
@@ -385,7 +494,7 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("focus")
             }
 
@@ -397,12 +506,12 @@ class MusicPlaybackService : MediaLibraryService() {
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
                 playGenre("serenity")
             }
 
             ACTION_START_IDLE -> {
-                startForeground(NOTIFICATION_ID, createNotification())
+                promoteToForeground(createNotification())
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -595,7 +704,7 @@ class MusicPlaybackService : MediaLibraryService() {
                 .setContentText(artist)
                 .setSmallIcon(R.drawable.ic_music_note)
                 .setLargeIcon(currentAlbumArt)
-                .setOngoing(true)
+                .setOngoing(isServiceCurrentlyPlaying)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         mediaLibrarySession?.let { session ->
@@ -606,16 +715,40 @@ class MusicPlaybackService : MediaLibraryService() {
         return builder.build()
     }
 
+    // Only called from paths where starting a foreground service is allowed (startForegroundService
+    // intents from tiles/widget, or playback just started).
+    private fun promoteToForeground(notification: Notification) {
+        startForeground(NOTIFICATION_ID, notification)
+        isForegroundService = true
+    }
+
+    // Foreground while playing; when paused, drop foreground status but keep the notification so
+    // playback can be resumed. Since Media3's own notification handling is bypassed through
+    // onUpdateNotification(), this also has to guard against Android 12+ refusing to start a
+    // foreground service while the app is in the background.
     private fun updateNotification() {
         val notification = createNotification()
-        if (!isServiceCurrentlyPlaying) {
-            // startForegrounds allows showing the notification to the user in non-expanded QS.
-            // This change also allows onDestroy() to remove the notification when the service is
-            // dead. Even if the user swiped it away while the app was dead, this call re-registers
-            // the MediaSession with the system UI.
-            startForeground(NOTIFICATION_ID, notification)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (isServiceCurrentlyPlaying) {
+            if (isForegroundService) {
+                notificationManager.notify(NOTIFICATION_ID, notification)
+                return
+            }
+            try {
+                // A service that is only bound (e.g. by Android Auto) must also be started, or it
+                // is destroyed as soon as the controller unbinds.
+                startForegroundService(Intent(this, MusicPlaybackService::class.java))
+                promoteToForeground(notification)
+            } catch (e: IllegalStateException) {
+                // ForegroundServiceStartNotAllowedException extends IllegalStateException.
+                Log.w(TAG, "updateNotification: Not allowed to start foreground service.", e)
+                notificationManager.notify(NOTIFICATION_ID, notification)
+            }
         } else {
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            if (isForegroundService) {
+                stopForeground(STOP_FOREGROUND_DETACH)
+                isForegroundService = false
+            }
             notificationManager.notify(NOTIFICATION_ID, notification)
         }
     }
@@ -628,8 +761,13 @@ class MusicPlaybackService : MediaLibraryService() {
         mediaLibrarySession = null
         exoPlayer?.release()
         exoPlayer = null
+        serviceScope.cancel()
         isServiceCurrentlyPlaying = false
         isPlaylistSet = false
+        isForegroundService = false
+        // The paused notification is detached from the service, so remove it explicitly. This has
+        // to run after the player is stopped, since stopping triggers a final updateNotification().
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).cancel(NOTIFICATION_ID)
         Log.d(TAG, "MusicPlaybackService destroyed and resources released.")
     }
 }

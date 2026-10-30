@@ -15,6 +15,7 @@ import com.sourajitk.ambient_music.tiles.ChillQSTileService
 import com.sourajitk.ambient_music.tiles.FocusQSTileService
 import com.sourajitk.ambient_music.tiles.SerenityQSTileService
 import com.sourajitk.ambient_music.tiles.SleepQSTileService
+import com.sourajitk.ambient_music.tiles.SleepTimerQSTileService
 import com.sourajitk.ambient_music.widget.AmbientMusicWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,7 @@ object TileStateUtil {
                 SleepQSTileService::class.java,
                 FocusQSTileService::class.java,
                 SerenityQSTileService::class.java,
-                SleepTimerService::class.java,
+                SleepTimerQSTileService::class.java,
             )
 
         tileServices.forEach { serviceClass ->

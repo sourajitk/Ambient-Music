@@ -14,10 +14,6 @@ import androidx.core.net.toUri
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.data.GitHubRelease
 import com.sourajitk.ambient_music.util.InstallSourceChecker
-import com.sourajitk.ambient_music.util.UpdateChecker
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "UpdateNotifier"
 private const val UPDATE_NOTIFICATION_CHANNEL_ID = "APP_UPDATES_CHANNEL"
@@ -35,26 +31,6 @@ fun createUpdateNotificationChannel(context: Context) {
     val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.createNotificationChannel(channel)
-}
-
-/**
- * Checks for updates in a background coroutine and posts a notification if a new version is found.
- */
-fun checkForAppUpdates(context: Context) {
-    CoroutineScope(Dispatchers.IO).launch {
-        Log.d(TAG, "Checking for app updates in the background...")
-        try {
-            val update = UpdateChecker.checkForUpdate(context)
-            if (update != null) {
-                Log.d(TAG, "Update found: ${update.tagName}. Posting notification.")
-                showUpdateNotification(context, update)
-            } else {
-                Log.d(TAG, "No new updates found.")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to check for updates.", e)
-        }
-    }
 }
 
 /** Builds and displays the actual update notification. */

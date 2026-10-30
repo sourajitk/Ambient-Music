@@ -18,6 +18,20 @@ object UpdateChecker {
     private val client = OkHttpClient()
     private val jsonParser = Json { ignoreUnknownKeys = true }
 
+    // Compares "major.minor.patch" numerically, ignoring a "v" prefix and any "-suffix" such as the
+    // commit hash in versionName. A plain string comparison gets "5.0.10" vs "5.0.9" wrong.
+    private fun isNewerVersion(latest: String, current: String): Boolean {
+        fun parse(version: String) = version.removePrefix("v").substringBefore("-").split(".").map { it.toIntOrNull() ?: 0 }
+        val latestParts = parse(latest)
+        val currentParts = parse(current)
+        for (i in 0 until maxOf(latestParts.size, currentParts.size)) {
+            val latestPart = latestParts.getOrElse(i) { 0 }
+            val currentPart = currentParts.getOrElse(i) { 0 }
+            if (latestPart != currentPart) return latestPart > currentPart
+        }
+        return false
+    }
+
     suspend fun checkForUpdate(context: Context): GitHubRelease? {
         return withContext(Dispatchers.IO) {
             val apiUrl = context.getString(R.string.update_url)
@@ -37,7 +51,7 @@ object UpdateChecker {
                         "UpdateChecker",
                         "Current version: $currentVersion, Latest GitHub release: $latestVersion",
                     )
-                    if (latestVersion > currentVersion) {
+                    if (isNewerVersion(latestVersion, currentVersion)) {
                         Log.d("UpdateChecker", "New update found: ${latestRelease.tagName}")
                         return@withContext latestRelease
                     } else {

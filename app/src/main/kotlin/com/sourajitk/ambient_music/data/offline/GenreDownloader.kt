@@ -123,7 +123,7 @@ object GenreDownloader {
 
     suspend fun downloadGenreFiles(context: Context, genre: String): Boolean {
         val genreSongs = SongsRepo.songs.filter { it.genre.equals(genre, ignoreCase = true) }
-        val genreDir = File(context.filesDir, "offline_genres/$genre")
+        val genreDir = SongsRepo.genreDir(context, genre)
         if (!genreDir.exists()) {
             genreDir.mkdirs()
         }

@@ -25,6 +25,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/Theme.Splash"
+        android:enableOnBackInvokedCallback="true"
         android:supportsRtl="true">
 
         <activity
@@ -39,12 +40,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.offlinemode.DownloadGenresActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AmbientMusic"
-            android:label="@string/download_genres_title" />
 
         <!-- For Android Auto -->
         <meta-data
