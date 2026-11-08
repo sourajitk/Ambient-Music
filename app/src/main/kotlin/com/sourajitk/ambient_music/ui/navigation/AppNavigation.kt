@@ -10,7 +10,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,17 +18,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,12 +44,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
@@ -71,20 +60,7 @@ import com.sourajitk.ambient_music.ui.timer.TimerScreen
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
-// Contains all of our routes
-sealed class Screen(val route: String, val label: Int, val icon: ImageVector) {
-    object Home : Screen("home", R.string.home_string, Icons.Default.Home)
-
-    object Settings : Screen("settings", R.string.settings_string, Icons.Default.Settings)
-
-    object Timer : Screen("timer", R.string.timer_string, Icons.Default.Timer)
-}
-
 private val tabs = listOf(Screen.Home, Screen.Timer, Screen.Settings)
-
-// Composable to get the string label
-@Composable
-fun Screen.label(): String = stringResource(id = this.label)
 
 // Hides a page that's fully covered by another from accessibility services.
 private fun Modifier.hiddenFromAccessibility(hidden: Boolean): Modifier = if (hidden) clearAndSetSemantics { } else this
@@ -187,7 +163,7 @@ private fun MainTabs(windowSizeClass: WindowSizeClass, backEnabled: Boolean, onN
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             bottomBar = {
                 if (showBottomBar) {
-                    AppBottomNavigationBar(navItems = tabs, currentRoute = selectedRoute, onSelect = { selectedRoute = it.route })
+                    AppBottomNavigationBar(currentRoute = selectedRoute, onSelect = { selectedRoute = it.route })
                 }
             },
         ) { innerPadding ->
@@ -333,39 +309,12 @@ private fun TabPage(title: String, showTopBar: Boolean, content: @Composable () 
 
 // Split the navbar controllers for two form factors: tablets/foldables and phones.
 @Composable
-fun AppBottomNavigationBar(navItems: List<Screen>, currentRoute: String, onSelect: (Screen) -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-            tonalElevation = 12.dp,
-            shadowElevation = 8.dp,
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(11.dp)
-                    .height(38.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                navItems.forEach { screen ->
-                    val isSelected = currentRoute == screen.route
-
-                    FloatingNavBarImpl(
-                        screen = screen,
-                        isSelected = isSelected,
-                        onClick = { onSelect(screen) },
-                    )
-                }
-            }
-        }
-    }
+fun AppBottomNavigationBar(currentRoute: String, onSelect: (Screen) -> Unit) {
+    FloatingNavBar(
+        current = tabs.first { it.route == currentRoute },
+        onSelect = onSelect,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @Composable
@@ -373,7 +322,7 @@ fun AppNavigationRail(navItems: List<Screen>, currentRoute: String, onSelect: (S
     NavigationRail(modifier = Modifier.fillMaxHeight()) {
         navItems.forEach { screen ->
             NavigationRailItem(
-                icon = { Icon(screen.icon, contentDescription = screen.label()) },
+                icon = { Icon(painterResource(screen.icon), contentDescription = screen.label()) },
                 selected = currentRoute == screen.route,
                 onClick = { onSelect(screen) },
             )
