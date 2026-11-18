@@ -57,10 +57,11 @@ android {
                 ?: signingConfigs.getByName("debug")
         }
         // Dogfood builds (assembleDebug) get their own package and launcher label so they install
-        // beside the release app.
+        // beside the release app. CI signs them with the release key so each new build updates the last.
         getByName("debug").apply {
             applicationIdSuffix = ".dogfood"
             versionNameSuffix = "-dogfood"
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
 
