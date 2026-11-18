@@ -28,7 +28,7 @@ android {
         minSdk = 31
         targetSdk = 37
         versionCode = commitCount
-        versionName = "5.1.3-$commitHash"
+        versionName = "5.1.4-$commitHash"
         resValue("string", "app_version", "\"${versionName}\"")
     }
 
