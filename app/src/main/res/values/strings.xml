@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Ambient Music</string>
+    <!-- Launcher label; the debug (dogfood) source set overrides it so the two installs can be told apart. -->
+    <string name="app_label" translatable="false">@string/app_name</string>
     <string name="qs_tile_main_label" translatable="false">Ambient Music</string>
     <string name="qs_subtitle_playing">Playing</string>
     <string name="qs_subtitle_paused">Paused</string>

@@ -56,6 +56,12 @@ android {
             signingConfig = signingConfigs.findByName("release")
                 ?: signingConfigs.getByName("debug")
         }
+        // Dogfood builds (assembleDebug) get their own package and launcher label so they install
+        // beside the release app.
+        getByName("debug").apply {
+            applicationIdSuffix = ".dogfood"
+            versionNameSuffix = "-dogfood"
+        }
     }
 
     compileOptions {
