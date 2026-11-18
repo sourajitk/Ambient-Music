@@ -35,18 +35,24 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.material3.ColorProviders
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.sourajitk.ambient_music.R
 import com.sourajitk.ambient_music.playback.MusicPlaybackService
+import com.sourajitk.ambient_music.ui.theme.DarkColors
+import com.sourajitk.ambient_music.ui.theme.LightColors
+import com.sourajitk.ambient_music.ui.theme.isMaterialYouOn
 
 class AmbientMusicWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        // Same colours as the app: Material You when the phone provides it, otherwise the app's own scheme.
+        val materialYou = isMaterialYouOn(context)
         provideContent {
-            GlanceTheme {
+            GlanceTheme(colors = if (materialYou) GlanceTheme.colors else ColorProviders(light = LightColors, dark = DarkColors)) {
                 WidgetContent()
             }
         }
